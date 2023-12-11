@@ -56,11 +56,11 @@ if (process.env.SSL_KEY_FILE && process.env.SSL_CERTIFICATE_FILE) {
       }, app);
       
     httpsServer.listen(process.env.PORT, () => {
-          console.log(`MDM backend server running on port ${process.env.PORT}`);
+          console.log(`MDM backend server running on port ${process.env.PORT} w/ TLS.`);
       });
 } else {
     app.listen(process.env.PORT, () => {
-        console.log(`MDM backend server running on port ${process.env.PORT}`);
+        console.log(`MDM backend server running on port ${process.env.PORT}.`);
     });
 }
 
