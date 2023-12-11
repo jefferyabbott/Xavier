@@ -1,0 +1,75 @@
+import { gql } from '@apollo/client';
+
+const GET_IPAD = gql`
+    query getiPad($SerialNumber: String!) {
+        ipad(SerialNumber: $SerialNumber) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            mdmProfileInstalled
+            QueryResponses {
+                AppAnalyticsEnabled
+                AvailableDeviceCapacity
+                AwaitingConfiguration
+                BatteryLevel
+                BluetoothMAC
+                BuildVersion
+                CellularTechnology
+                DataRoamingEnabled
+                DeviceCapacity
+                DeviceName
+                IsActivationLockEnabled
+                IsCloudBackupEnabled
+                IsDeviceLocatorServiceEnabled
+                IsDoNotDisturbInEffect
+                IsSupervised
+                Model
+                ModelName
+                ModelNumber
+                OSVersion
+                PersonalHotspotEnabled
+                ProductName
+                SerialNumber
+                SoftwareUpdateDeviceID
+                SupplementalBuildVersion
+                TimeZone
+                UDID
+                WiFiMAC
+            }
+            Applications {
+              Identifier
+              Name
+              Version
+            }
+            Profiles {
+                HasRemovalPasscode
+                IsEncrypted
+                IsManaged
+                PayloadDescription
+                PayloadDisplayName
+                PayloadIdentifier
+                PayloadOrganization
+                PayloadType
+                PayloadUUID
+                PayloadVersion
+                PayloadRemovalDisallowed
+                PayloadContent {
+                    PayloadDescription
+                    PayloadDisplayName
+                    PayloadIdentifier
+                    PayloadOrganization
+                    PayloadType
+                    PayloadUUID
+                    PayloadVersion
+                }
+              }
+            CertificateList {
+                CommonName
+                IsIdentity
+            }
+        }
+    }
+`
+
+export { GET_IPAD };

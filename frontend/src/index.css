@@ -1,0 +1,280 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  height: 100vh;
+  background-color: #F7F3F2;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+p {
+  line-height: 1.7;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  line-height: 2.2;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.center {
+  text-align: center;
+}
+
+
+
+tr {
+  text-align: left;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.rightHeader {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 50px;
+  padding: 0 20px;
+}
+
+.heading p {
+  color: #828282;
+}
+
+.form,
+.content {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+.form-group label {
+  text-align: left;
+  display: block;
+  margin: 0 0 5px 3px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background: #000;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  appearance: button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn svg {
+  margin-right: 8px;
+}
+
+.btn-reverse {
+  background: #fff;
+  color: #000;
+}
+
+.btn-block {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.btn:hover {
+  transform: scale(0.98);
+}
+
+.loadingSpinnerContainer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loadingSpinner {
+  width: 64px;
+  height: 64px;
+  border: 8px solid;
+  border-color: #000 transparent #555 transparent;
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+.dropdown-menu {
+  background-color: lightgray;
+}
+
+.dropdown-menu li a:hover {
+  background-color: black;
+  color: white;
+}
+
+.greyBorder {
+  border: 2px solid grey;
+}
+
+.sidebar {
+  overflow: scroll initial;
+  justify-content: start;
+  min-height: 100vh;
+}
+
+.container {
+  padding: 0 20px;
+}
+
+.loginOverride {
+  display: block;
+  position: absolute;
+  height: 100%;
+  justify-content: center;
+  margin-top: 50px;
+  top: 25%;
+}
+
+.page {
+  display: flex;
+  min-width: 450px;
+}
+
+.positionRightAndWithMargins {
+  float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+
+.dashboardCard {
+  position: relative;
+  width: 20rem;
+  height: 16rem;
+  margin: 30px 10px 0 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.chartDimens {
+  height: 80%;
+  width: 80%;
+  position: relative;
+  margin-bottom: 1%;
+  padding: 1%;
+}
+
+canvas {
+  height: 250px !important;
+  width: 250px !important;
+}
+
+.tabText {
+  color: black;
+}
+
+.platformMargins {
+  margin: 0 10px 10px 0;
+}
+
+.welcomeMessage {
+  margin-top: 100px;
+}
+
+#profileUploader {
+  min-width: 500px;
+}
+
+.dropdown-item {
+  margin: 0 25px 0 5px;
+}
+
+.errorRed {
+  color: red;
+  font-size: 1.0em;
+  font-weight: bold;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .form {
+    width: 90%;
+  }
+
+  .heading h1 {
+    font-size: 2rem;
+  }
+
+  .heading p {
+    font-size: 1.5rem;
+  }
+}

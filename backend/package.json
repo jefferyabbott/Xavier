@@ -1,0 +1,26 @@
+{
+  "name": "mdm-webhook",
+  "version": "1.0.0",
+  "description": "A webhook server to process endpoint repsonses forwarded by MicroMDM or NanoMDM",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeffery Abbott",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.8.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.6.3",
+    "plist": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "type": "module"
+}
