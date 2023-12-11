@@ -2,7 +2,8 @@ import axios from 'axios';
 import { createRawCommandPlist } from './createRawCommandPlist.js';
 
 // mdm details
-const AUTHORIZATION = process.env.MDM_AUTHORIZATION;
+const convertedAuthToken = Buffer.from(`${process.env.MDM_USER}:${process.env.MDM_TOKEN}`).toString('base64');
+const AUTHORIZATION = `Basic ${convertedAuthToken}`;
 const SERVER_URL = process.env.MDM_SERVER_URL;
 
 

@@ -10,7 +10,8 @@ The backend requires several environment variables. How you set env variables de
 `PORT=8080`\
 `MONGO_URI="mongodb+srv://MONGO_USER:MONGO_PASSWORD@MONGO_URL/?retryWrites=true&w=majority"`\
 `NODE_ENV="production"`\
-`MDM_AUTHORIZATION="yourMDM_apiToken"`\
+`MDM_USER="micromdm(OR OTHER USERNAME)`\
+`MDM_TOKEN="yourMDM_apiToken"`\
 `MDM_SERVER_URL="https://yourMDM-ServerURL"`\
 `JWT_SECRET="LONG_RANDOM_STRING_TO_SECURE_YOUR_JWTS"`
 
