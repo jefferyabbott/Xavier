@@ -27,3 +27,7 @@ The project can now be served using:\
 
 If you are running this app on an AWS EC2 or Google Compute Engine consider managing it with [PM2 process manager](https://pm2.keymetrics.io).
 
+### Step 5 (point your MDM server to the backend server)
+Now that the backend server is running, you'll need to redirect MDM responses from the MDM server to the backend server. In the serve command for your MDM server, add the URL for your backend server as a webhook:\
+`-command-webhook-url https://yourBackendServerURL/mdm/webhook
+`
