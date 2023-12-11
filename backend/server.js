@@ -12,7 +12,7 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 app.use(cors({
-    origin: '*'
+    origin: [process.env.MDM_SERVER_URL, process.env.XAVIER_FRONTEND_SERVER_URL]
 }));
 app.use(express.json({ limit: '50mb', extended: false }));
 app.use(express.urlencoded({extended: false}));
