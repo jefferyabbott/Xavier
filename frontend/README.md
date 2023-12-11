@@ -8,7 +8,7 @@ For details, view [backend/README.md](https://github.com/jefferyabbott/Xavier/bl
 
 ### Step 2 (define env variable)
 The frontend is a static website that needs to know how to find the backend. The react-scripts build process will look for an environment variable that contains the URL of the backend server. The easiest way to supply the environment variable is to define it in a **.env** file in the root directory of the frontend project.\
-`REACT_APP_BACKEND_SERVER="https://yourBackendServerURL.com"`
+`REACT_APP_BACKEND_SERVER="https://yourBackendServerURL"`
 
 ### Step 3 (install dependencies)
 In the root directory of the frontend project, enter:\
