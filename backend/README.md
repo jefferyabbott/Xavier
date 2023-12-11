@@ -20,7 +20,7 @@ The backend requires several environment variables. How you set env variables de
 
 1. Set the port to whatever port is needed in your hosting environment.
 2. Setting the NODE_ENV to development would enable the GraphiQL interactive in-browser GraphQL IDE. Please do not do this in your production environment.
-3. The SSL_CERTIFICATE_FILE and SSL_KEY_FILE are only required if you are terminating TLS on the server. If you are using a load balancer (recommended), do not provide these varaiables.
+3. The SSL_CERTIFICATE_FILE and SSL_KEY_FILE are only required if you are terminating TLS on the server. If you are using a load balancer (recommended), do not provide these variables.
 
 ### Step 3 (install dependencies)
 Xavier was built and tested using **Node.js v18.17.0**. Assuming you have Node.js installed, you can install the project dependencies. In the root directory of the backend project, enter:\
