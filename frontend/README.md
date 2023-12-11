@@ -4,7 +4,7 @@
 
 ### Step 1 (setup your backend server)
 Please first setup the backend server.\
-For details, view the README.md file in ../backend.
+For details, view [backend/README.md](https://github.com/jefferyabbott/Xavier/blob/main/backend/README.md).
 
 ### Step 2 (define env variable)
 The frontend is a static website that needs to know how to find the backend. The react-scripts build process will look for an environment variable that contains the URL of the backend server. The easiet way to supply the environment variable is to define it in a **.env** file in the root directory of the frontend project.\
