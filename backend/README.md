@@ -3,10 +3,10 @@
 ## Deployment Guide
 
 ### Step 1 (setup your MDM server)
-Xavier is a backend and frontend for an open source MDM server such as [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm). If you don't already have a running MDM server, you'll want to set that up first.
+Xavier's backend receives responses from the endpoints as a webhook through an open source MDM server such as [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm). If you don't already have a running MDM server, you'll want to set that up first.
 
 ### Step 2 (define env variables)
-The backend requires several environment variables. How you set env variables depends on where/how you are hosting the backend. One possible way to supply the environment variable is to define it in a **.env** file in the root directory of the backend project.\
+The backend requires several environment variables. How you set env variables depends on where/how you are hosting the backend. One possible way to supply the environment variables is to define them in a **.env** file in the root directory of the backend project.\
 `PORT=8080`\
 `MONGO_URI="mongodb+srv://MONGO_USER:MONGO_PASSWORD@MONGO_URL/?retryWrites=true&w=majority"`\
 `NODE_ENV="production"`\
