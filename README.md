@@ -1,6 +1,6 @@
 # Xavier
 
-Xavier is an open source project (feel free to modify and use) that provides a backend and frontend for open source MDM servers such as [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm).
+Xavier is an open source project that provides a backend and frontend for open source MDM servers such as [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm).
 
 ![Xavier Dashboard](https://storage.googleapis.com/github-images/XavierDashboard.png)
 ![Xavier Endpoint View](https://storage.googleapis.com/github-images/XavierEndpoint.png)
