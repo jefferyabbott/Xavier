@@ -13,7 +13,7 @@ The backend requires several environment variables. How you set env variables de
 `MDM_USER="micromdm(OR OTHER USERNAME)`\
 `MDM_TOKEN="yourMDM_apiToken"`\
 `MDM_SERVER_URL="https://yourMDM-ServerURL"`\
-`XAVIER_FRONTEND_SERVER_URL="https://www.yourFrontEndServerURL.com"`\
+`XAVIER_FRONTEND_SERVER_URL="https://www.yourFrontEndServerURL"`\
 `JWT_SECRET="LONG_RANDOM_STRING_TO_SECURE_YOUR_JWTS"`\
 `SSL_CERTIFICATE_FILE="path to your SSL certificate"`\
 `SSL_KEY_FILE="path to your SSL key"`
