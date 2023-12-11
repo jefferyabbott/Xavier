@@ -49,13 +49,20 @@ app.use('/', (req, res) => {
 
 app.use(errorHandler);
 
-const httpsServer = https.createServer({
-    key: fs.readFileSync(process.env.SSL_KEY_FILE),
-    cert: fs.readFileSync(process.env.SSL_CERTIFICATE_FILE),
-  }, app);
-  
-  httpsServer.listen(process.env.PORT, () => {
-      console.log(`MDM backend server running on port ${process.env.PORT}`);
-  });
+if (process.env.SSL_KEY_FILE && process.env.SSL_CERTIFICATE_FILE) {
+    const httpsServer = https.createServer({
+        key: fs.readFileSync(process.env.SSL_KEY_FILE),
+        cert: fs.readFileSync(process.env.SSL_CERTIFICATE_FILE),
+      }, app);
+      
+    httpsServer.listen(process.env.PORT, () => {
+          console.log(`MDM backend server running on port ${process.env.PORT}`);
+      });
+} else {
+    app.listen(process.env.PORT, () => {
+        console.log(`MDM backend server running on port ${process.env.PORT}`);
+    });
+}
+
 
 
