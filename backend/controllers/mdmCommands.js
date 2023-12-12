@@ -1,5 +1,6 @@
 import express from 'express';
 const router = express.Router();
+import macOSDevice from '../models/macOSDevice.js';
 import iOSDevice from '../models/iOSDevice.js';
 import iPadOSDevice from '../models/iPadOSDevice.js';
 import profile from '../models/profile.js';
@@ -16,8 +17,10 @@ import {
     installConfigProfile_MDM_Command,
     clearPasscode_MDM_Command,
     renameDevice_MDM_Command,
-    shutdownDevice_MDM_Command
+    shutdownDevice_MDM_Command,
+    lockDevice_MDM_Command
 } from '../services/mdmActions.js';
+import createRandom6DigitPin from '../utilities/randomPin.js';
 
 // get iOS devices
 const updateiOSDeviceDetails = (req, res) => {
@@ -111,6 +114,16 @@ const clearPasscode = async (req, res) => {
     return res.sendStatus(200);
 }
 
+// lock device
+const lockDevice = async (req, res) => {
+    const { udid } = req.params;
+    const { message, phoneNumber } = req.body;
+    const pin = createRandom6DigitPin();
+    await macOSDevice.updateOne({ UDID: udid }, { $push: { unlockPins: {'pin': pin }}});
+    lockDevice_MDM_Command(udid, pin, message, phoneNumber);
+    return res.sendStatus(200);
+}
+
 // restart device
 const restartDevice = (req, res) => {
     const { udid } = req.params;
@@ -183,5 +196,6 @@ export {
     clearPasscode,
     renameDevice,
     shutdownDevice,
-    uploadConfigProfile
+    uploadConfigProfile,
+    lockDevice
 }

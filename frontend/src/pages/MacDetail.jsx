@@ -18,6 +18,7 @@ import RestartDeviceModal from "../components/modals/RestartDeviceModal.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
 import ShutdownDeviceModal from "../components/modals/shutdownDeviceModal.jsx";
+import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
 
 export default function MacDetail() {
   const { SerialNumber } = useParams();
@@ -26,6 +27,7 @@ export default function MacDetail() {
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
   const [showShutdownDeviceModal, setShowShutdownDeviceModal] = useState(false);
+  const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
 
   // tabs
   const applicationsTabLabel = useRef(null);
@@ -106,6 +108,14 @@ export default function MacDetail() {
     setShowShutdownDeviceModal(false);
   }
 
+  function displayLockDeviceModal() {
+    setShowLockDeviceModal(true);
+  }
+
+  function hideLockDeviceModal() {
+    setShowLockDeviceModal(false);
+  }
+
   const { loading, error, data } = useQuery(GET_MAC, {
     variables: { SerialNumber },
   });
@@ -151,7 +161,7 @@ export default function MacDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button className='dropdown-item' onClick={displayLockDeviceModal}>
                             Lock Device
                           </button>
                         </li>
@@ -273,6 +283,18 @@ export default function MacDetail() {
                         }
                       </td>
                     </tr>
+
+                    { data.mac.unlockPins && data.mac.unlockPins.length > 0 &&
+                      (
+                        <tr>
+                        <td>unlock PIN</td>
+                        <td>
+                          {data.mac.unlockPins[data.mac.unlockPins.length - 1].pin}
+                        </td>
+                      </tr>
+                      )
+
+                    }
                   </tbody>
                 </table>
               </div>
@@ -540,6 +562,14 @@ export default function MacDetail() {
               hideShutdownDeviceModal={hideShutdownDeviceModal}
             />
           ) : null}
+          {
+            showLockDeviceModal ? (
+              <LockDeviceModal
+                visible={showLockDeviceModal}
+                UDID={data.mac.UDID}
+                hideLockDeviceModal={hideLockDeviceModal}
+              />
+            ) : null }
         </main>
       )}
     </>

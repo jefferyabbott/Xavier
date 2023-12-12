@@ -26,6 +26,16 @@ function clearPasscode(udid, platform) {
     postCommandWithOptions(API_URL, options, message);
 }
 
+function lockDevice(udid, phoneNumber, lockScreenMessage) {
+    const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/lockDevice/${udid}`;
+    const options = {
+        phoneNumber,
+        message: lockScreenMessage
+    }
+    const message = "Lock device command has been issued."; 
+    postCommandWithOptions(API_URL, options, message);
+}
+
 function disableRemoteDesktop(udid) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/mac/disableRemoteDesktop/${udid}`;
     postCommand(API_URL, 'Disable remote desktop command has been issued.');
@@ -117,5 +127,6 @@ export {
     clearPasscode,
     renameDevice,
     shutdownDevice,
-    uploadProfile
+    uploadProfile,
+    lockDevice
 };

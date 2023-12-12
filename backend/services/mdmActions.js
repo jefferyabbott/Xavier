@@ -104,6 +104,21 @@ function clearPasscode_MDM_Command(udid, unlockToken) {
   sendMDMCommand(udid, createRawCommandPlist(args));
 }
 
+// lock device
+function lockDevice_MDM_Command(udid, pin, message, phoneNumber) {
+  const args = `
+    <key>RequestType</key>
+    <string>DeviceLock</string>
+    <key>PIN</key>
+    <string>${pin}</string>
+    <key>PhoneNumber</key>
+    <string>${phoneNumber}</string>
+    <key>Message</key>
+    <string>${message}</string>
+  `.replace(/\n|\r/g, "");
+  sendMDMCommand(udid, createRawCommandPlist(args));
+}
+
 // enable remote desktop (mac)
 function enableRemoteDesktop_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>EnableRemoteDesktop</string>';
@@ -180,5 +195,6 @@ export {
   installConfigProfile_MDM_Command,
   clearPasscode_MDM_Command,
   renameDevice_MDM_Command,
-  shutdownDevice_MDM_Command
+  shutdownDevice_MDM_Command,
+  lockDevice_MDM_Command
 };
