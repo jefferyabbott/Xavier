@@ -19,8 +19,8 @@ MDM_TOKEN="yourMDM_apiToken"
 MDM_SERVER_URL="https://yourMDM-ServerURL"
 XAVIER_FRONTEND_SERVER_URL="https://www.yourFrontEndServerURL"
 JWT_SECRET="LONG_RANDOM_STRING_TO_SECURE_YOUR_JWTS"
-SSL_CERTIFICATE_FILE="path to your SSL certificate" (optional)
-SSL_KEY_FILE="path to your SSL key" (optional)
+SSL_CERTIFICATE_FILE="path to your SSL certificate" #(optional)
+SSL_KEY_FILE="path to your SSL key" #(optional)
 ```
 
 1. Set the port to whatever port is needed in your hosting environment.
