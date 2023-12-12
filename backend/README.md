@@ -9,7 +9,7 @@ Xavier's backend receives responses from the endpoints as a webhook through an o
 Xavier uses **MongoDB** to store and retrieve data about the endpoints. You will need to setup (and secure) a database. Probably the quickest way to do this is to use **MongoDB Atlas**. If you are running this in AWS, **Amazon DocumentDB** is a fully-compatible clone of MongoDB. Alternatively, you could run your own MongoDB server. If you are setting up a simple testing environment, running MongoDB server on the same server as the backend app would be fine.
 
 ### Step 3 (define env variables)
-The backend requires several environment variables. How you set env variables depends on where/how you are hosting the backend. One possible way to supply the environment variables is to define them in a **.env** file in the root directory of the backend project.\
+The backend requires several environment variables. How you set env variables depends on where/how you are hosting the backend. One possible way to supply the environment variables is to define them in a **.env** file in the root directory of the backend project.
 ```
 PORT=8080
 MONGO_URI="mongodb+srv://MONGO_USER:MONGO_PASSWORD@MONGO_URL/?retryWrites=true&w=majority"

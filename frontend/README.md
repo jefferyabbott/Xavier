@@ -13,7 +13,7 @@ REACT_APP_BACKEND_SERVER="https://yourBackendServerURL"
 ```
 
 ### Step 3 (install dependencies)
-In the root directory of the frontend project, enter:\
+Xavier was built and tested using **Node.js v18.17.0**. Assuming you have Node.js installed, you can install the project dependencies. In the root directory of the frontend project, enter:\
 `npm install` \
 This will install all dependencies required to build the project.
 
