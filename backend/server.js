@@ -1,11 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
- 
-
-import fs from 'fs';
+ import fs from 'fs';
 import https from 'https';
-
-
 import express from 'express';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler.js';
@@ -21,7 +17,6 @@ app.use(express.urlencoded({extended: false}));
 import connectDB from './config/database.js';
 connectDB();
 
-
 import mdmWebhookRouter from './routes/mdmWebhookRoutes.js';
 import mdmCommandRouter from './routes/mdmCommandRoutes.js';
 import userRouter from './routes/consoleUserRoutes.js';
@@ -34,7 +29,6 @@ app.use('/api/users', userRouter);
 app.use('/complianceCardPrefs', complianceCardPrefsRouter);
 
 // define graphql endpoint
-// TODO add auth middleware
 import protect from './middleware/authHandler.js';
 import { graphqlHTTP } from 'express-graphql';
 import schema from './schema/schema.js';
@@ -42,10 +36,6 @@ app.use('/graphql', protect, graphqlHTTP({
     schema,
     graphiql: process.env.NODE_ENV === 'development'
 }));
-
-app.use('/', (req, res) => {
-    res.send('ok');
-});
 
 app.use(errorHandler);
 
@@ -63,6 +53,3 @@ if (process.env.SSL_KEY_FILE && process.env.SSL_CERTIFICATE_FILE) {
         console.log(`MDM backend server running on port ${process.env.PORT}.`);
     });
 }
-
-
-
