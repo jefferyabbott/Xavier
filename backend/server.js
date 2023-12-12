@@ -5,6 +5,7 @@ import https from 'https';
 import express from 'express';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler.js';
+import protect from './middleware/authHandler.js';
 
 const app = express();
 app.use(cors({
@@ -22,14 +23,15 @@ import mdmCommandRouter from './routes/mdmCommandRoutes.js';
 import userRouter from './routes/consoleUserRoutes.js';
 import complianceCardPrefsRouter from './routes/complianceCardPrefsRoutes.js';
 
-// define routes
+// open routes
 app.use('/mdm/webhook', mdmWebhookRouter);
-app.use('/mdm/commands', mdmCommandRouter);
 app.use('/api/users', userRouter);
-app.use('/complianceCardPrefs', complianceCardPrefsRouter);
+
+// protected routes
+app.use('/mdm/commands', protect, mdmCommandRouter);
+app.use('/complianceCardPrefs', protect, complianceCardPrefsRouter);
 
 // define graphql endpoint
-import protect from './middleware/authHandler.js';
 import { graphqlHTTP } from 'express-graphql';
 import schema from './schema/schema.js';
 app.use('/graphql', protect, graphqlHTTP({

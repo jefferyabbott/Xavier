@@ -12,17 +12,16 @@ import {
     shutdownDevice,
     uploadConfigProfile
 } from '../controllers/mdmCommands.js';
-import protect from '../middleware/authHandler.js';
 
-router.post('/mac/updateInventory/:udid', protect, updateMacDeviceDetails);
-router.post('/ios/updateInventory/:udid', protect, updateiOSDeviceDetails);
-router.post('/restartDevice/:udid', protect, restartDevice);
-router.post('/mac/enableRemoteDesktop/:udid', protect, enableRemoteDesktop);
-router.post('/mac/disableRemoteDesktop/:udid', protect, disableRemoteDesktop);
-router.post('/installProfile/:udid', protect, installConfigProfile);
-router.post('/ios/clearPasscode/:udid', protect, clearPasscode);
-router.post('/renameDevice/:udid', protect, renameDevice);
-router.post('/shutdownDevice/:udid', protect, shutdownDevice);
-router.post('/uploadProfile', protect, uploadConfigProfile);
+router.post('/mac/updateInventory/:udid', updateMacDeviceDetails);
+router.post('/ios/updateInventory/:udid', updateiOSDeviceDetails);
+router.post('/restartDevice/:udid', restartDevice);
+router.post('/mac/enableRemoteDesktop/:udid', enableRemoteDesktop);
+router.post('/mac/disableRemoteDesktop/:udid', disableRemoteDesktop);
+router.post('/installProfile/:udid', installConfigProfile);
+router.post('/ios/clearPasscode/:udid', clearPasscode);
+router.post('/renameDevice/:udid', renameDevice);
+router.post('/shutdownDevice/:udid', shutdownDevice);
+router.post('/uploadProfile', uploadConfigProfile);
 
 export default router;
