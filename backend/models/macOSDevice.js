@@ -27,8 +27,13 @@ const macOSDeviceSchema = new mongoose.Schema({
   Topic: {
     type: String
   },
-
-
+  unlockPins: [ 
+    {
+      pin: {
+        type: String
+      }
+    }
+  ],
   QueryResponses: {
     // ActiveManagedUsers: [],
     // AutoSetupAdminAccounts: [],

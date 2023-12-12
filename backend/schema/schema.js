@@ -186,6 +186,13 @@ const ConfigProfileType = new GraphQLObjectType({
   })
 });
 
+const UnlockPinType = new GraphQLObjectType({
+  name: "unlockPin",
+  fields: () => ({
+    pin: { type: GraphQLString },
+  })
+});
+
 const MacType = new GraphQLObjectType({
     name: 'macosdevice',
     fields: () => ({
@@ -201,7 +208,8 @@ const MacType = new GraphQLObjectType({
         SecurityInfo: { type: MacSecurityInfoType },
         Applications: { type: new GraphQLList(ApplicationType) },
         Profiles: { type: new GraphQLList(ProfileType) },
-        CertificateList: { type: new GraphQLList(CertificateType) }     
+        CertificateList: { type: new GraphQLList(CertificateType) }, 
+        unlockPins: { type: new GraphQLList(UnlockPinType)}  
     })
 });
 

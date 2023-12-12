@@ -10,7 +10,8 @@ import {
     clearPasscode,
     renameDevice,
     shutdownDevice,
-    uploadConfigProfile
+    uploadConfigProfile,
+    lockDevice
 } from '../controllers/mdmCommands.js';
 
 router.post('/mac/updateInventory/:udid', updateMacDeviceDetails);
@@ -23,5 +24,6 @@ router.post('/ios/clearPasscode/:udid', clearPasscode);
 router.post('/renameDevice/:udid', renameDevice);
 router.post('/shutdownDevice/:udid', shutdownDevice);
 router.post('/uploadProfile', uploadConfigProfile);
+router.post('/lockDevice/:udid', lockDevice);
 
 export default router;

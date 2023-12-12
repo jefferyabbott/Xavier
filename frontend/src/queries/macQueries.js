@@ -16,6 +16,9 @@ const GET_MAC = gql`
             OSVersion
             UDID
             mdmProfileInstalled
+            unlockPins {
+                pin
+            }
             QueryResponses {
                 AvailableDeviceCapacity
                 BluetoothMAC
