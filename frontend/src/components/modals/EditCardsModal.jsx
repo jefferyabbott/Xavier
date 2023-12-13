@@ -1,9 +1,9 @@
 import { useState, useEffect, React } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
-import SearchForApps from "./SearchForApps.jsx";
-import SearchForComplianceStatus from "./SearchForComplianceStatus.jsx";
-import { updateComplianceCardPrefs } from "../commands/updateComplianceCardPrefs.js";
+import SearchForApps from "../SearchForApps.jsx";
+import SearchForComplianceStatus from "../SearchForComplianceStatus.jsx";
+import { updateComplianceCardPrefs } from "../../commands/updateComplianceCardPrefs.js";
 
 function EditCardsModal({
   visible,

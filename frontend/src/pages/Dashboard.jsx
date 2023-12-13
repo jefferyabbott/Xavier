@@ -8,16 +8,16 @@ import generateBooleanComplianceData from "../utilities/generateBooleanComplianc
 import generateOSVersionComplianceData from "../utilities/generateOSVersionComplianceData.js";
 import generateAppVersionComplianceData from "../utilities/generateAppVersionComplianceData.js";
 import { FaEdit } from "react-icons/fa";
-import EditCardsModal from "../components/EditCardsModal.jsx";
+import EditCardsModal from "../components/modals/EditCardsModal.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
   let consoleUser;
   const tokenStr = localStorage.getItem('user');
-if (tokenStr) {
-    consoleUser = JSON.parse(tokenStr)._id;
-} 
+  if (tokenStr) {
+      consoleUser = JSON.parse(tokenStr)._id;
+  } 
 
   useEffect(() => {
     if (!consoleUser) {

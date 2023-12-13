@@ -3,6 +3,7 @@ import macOSDevice from '../models/macOSDevice.js';
 import iOSDevice from '../models/iOSDevice.js';
 import iPadOSDevice from '../models/iPadOSDevice.js';
 import profile from '../models/profile.js';
+import consoleUser from '../models/consoleUser.js';
 import complianceCardPrefs from '../models/complianceCard.js';
 
 const ApplicationType = new GraphQLObjectType({
@@ -267,6 +268,15 @@ const ComplianceCardPrefsType = new GraphQLObjectType({
   })
 });
 
+const ConsoleUserType = new GraphQLObjectType({
+  name: 'consoleuser',
+  fields: () => ({
+    name: { type: GraphQLString },
+    email: { type: GraphQLString },
+    userType: { type: GraphQLString }
+  })
+});
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -320,6 +330,12 @@ const RootQuery = new GraphQLObjectType({
           type: new GraphQLList(ConfigProfileType),
           resolve(parent, args) {
             return profile.find();
+          }
+        },
+        consoleusers: {
+          type: new GraphQLList(ConsoleUserType),
+          resolve(parent, args) {
+            return consoleUser.find();
           }
         }
     }

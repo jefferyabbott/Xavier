@@ -1,7 +1,7 @@
 import { useState, useEffect, React } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import ProfilePayload from './ProfilePayload';
-import AuditSymbolCompliance from './AuditSymbolCompliance';
+import ProfilePayload from '../ProfilePayload';
+import AuditSymbolCompliance from '../AuditSymbolCompliance';
 
 
 function ProfileModal({visible, profile, hideProfileDetails}) {
