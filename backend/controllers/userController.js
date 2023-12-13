@@ -7,7 +7,7 @@ const { genSalt, hash, compare } = bcrypt;
 const { sign } = jwt;
 
 // @desc    Register new user
-// @route   POST /api/users
+// @route   POST /api/users/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -25,11 +25,18 @@ const registerUser = asyncHandler(async (req, res) => {
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt);
 
+    // check for existing users
+    // if none exist, then give the new user admin rights
+    // otherwise, give the new user read-only aduditor rights
+
+    const existingUsers = await consoleUser.find();
+
     // create user
     const user = await consoleUser.create({
         name,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        userType: (existingUsers && existingUsers.length > 0) ? 'consoleAuditor': 'consoleAdministrator'
     });
 
     if (user) {
@@ -75,7 +82,6 @@ const generateToken = (id) => {
 
 export {
     registerUser,
-    loginUser,
-    complianceCardPref
+    loginUser
 }
 

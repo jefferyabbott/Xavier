@@ -13,6 +13,10 @@ const consoleUserSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, 'password is required']
+    },
+    userType: {
+        type: String,
+        required: [true, 'user must be set to either consoleAdministrator or consoleAuditor']
     }
 }, {
     timestamps: true
