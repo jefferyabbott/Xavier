@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import AuditSymbolCompliance from "./AuditSymbolCompliance.jsx";
 import SearchBar from "./SearchBar";
-import ProfileModal from "./ProfileModal.jsx";
+import ProfileModal from "./modals/ProfileModal.jsx";
 
 function sortProfiles(Profiles) {
   let appArray = [...Profiles];

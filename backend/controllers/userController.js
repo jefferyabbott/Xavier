@@ -44,7 +44,53 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user.id,
             name: user.name,
             email: user.email,
+            userType: user.userType,
             token: generateToken(user._id)
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+});
+
+
+// @desc    Create new user
+// @route   POST /api/users/createNewUser
+// @access  Private
+const createNewUser = asyncHandler(async (req, res) => {
+
+    const requestingUser = await consoleUser.findOne({ _id: req.user._id }).select(['-password']);
+    if (requestingUser.userType !== 'consoleAdministrator') {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
+
+    const { name, email, password, userType } = req.body;
+    if (!name || !email || !password || !userType) {
+        res.status(400);
+        throw new Error('Please add all fields');
+    }
+    const userExists = await consoleUser.findOne({email});
+    if (userExists) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    // hash the password
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
+
+    // create user
+    const newUser = await consoleUser.create({
+        name,
+        email,
+        password: hashedPassword,
+        userType
+    });
+
+    if (newUser) {
+        res.status(201).json({
+            message: `New user account for ${name} has been created.`
         });
     } else {
         res.status(400);
@@ -65,6 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
             _id: user.id,
             name: user.name,
             email: user.email,
+            userType: user.userType,
             token: generateToken(user._id)
         });
     } else {
@@ -82,6 +129,7 @@ const generateToken = (id) => {
 
 export {
     registerUser,
-    loginUser
+    loginUser,
+    createNewUser
 }
 
