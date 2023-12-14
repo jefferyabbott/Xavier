@@ -44,9 +44,30 @@ The project can now be served using:\
 If you are running this app on an AWS EC2 or Google Compute Engine consider managing it with [PM2 process manager](https://pm2.keymetrics.io).
 
 ### Step 7 (create the first user account)
-Using an app like Postman or using a curl command, send a `POST` request to: `https://https://yourBackendServerURL/api/users/register` \
+Using an app like Postman or using a curl command, send a `POST` request to:\
+`https://https://yourBackendServerURL/api/users/register`\
+In the body of the POST request, include a JSON object containing { name, email, password }. If using curl, the request may look like this:
+```
+curl --location 'https://yourBackendServerURL/api/users/register' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'name=First User' \
+--data-urlencode 'email=firstuser@example.com' \
+--data-urlencode 'password=mySuperSecretPassword'
+```
+or ...
+```
+curl --location 'https://yourBackendServerURL/api/users/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    '\''name'\'': '\''First User'\'',
+    '\''email'\'': '\''firstuser@example.com'\'',
+    '\''password'\'': '\''mySuperSecretPassword
+}'
+```
 
-### Step 6 (point your MDM server to the backend server)
+After creating the first user account, return to step 5 and comment out the register route so people cannot make their own user accounts. Then restart the server. By default, after one administrator account is created, any future accounts created using the register route will have read-only auditor privileges.
+
+### Step 8 (point your MDM server to the backend server)
 Now that the backend server is running, you'll need to redirect MDM responses from the MDM server to the backend server. In the **serve** command for your MDM server, add the URL for your backend server as a webhook:\
 `-command-webhook-url https://yourBackendServerURL/mdm/webhook
 `
