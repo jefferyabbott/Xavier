@@ -1,28 +1,23 @@
 import { useState, useEffect, React } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_CONFIG_PROFILES } from "../queries/configProfilesQueries";
-import ProfileUploader from "../components/ProfileUploader";
 import Spinner from "../components/Spinner";
 import NotFound from "./NotFound";
 import ConfigProfileRow from "../components/ConfigProfileRow.jsx";
 import { FaPlusCircle } from "react-icons/fa";
-import { uploadProfile } from '../commands/mdmCommands';
 import isAdministrator from "../utilities/checkPrivileges";
+import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
+import { GET_CONFIG_PROFILES } from "../queries/configProfilesQueries.js";
 
 function Profiles() {
 
-  const [base64Profile, setBase64Profile] = useState();
-  const [addProfile, setAddProfile] = useState(false);
+  const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
 
-  // TODO - set useEffect to upload a profile
-  // TODO - check if the profile has already been uploaded
-
-  function returnBase64String(str) {
-    setBase64Profile(str);
+  function displayInstallProfileModal() {
+    setShowInstallProfileModal(true);
   }
 
-  function allowProfileUpload() {
-    setAddProfile(true);
+  function hideInstallProfileModal() {
+    setShowInstallProfileModal(false);
   }
 
   const { loading, error, data } = useQuery(GET_CONFIG_PROFILES);
@@ -53,11 +48,22 @@ function Profiles() {
       <div>
         { 
           (isAdministrator()) ?
-          (addProfile) ? <ProfileUploader returnBase64String={returnBase64String}/> : (<button className="btn" onClick={allowProfileUpload}><FaPlusCircle/></button>)
+          (showInstallProfileModal) ?
+              <InstallProfileModal
+                visible={showInstallProfileModal}
+                UDID={null}
+                currentProfiles={null}
+                configProfiles={data.configProfiles}
+                hideInstallProfileModal={hideInstallProfileModal}
+              />
+            : 
+            <button className="btn" onClick={displayInstallProfileModal}><FaPlusCircle/></button>
           : null
         }
       </div>
       
+      
+
       </main>
     </>
   }
