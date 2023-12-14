@@ -44,7 +44,7 @@ The project can now be served using:\
 If you are running this app on an AWS EC2 or Google Compute Engine consider managing it with [PM2 process manager](https://pm2.keymetrics.io).
 
 ### Step 7 (create the first user account)
-Using an app like Postman or using a curl command, send a `POST` request to:\
+Using an app like Postman or using the curl command, send a `POST` request to:\
 `https://https://yourBackendServerURL/api/users/register`\
 In the body of the POST request, include a JSON object containing { name, email, password }. If using curl, the request may look like this:
 ```
