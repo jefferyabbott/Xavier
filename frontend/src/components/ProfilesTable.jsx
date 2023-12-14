@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import AuditSymbolCompliance from "./AuditSymbolCompliance.jsx";
 import SearchBar from "./SearchBar";
 import ProfileModal from "./modals/ProfileModal.jsx";
+import { FaTrash } from "react-icons/fa";
+import UninstallProfileModal from "./modals/UninstallProfileModal.jsx";
 
 function sortProfiles(Profiles) {
   let appArray = [...Profiles];
@@ -13,10 +15,13 @@ function sortProfiles(Profiles) {
   });
 }
 
-export default function ProfilesTable({ Profiles }) {
+export default function ProfilesTable({ Profiles, Administrator, UDID }) {
   const [searchedProfiles, setSearchedProfiles] = useState(Profiles);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [selectedProfileDisplayName, setSelectedProfileDisplayName] = useState(null);
+  const [selectedProfileIdentifier, setSelectedProfileIdentifier] = useState(null);
+  const [showUninstallProfileModal, setShowUninstallModalProfile] = useState(false);
 
   function searchHandler(query) {
     setSearchedProfiles(
@@ -35,6 +40,16 @@ export default function ProfilesTable({ Profiles }) {
     setIsModalVisible(false);
   }
 
+  function displayUninstallProfileModal(name, ident) {
+    setSelectedProfileDisplayName(name);
+    setSelectedProfileIdentifier(ident);
+    setShowUninstallModalProfile(true);
+  }
+
+  function hideUninstallProfileModal() {
+    setShowUninstallModalProfile(false);
+  }
+
   return (
     <div>
       <table className='table tableList'>
@@ -46,27 +61,32 @@ export default function ProfilesTable({ Profiles }) {
             <th>Identifier</th>
             <th>Encrypted</th>
             <th>User Removable</th>
+            {
+              (Administrator) ? <th>'Uninstall'</th> : null
+            }
           </tr>
         </thead>
         <tbody>
           {sortProfiles(searchedProfiles).map((profile, index) => {
             return (
-              <tr
-                key={profile.PayloadDisplayName + index}
-                onClick={() => showProfileDetails(profile)}
-              >
-                <td>{profile.PayloadDisplayName}</td>
-                <td>{profile.PayloadIdentifier}</td>
-                <td>
+              <tr key={profile.PayloadDisplayName + index}>
+                <td onClick={() => showProfileDetails(profile)}>{profile.PayloadDisplayName}</td>
+                <td onClick={() => showProfileDetails(profile)}>{profile.PayloadIdentifier}</td>
+                <td onClick={() => showProfileDetails(profile)}>
                   {<AuditSymbolCompliance status={profile.IsEncrypted} />}
                 </td>
-                <td>
+                <td onClick={() => showProfileDetails(profile)}>
                   {
                     <AuditSymbolCompliance
                       status={!profile.PayloadRemovalDisallowed}
                     />
                   }
                 </td>
+                {
+                  (Administrator) ? <td>
+                    <FaTrash onClick={() => displayUninstallProfileModal(profile.PayloadDisplayName, profile.PayloadIdentifier)}/>
+                  </td> : null
+                } 
               </tr>
             );
           })}
@@ -76,6 +96,13 @@ export default function ProfilesTable({ Profiles }) {
         visible={isModalVisible}
         profile={selectedProfile}
         hideProfileDetails={hideProfileDetails}
+      />
+      <UninstallProfileModal
+        visible={showUninstallProfileModal}
+        UDID={UDID}
+        displayName={selectedProfileDisplayName}
+        identifier={selectedProfileIdentifier}
+        hideUninstallProfileModal={hideUninstallProfileModal}
       />
     </div>
   );

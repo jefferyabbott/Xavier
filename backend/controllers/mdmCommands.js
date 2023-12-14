@@ -18,7 +18,8 @@ import {
     clearPasscode_MDM_Command,
     renameDevice_MDM_Command,
     shutdownDevice_MDM_Command,
-    lockDevice_MDM_Command
+    lockDevice_MDM_Command,
+    removeConfigProfile_MDM_Command
 } from '../services/mdmActions.js';
 import createRandom6DigitPin from '../utilities/randomPin.js';
 import isAdministrator from '../utilities/checkPrivileges.js';
@@ -87,6 +88,18 @@ const installConfigProfile = async (req, res) => {
         }
         );
     
+    return res.sendStatus(200);
+}
+
+// remove config profile
+const removeConfigProfile = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
+    const { udid } = req.params;
+    const { identifier } = req.body;
+    removeConfigProfile_MDM_Command(udid, identifier);
     return res.sendStatus(200);
 }
 
@@ -242,5 +255,6 @@ export {
     renameDevice,
     shutdownDevice,
     uploadConfigProfile,
-    lockDevice
+    lockDevice,
+    removeConfigProfile
 }
