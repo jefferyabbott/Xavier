@@ -15,6 +15,7 @@ import {
   clearPasscode,
 } from "../commands/mdmCommands.js";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
+import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPadDetail() {
   const { SerialNumber } = useParams();
@@ -95,7 +96,7 @@ export default function IPadDetail() {
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
             <div>
               {(() => {
-                if (data.ipad.mdmProfileInstalled) {
+                if (data.ipad.mdmProfileInstalled && isAdministrator()) {
                   return (
                     <div className='dropdown'>
                       <button

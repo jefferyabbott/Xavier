@@ -19,6 +19,7 @@ import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
 import ShutdownDeviceModal from "../components/modals/ShutdownDeviceModal.jsx";
 import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
+import isAdministrator from "../utilities/checkPrivileges";
 
 export default function MacDetail() {
   const { SerialNumber } = useParams();
@@ -134,7 +135,7 @@ export default function MacDetail() {
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
             <div>
               {(() => {
-                if (data.mac.mdmProfileInstalled) {
+                if (data.mac.mdmProfileInstalled && isAdministrator()) {
                   return (
                     <div className='dropdown'>
                       <button
