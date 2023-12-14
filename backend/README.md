@@ -32,11 +32,19 @@ Xavier was built and tested using **Node.js v18.17.0**. Assuming you have Node.j
 `npm install` \
 This will install all dependencies required to build the project.
 
-### Step 5 (start the backend server)
+### Step 5 (enable new user registration)
+Xavier will eventually support account management through a SAML provider such as Okta. For now, though, you must create local user accounts. In order to create your first user account, which will have administrator privileges by default, open [backend/routes/consoleUserRoutes.js](https://github.com/jefferyabbott/Xavier/blob/main/backend/routes/consoleUserRoutes.js) and uncomment the following line:\
+```// router.post('/register', registerUser);```\
+This will allow you to register your first user account. You'll see how to do that in step 7.
+
+### Step 6 (start the backend server)
 The project can now be served using:\
 `node server.js`
 
 If you are running this app on an AWS EC2 or Google Compute Engine consider managing it with [PM2 process manager](https://pm2.keymetrics.io).
+
+### Step 7 (create the first user account)
+Using an app like Postman or using a curl command, send a `POST` request to: `https://https://yourBackendServerURL/api/users/register` \
 
 ### Step 6 (point your MDM server to the backend server)
 Now that the backend server is running, you'll need to redirect MDM responses from the MDM server to the backend server. In the **serve** command for your MDM server, add the URL for your backend server as a webhook:\
