@@ -29,6 +29,7 @@ export default function MacDetail() {
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
   const [showShutdownDeviceModal, setShowShutdownDeviceModal] = useState(false);
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
+  const hasAdminRights = isAdministrator();
 
   // tabs
   const applicationsTabLabel = useRef(null);
@@ -71,7 +72,7 @@ export default function MacDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.mac.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.mac.Profiles} Administrator={() => isAdministrator()} UDID={data.mac.UDID}/>;
+      return <ProfilesTable Profiles={data.mac.Profiles} Administrator={hasAdminRights} UDID={data.mac.UDID}/>;
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.mac.CertificateList} />;
     }

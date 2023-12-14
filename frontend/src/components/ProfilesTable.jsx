@@ -62,7 +62,7 @@ export default function ProfilesTable({ Profiles, Administrator, UDID }) {
             <th>Encrypted</th>
             <th>User Removable</th>
             {
-              (Administrator) ? <th>'Uninstall'</th> : null
+              (Administrator) ? <th>Uninstall</th> : null
             }
           </tr>
         </thead>
