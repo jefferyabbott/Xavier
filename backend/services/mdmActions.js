@@ -133,6 +133,7 @@ function disableRemoteDesktop_MDM_Command(udid) {
   getSecurityInfo_MDM_Command(udid);
 }
 
+// install config profile
 function installConfigProfile_MDM_Command(udid, profile) {
   const args = `
     <key>RequestType</key>
@@ -140,6 +141,18 @@ function installConfigProfile_MDM_Command(udid, profile) {
     <key>Payload</key>
     <data>${profile}</data>
   `;
+  sendMDMCommand(udid, createRawCommandPlist(args));
+  getProfileList_MDM_Command(udid);
+}
+
+// remove config profile
+function removeConfigProfile_MDM_Command(udid, identifier) {
+  const args = `
+    <key>RequestType</key>
+    <string>RemoveProfile</string>
+    <key>Identifier</key>
+    <string>${identifier}</string>
+  `.replace(/\n|\r/g, "");
   sendMDMCommand(udid, createRawCommandPlist(args));
   getProfileList_MDM_Command(udid);
 }
@@ -196,5 +209,6 @@ export {
   clearPasscode_MDM_Command,
   renameDevice_MDM_Command,
   shutdownDevice_MDM_Command,
-  lockDevice_MDM_Command
+  lockDevice_MDM_Command,
+  removeConfigProfile_MDM_Command
 };

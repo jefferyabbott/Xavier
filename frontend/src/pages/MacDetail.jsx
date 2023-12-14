@@ -71,7 +71,7 @@ export default function MacDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.mac.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.mac.Profiles} />;
+      return <ProfilesTable Profiles={data.mac.Profiles} Administrator={() => isAdministrator()} UDID={data.mac.UDID}/>;
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.mac.CertificateList} />;
     }

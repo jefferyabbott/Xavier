@@ -70,6 +70,15 @@ function installProfile(udid, profile) {
     postCommandWithOptions(API_URL, options, message);
 }
 
+function removeProfile(udid, identifier) {
+    const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/removeProfile/${udid}`;
+    const options = {
+        identifier
+    }
+    const message = "The remove profile command has been issued."; 
+    postCommandWithOptions(API_URL, options, message);
+}
+
 function uploadProfile(profile) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/uploadProfile`;
     const options = {
@@ -128,5 +137,6 @@ export {
     renameDevice,
     shutdownDevice,
     uploadProfile,
-    lockDevice
+    lockDevice,
+    removeProfile,
 };
