@@ -14,6 +14,7 @@ import {
   restartDevice,
   clearPasscode,
 } from "../commands/mdmCommands.js";
+import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPhoneDetail() {
   const { SerialNumber } = useParams();
@@ -86,7 +87,7 @@ export default function IPhoneDetail() {
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
             <div>
               {(() => {
-                if (data.iphone.mdmProfileInstalled) {
+                if (data.iphone.mdmProfileInstalled && isAdministrator()) {
                   return (
                     <div className='dropdown'>
                       <button

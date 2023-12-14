@@ -21,9 +21,14 @@ import {
     lockDevice_MDM_Command
 } from '../services/mdmActions.js';
 import createRandom6DigitPin from '../utilities/randomPin.js';
+import isAdministrator from '../utilities/checkPrivileges.js';
 
 // get iOS devices
 const updateiOSDeviceDetails = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     if (udid) {
         getiOSDeviceInfo_MDM_Command(udid);
@@ -39,6 +44,10 @@ const updateiOSDeviceDetails = (req, res) => {
 
 // get mac details
 const updateMacDeviceDetails = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     if (udid) {
         getDeviceInfo_MDM_Command(udid);
@@ -54,6 +63,10 @@ const updateMacDeviceDetails = (req, res) => {
 
 // install config profile
 const installConfigProfile = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     const { profileObject } = req.body;
     // update database with profile details
@@ -79,6 +92,10 @@ const installConfigProfile = async (req, res) => {
 
 // upload config profile
 const uploadConfigProfile = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { profileObject } = req.body;
     await profile.updateOne({
         'PayloadIdentifier': profileObject.PayloadIdentifier
@@ -102,6 +119,10 @@ return res.sendStatus(200);
 
 // clear passcode (iOS and iPadOS)
 const clearPasscode = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     const { platform } = req.body;
     let UnlockToken = '';
@@ -116,6 +137,10 @@ const clearPasscode = async (req, res) => {
 
 // lock device
 const lockDevice = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     const { message, phoneNumber } = req.body;
     const pin = createRandom6DigitPin();
@@ -126,6 +151,10 @@ const lockDevice = async (req, res) => {
 
 // restart device
 const restartDevice = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     const { notifyUser } = req.body;
     if (udid) {
@@ -138,6 +167,10 @@ const restartDevice = (req, res) => {
 
 // shutdown device
 const shutdownDevice = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     if (udid) {
         shutdownDevice_MDM_Command(udid);
@@ -149,6 +182,10 @@ const shutdownDevice = (req, res) => {
 
 // enable remote desktop (mac)
 const enableRemoteDesktop = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     if (udid) {
         enableRemoteDesktop_MDM_Command(udid);
@@ -160,6 +197,10 @@ const enableRemoteDesktop = (req, res) => {
 
 // disable remote desktop (mac)
 const disableRemoteDesktop = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     if (udid) {
         disableRemoteDesktop_MDM_Command(udid);
@@ -171,6 +212,10 @@ const disableRemoteDesktop = (req, res) => {
 
 // rename device 
 const renameDevice = (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
     const { udid } = req.params;
     const { newName, platform } = req.body;
     if (udid) {

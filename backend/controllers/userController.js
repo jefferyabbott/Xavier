@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import asyncHandler from 'express-async-handler';
 import consoleUser from '../models/consoleUser.js';
+import isAdministrator from '../utilities/checkPrivileges.js';
 
 const { genSalt, hash, compare } = bcrypt;
 const { sign } = jwt;
@@ -59,8 +60,12 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Private
 const createNewUser = asyncHandler(async (req, res) => {
 
-    const requestingUser = await consoleUser.findOne({ _id: req.user._id }).select(['-password']);
-    if (requestingUser.userType !== 'consoleAdministrator') {
+    // const requestingUser = await consoleUser.findOne({ _id: req.user._id }).select(['-password']);
+    // if (requestingUser.userType !== 'consoleAdministrator') {
+    //     res.status(400);
+    //     throw new Error('This request must be made by an administrator');
+    // }
+    if (!isAdministrator(req.user._id)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }

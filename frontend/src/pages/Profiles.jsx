@@ -7,6 +7,7 @@ import NotFound from "./NotFound";
 import ConfigProfileRow from "../components/ConfigProfileRow.jsx";
 import { FaPlusCircle } from "react-icons/fa";
 import { uploadProfile } from '../commands/mdmCommands';
+import isAdministrator from "../utilities/checkPrivileges";
 
 function Profiles() {
 
@@ -50,7 +51,11 @@ function Profiles() {
         </tbody>
       </table>
       <div>
-        { (addProfile) ? <ProfileUploader returnBase64String={returnBase64String}/> : (<button className="btn" onClick={allowProfileUpload}><FaPlusCircle/></button>)}
+        { 
+          (isAdministrator()) ?
+          (addProfile) ? <ProfileUploader returnBase64String={returnBase64String}/> : (<button className="btn" onClick={allowProfileUpload}><FaPlusCircle/></button>)
+          : null
+        }
       </div>
       
       </main>
