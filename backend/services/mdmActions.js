@@ -119,6 +119,12 @@ function lockDevice_MDM_Command(udid, pin, message, phoneNumber) {
   sendMDMCommand(udid, createRawCommandPlist(args));
 }
 
+// erase device
+function eraseDevice_MDM_Command(udid) {
+  const args = '<key>RequestType</key><string>EraseDevice</string>';
+  sendMDMCommand(udid, createRawCommandPlist(args));
+}
+
 // enable remote desktop (mac)
 function enableRemoteDesktop_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>EnableRemoteDesktop</string>';
@@ -210,5 +216,6 @@ export {
   renameDevice_MDM_Command,
   shutdownDevice_MDM_Command,
   lockDevice_MDM_Command,
-  removeConfigProfile_MDM_Command
+  removeConfigProfile_MDM_Command,
+  eraseDevice_MDM_Command
 };
