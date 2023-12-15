@@ -93,6 +93,8 @@ export default function Dashboard() {
                 case "ipados":
                   platformData = data.ipads;
                   break;
+                default:
+                  break;
               }
               if (card.type === "boolean") {
                 return (
@@ -127,6 +129,8 @@ export default function Dashboard() {
                     key={`compliancecard${index}`}
                   />
                 );
+              } else {
+                return null;
               }
             })}
           

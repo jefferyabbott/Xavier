@@ -21,7 +21,7 @@ function createNewUser(name, email, password, userType) {
         userType
     }
     const message = `New user account for ${name} has been created.`;
-    const addSuccessful = postCommandWithOptions(API_URL, options, message);
+    postCommandWithOptions(API_URL, options, message);
 
     const addedUser = { name, email, userType };
     return addedUser;

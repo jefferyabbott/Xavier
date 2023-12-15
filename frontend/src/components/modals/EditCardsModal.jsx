@@ -58,6 +58,8 @@ function EditCardsModal({
             case "ipados":
               title = "iPadOS version";
               break;
+            default:
+              break;
           }
           setCards([
             ...cards,
@@ -73,11 +75,7 @@ function EditCardsModal({
 
       // type app version
       if (addCardType === "appVersion") {
-        const currentApps = cards.map((item) => {
-          if (item.platform === addCardPlatform && item.type === "appVersion") {
-            return item.title;
-          }
-        });
+        const currentApps = cards.filter((card) => (card.platform === addCardPlatform && card.type === "appVersion")).map((item) => item.title);
         let platformData;
         switch (addCardPlatform) {
           case "macos":
@@ -88,6 +86,9 @@ function EditCardsModal({
             break;
           case "ipados":
             platformData = iPadData;
+            break;
+          default:
+            break;
         }
         setCardDataSelect(
           <SearchForApps
@@ -105,11 +106,7 @@ function EditCardsModal({
 
       // type boolean (compliance status)
       if (addCardType === "boolean") {
-        const currentBooleans = cards.map((item) => {
-          if (item.platform === addCardPlatform && item.type === "boolean") {
-            return item.title;
-          }
-        });
+        const currentBooleans = cards.filter((card) => (card.platform === addCardPlatform && card.type === "boolean")).map((item) => item.title);
         setCardDataSelect(
           <SearchForComplianceStatus
             platform={addCardPlatform}
@@ -123,19 +120,18 @@ function EditCardsModal({
         setShowAddCard(false);
       }
     }
-  }, [visible, addCardPlatform, addCardType]);
+  }, [visible, addCardPlatform, addCardType, cards, iPadData, iPhoneData, macData]);
 
   function cardType(type) {
     switch (type) {
       case "boolean":
         return "compliance status";
-        break;
       case "osVersion":
         return "OS version";
-        break;
       case "appVersion":
         return "app version";
-        break;
+      default:
+        return null;
     }
   }
 
@@ -143,13 +139,12 @@ function EditCardsModal({
     switch (platform) {
       case "macos":
         return "Mac";
-        break;
       case "ios":
         return "iPhone";
-        break;
       case "ipados":
         return "iPad";
-        break;
+      default:
+        return null;
     }
   }
 

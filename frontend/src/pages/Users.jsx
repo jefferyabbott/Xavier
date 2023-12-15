@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from "react";
+import { useState, React } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CONSOLE_USERS } from "../queries/userQueries";
 import Spinner from "../components/Spinner";

@@ -46,6 +46,8 @@ function SearchForComplianceStatus({
         (card) => !currentCardBooleans.includes(card.title)
       );
       break;
+    default:
+      break;
   }
 
   return (

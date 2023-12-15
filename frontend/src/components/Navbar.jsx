@@ -18,7 +18,7 @@ function Navbar() {
   return (
     <nav className="navbar navbar-dark bg-dark header">
         <div className="container-fluid">
-            <div className="navbar-brand logo"><h1>Xavier</h1></div>
+            <div className="navbar-brand logo"><img className="logo" src="/logo192.png" alt="Xavier satellite logo"/><h1>Xavier</h1></div>
             <ul>
           { user ? (
             <li>

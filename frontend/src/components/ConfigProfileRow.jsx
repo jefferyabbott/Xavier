@@ -1,7 +1,4 @@
 import React from "react";
-import { FaApple } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-// import timeSince from '../utilities/TimeSince';
 
 export default function ConfigProfileRow({ profile }) {
 

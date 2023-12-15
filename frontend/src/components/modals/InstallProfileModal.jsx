@@ -36,7 +36,7 @@ import ProfilePayload from '../ProfilePayload';
         }
       })
     }
-  }, [plistData]);
+  }, [plistData, UDID, currentProfiles]);
 
   function deployProfile() {
     if (profile) {
