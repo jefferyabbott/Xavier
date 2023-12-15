@@ -20,6 +20,7 @@ import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
 import ShutdownDeviceModal from "../components/modals/ShutdownDeviceModal.jsx";
 import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
 import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
+import PinHistoryTable from "../components/PinHistoryTable.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function MacDetail() {
@@ -31,6 +32,7 @@ export default function MacDetail() {
   const [showShutdownDeviceModal, setShowShutdownDeviceModal] = useState(false);
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
   const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
+  const [showPinHistory, setShowPinHistory] = useState(false);
   const hasAdminRights = isAdministrator();
 
   // tabs
@@ -126,6 +128,10 @@ export default function MacDetail() {
 
   function hideEraseDeviceModal() {
     setShowEraseDeviceModal(false);
+  }
+
+  function hideShowPinHistoryTable() {
+    setShowPinHistory(false);
   }
 
   const { loading, error, data } = useQuery(GET_MAC, {
@@ -302,9 +308,12 @@ export default function MacDetail() {
                       (
                         <tr>
                         <td>unlock PIN</td>
-                        <td>
-                          {data.mac.unlockPins[data.mac.unlockPins.length - 1].pin}
-                        </td>
+                        {
+                          (showPinHistory) ?
+                            <PinHistoryTable data={data.mac.unlockPins} hideShowPinHistoryTable={hideShowPinHistoryTable} />
+                          : <div onClick={() => setShowPinHistory(true)}>click to view</div>
+                      }
+
                       </tr>
                       )
 
