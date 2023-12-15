@@ -16,6 +16,7 @@ import {
 } from "../commands/mdmCommands.js";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
+import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPadDetail() {
@@ -24,6 +25,7 @@ export default function IPadDetail() {
 
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
+  const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
 
   const hasAdminRights = isAdministrator();
 
@@ -90,6 +92,14 @@ export default function IPadDetail() {
     setShowInstallProfileModal(false);
   }
 
+  function displayEraseDeviceModal() {
+    setShowEraseDeviceModal(true);
+  }
+
+  function hideEraseDeviceModal() {
+    setShowEraseDeviceModal(false);
+  }
+
   const { loading, error, data } = useQuery(GET_IPAD, {
     variables: { SerialNumber },
   });
@@ -132,7 +142,9 @@ export default function IPadDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button className='dropdown-item'
+                          onClick={displayEraseDeviceModal}
+                          >
                             Erase Device
                           </button>
                         </li>
@@ -342,6 +354,13 @@ export default function IPadDetail() {
               currentProfiles={data.ipad.Profiles}
               configProfiles={data.configProfiles}
               hideInstallProfileModal={hideInstallProfileModal}
+            />
+          ) : null}
+          {showEraseDeviceModal ? (
+            <EraseDeviceModal
+              visible={showEraseDeviceModal}
+              UDID={data.ipad.UDID}
+              hideEraseDeviceModal={hideEraseDeviceModal}
             />
           ) : null}
         </main>

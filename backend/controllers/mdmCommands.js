@@ -19,7 +19,8 @@ import {
     renameDevice_MDM_Command,
     shutdownDevice_MDM_Command,
     lockDevice_MDM_Command,
-    removeConfigProfile_MDM_Command
+    removeConfigProfile_MDM_Command,
+    eraseDevice_MDM_Command
 } from '../services/mdmActions.js';
 import createRandom6DigitPin from '../utilities/randomPin.js';
 import isAdministrator from '../utilities/checkPrivileges.js';
@@ -162,6 +163,17 @@ const lockDevice = async (req, res) => {
     return res.sendStatus(200);
 }
 
+// erase device
+const eraseDevice = async (req, res) => {
+    if (!isAdministrator(req.user._id)) {
+        res.status(400);
+        throw new Error('This request must be made by an administrator');
+    }
+    const { udid } = req.params;
+    eraseDevice_MDM_Command(udid);
+    return res.sendStatus(200);
+}
+
 // restart device
 const restartDevice = (req, res) => {
     if (!isAdministrator(req.user._id)) {
@@ -256,5 +268,6 @@ export {
     shutdownDevice,
     uploadConfigProfile,
     lockDevice,
-    removeConfigProfile
+    removeConfigProfile,
+    eraseDevice
 }

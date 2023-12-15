@@ -5,14 +5,15 @@ import {
     updateMacDeviceDetails, 
     restartDevice, 
     enableRemoteDesktop, 
-    disableRemoteDesktop, 
+    disableRemoteDesktop,
     installConfigProfile,
     clearPasscode,
     renameDevice,
     shutdownDevice,
     uploadConfigProfile,
     lockDevice,
-    removeConfigProfile
+    removeConfigProfile,
+    eraseDevice
 } from '../controllers/mdmCommands.js';
 
 router.post('/mac/updateInventory/:udid', updateMacDeviceDetails);
@@ -26,6 +27,7 @@ router.post('/renameDevice/:udid', renameDevice);
 router.post('/shutdownDevice/:udid', shutdownDevice);
 router.post('/uploadProfile', uploadConfigProfile);
 router.post('/lockDevice/:udid', lockDevice);
+router.post('/eraseDevice/:udid', eraseDevice);
 router.post('/removeProfile/:udid', removeConfigProfile);
 
 export default router;

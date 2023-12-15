@@ -36,6 +36,12 @@ function lockDevice(udid, phoneNumber, lockScreenMessage) {
     postCommandWithOptions(API_URL, options, message);
 }
 
+function eraseDevice(udid) {
+    const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/eraseDevice/${udid}`;
+    const message = "Erase device command has been issued."; 
+    postCommand(API_URL, message);
+}
+
 function disableRemoteDesktop(udid) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/mac/disableRemoteDesktop/${udid}`;
     postCommand(API_URL, 'Disable remote desktop command has been issued.');
@@ -139,4 +145,5 @@ export {
     uploadProfile,
     lockDevice,
     removeProfile,
+    eraseDevice
 };

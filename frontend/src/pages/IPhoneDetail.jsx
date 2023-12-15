@@ -15,6 +15,7 @@ import {
   clearPasscode,
 } from "../commands/mdmCommands.js";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
+import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPhoneDetail() {
@@ -22,6 +23,7 @@ export default function IPhoneDetail() {
   const [activeTab, setActiveTab] = useState("Applications");
 
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
+  const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
 
   const hasAdminRights = isAdministrator();
 
@@ -83,6 +85,14 @@ export default function IPhoneDetail() {
     setShowInstallProfileModal(false);
   }
 
+  function displayEraseDeviceModal() {
+    setShowEraseDeviceModal(true);
+  }
+
+  function hideEraseDeviceModal() {
+    setShowEraseDeviceModal(false);
+  }
+
   
 
   const { loading, error, data } = useQuery(GET_IPHONE, {
@@ -127,7 +137,9 @@ export default function IPhoneDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button className='dropdown-item'
+                          onClick={displayEraseDeviceModal}
+                          >
                             Erase Device
                           </button>
                         </li>
@@ -319,6 +331,13 @@ export default function IPhoneDetail() {
               currentProfiles={data.iphone.Profiles}
               configProfiles={data.configProfiles}
               hideInstallProfileModal={hideInstallProfileModal}
+            />
+          ) : null}
+          {showEraseDeviceModal ? (
+            <EraseDeviceModal
+              visible={showEraseDeviceModal}
+              UDID={data.ipad.UDID}
+              hideEraseDeviceModal={hideEraseDeviceModal}
             />
           ) : null}
         </main>

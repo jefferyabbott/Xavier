@@ -19,6 +19,7 @@ import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
 import ShutdownDeviceModal from "../components/modals/ShutdownDeviceModal.jsx";
 import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
+import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function MacDetail() {
@@ -29,6 +30,7 @@ export default function MacDetail() {
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
   const [showShutdownDeviceModal, setShowShutdownDeviceModal] = useState(false);
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
+  const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
   const hasAdminRights = isAdministrator();
 
   // tabs
@@ -118,6 +120,14 @@ export default function MacDetail() {
     setShowLockDeviceModal(false);
   }
 
+  function displayEraseDeviceModal() {
+    setShowEraseDeviceModal(true);
+  }
+
+  function hideEraseDeviceModal() {
+    setShowEraseDeviceModal(false);
+  }
+
   const { loading, error, data } = useQuery(GET_MAC, {
     variables: { SerialNumber },
   });
@@ -149,7 +159,9 @@ export default function MacDetail() {
                       </button>
                       <ul className='dropdown-menu hide'>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button className='dropdown-item'
+                          onClick={displayEraseDeviceModal}
+                          >
                             Erase Device
                           </button>
                         </li>
@@ -572,6 +584,13 @@ export default function MacDetail() {
                 hideLockDeviceModal={hideLockDeviceModal}
               />
             ) : null }
+            {showEraseDeviceModal ? (
+            <EraseDeviceModal
+              visible={showEraseDeviceModal}
+              UDID={data.ipad.UDID}
+              hideEraseDeviceModal={hideEraseDeviceModal}
+            />
+          ) : null}
         </main>
       )}
     </>
