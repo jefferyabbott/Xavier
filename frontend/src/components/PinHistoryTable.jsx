@@ -11,7 +11,7 @@ export default function PinHistoryTable({ data, hideShowPinHistoryTable }) {
                 </tr>
             </thead>
             <tbody>
-                {data.reverse().map((item, index) => { 
+                {data.map((item, index) => { 
                     return (
                     <tr key={item.pin + index}>
                         <td>{item.pin}</td>
