@@ -15,6 +15,7 @@ import {
   clearPasscode,
 } from "../commands/mdmCommands.js";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
+import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPadDetail() {
@@ -22,6 +23,9 @@ export default function IPadDetail() {
   const [activeTab, setActiveTab] = useState("Applications");
 
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
+  const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
+
+  const hasAdminRights = isAdministrator();
 
   // tabs
   const applicationsTabLabel = useRef(null);
@@ -64,7 +68,7 @@ export default function IPadDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.ipad.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.ipad.Profiles} />;
+      return <ProfilesTable Profiles={data.ipad.Profiles} Administrator={hasAdminRights} UDID={data.ipad.UDID}/>;
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.ipad.CertificateList} />;
     }
@@ -76,6 +80,14 @@ export default function IPadDetail() {
 
   function hideRenameDeviceModal() {
     setShowRenameDeviceModal(false);
+  }
+
+  function displayInstallProfileModal() {
+    setShowInstallProfileModal(true);
+  }
+
+  function hideInstallProfileModal() {
+    setShowInstallProfileModal(false);
   }
 
   const { loading, error, data } = useQuery(GET_IPAD, {
@@ -125,7 +137,11 @@ export default function IPadDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button
+                            className='dropdown-item'
+                            href='#'
+                            onClick={displayInstallProfileModal}
+                          >
                             Install Profile
                           </button>
                         </li>
@@ -317,6 +333,15 @@ export default function IPadDetail() {
               platform='iPadOS'
               oldName={data.ipad.QueryResponses.DeviceName}
               hideRenameDeviceModal={hideRenameDeviceModal}
+            />
+          ) : null}
+          {showInstallProfileModal ? (
+            <InstallProfileModal
+              visible={showInstallProfileModal}
+              UDID={data.ipad.UDID}
+              currentProfiles={data.ipad.Profiles}
+              configProfiles={data.configProfiles}
+              hideInstallProfileModal={hideInstallProfileModal}
             />
           ) : null}
         </main>

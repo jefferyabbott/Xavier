@@ -14,11 +14,17 @@ import {
   restartDevice,
   clearPasscode,
 } from "../commands/mdmCommands.js";
+import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
 
 export default function IPhoneDetail() {
   const { SerialNumber } = useParams();
   const [activeTab, setActiveTab] = useState("Applications");
+
+  const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
+
+  const hasAdminRights = isAdministrator();
+
 
   // tabs
   const applicationsTabLabel = useRef(null);
@@ -61,13 +67,23 @@ export default function IPhoneDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.iphone.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.iphone.Profiles} />;
+      return <ProfilesTable Profiles={data.iphone.Profiles} Administrator={hasAdminRights} UDID={data.iphone.UDID}/>;
     } else if (activeTab === "Certificates") {
       return (
         <CertificateListTable Certificates={data.iphone.CertificateList} />
       );
     }
   }
+
+  function displayInstallProfileModal() {
+    setShowInstallProfileModal(true);
+  }
+
+  function hideInstallProfileModal() {
+    setShowInstallProfileModal(false);
+  }
+
+  
 
   const { loading, error, data } = useQuery(GET_IPHONE, {
     variables: { SerialNumber },
@@ -116,7 +132,11 @@ export default function IPhoneDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' href='#'>
+                          <button
+                            className='dropdown-item'
+                            href='#'
+                            onClick={displayInstallProfileModal}
+                          >
                             Install Profile
                           </button>
                         </li>
@@ -292,6 +312,15 @@ export default function IPhoneDetail() {
           </ul>
 
           <div>{renderSelectedTab(activeTab)}</div>
+          {showInstallProfileModal ? (
+            <InstallProfileModal
+              visible={showInstallProfileModal}
+              UDID={data.iphone.UDID}
+              currentProfiles={data.iphone.Profiles}
+              configProfiles={data.configProfiles}
+              hideInstallProfileModal={hideInstallProfileModal}
+            />
+          ) : null}
         </main>
       )}
     </>

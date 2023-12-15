@@ -2,6 +2,14 @@ import { gql } from '@apollo/client';
 
 const GET_IPHONE = gql`
     query getiPhone($SerialNumber: String!) {
+        configProfiles {
+            PayloadDisplayName
+            PayloadDescription
+            PayloadOrganization
+            PayloadIdentifier
+            PayloadUUID
+            MobileConfigData
+        }
         iphone(SerialNumber: $SerialNumber) {
             SerialNumber
             ProductName
