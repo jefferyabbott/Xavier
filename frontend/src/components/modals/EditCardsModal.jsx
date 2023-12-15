@@ -24,6 +24,11 @@ function EditCardsModal({
 
   const handleClose = () => {
     setShow(false);
+    setShowAddCard(false);
+    setShowOkButton(false);
+    setAddCardPlatform("");
+    setAddCardType("");
+    setCardDataSelect("");
     stopEditingCards();
   };
 
