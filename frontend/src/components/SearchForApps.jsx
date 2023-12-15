@@ -10,21 +10,16 @@ function sortApps(Applications) {
 }
 
 function SearchForApps({
-  data,
   platform,
+  installedApps,
   currentCardApps,
   addCards,
   clearAddCard,
 }) {
-  const ApplicationSet = new Set();
-  data.forEach((device) => {
-    device.Applications.forEach((app) => {
-      if (!currentCardApps.includes(app.Name)) {
-        ApplicationSet.add(app.Name);
-      }
-    });
-  });
-  const Applications = Array.from(ApplicationSet);
+
+
+  const Applications = installedApps.filter((installedApp) => !currentCardApps.includes(installedApp));
+  
 
   const [searchedApps, setSearchedApps] = useState(Applications);
   const [selectedApps, setSelectedApps] = useState([]);

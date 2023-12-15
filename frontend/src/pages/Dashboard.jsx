@@ -142,6 +142,9 @@ export default function Dashboard() {
               macData={data.macs}
               iPhoneData={data.iphones}
               iPadData={data.ipads}
+              installedMacApps={data.installedMacApplications}
+              installediPhoneApps={data.installediPhoneApplications}
+              installediPadApps={data.installediPadApplications}
               stopEditingCards={stopEditingCards}
               updateCards={updateCards}
             />

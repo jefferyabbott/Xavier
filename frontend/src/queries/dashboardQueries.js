@@ -2,6 +2,9 @@ import { gql } from '@apollo/client';
 
 const GET_COMPLIANCE_DATA = gql`
     query getComplianceData($consoleUser: ID!) {
+        installedMacApplications
+        installediPhoneApplications
+        installediPadApplications
         compliancecardprefs(consoleUser: $consoleUser) {
             complianceCardPrefs {
                 type

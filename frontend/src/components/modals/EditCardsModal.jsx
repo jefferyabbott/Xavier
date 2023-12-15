@@ -11,6 +11,9 @@ function EditCardsModal({
   macData,
   iPhoneData,
   iPadData,
+  installedMacApps,
+  installediPhoneApps,
+  installediPadApps,
   stopEditingCards,
   updateCards,
 }) {
@@ -82,15 +85,19 @@ function EditCardsModal({
       if (addCardType === "appVersion") {
         const currentApps = cards.filter((card) => (card.platform === addCardPlatform && card.type === "appVersion")).map((item) => item.title);
         let platformData;
+        let installedApps;
         switch (addCardPlatform) {
           case "macos":
             platformData = macData;
+            installedApps = installedMacApps;
             break;
           case "ios":
             platformData = iPhoneData;
+            installedApps = installediPhoneApps;
             break;
           case "ipados":
             platformData = iPadData;
+            installedApps = installediPadApps;
             break;
           default:
             break;
@@ -98,6 +105,7 @@ function EditCardsModal({
         setCardDataSelect(
           <SearchForApps
             data={platformData}
+            installedApps={installedApps}
             platform={addCardPlatform}
             currentCardApps={currentApps}
             addCards={addCardsExt}
