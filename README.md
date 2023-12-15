@@ -2,8 +2,8 @@
 
 Xavier is an open source project that provides a backend and frontend for open source MDM servers such as [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm).
 
-![Xavier Dashboard](https://storage.googleapis.com/github-images/XavierDashboard.png)
-![Xavier Endpoint View](https://storage.googleapis.com/github-images/XavierEndpoint.png)
+![Xavier Dashboard](https://storage.googleapis.com/github-images/Dashboard2.jpeg)
+![Xavier Endpoint View](https://storage.googleapis.com/github-images/Endpoint2.jpeg)
 
 ## Quick Start
 1. Setup your MDM server - either [MicroMDM](https://micromdm.io) or [NanoMDM](https://github.com/micromdm/nanomdm)
