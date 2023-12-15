@@ -14,7 +14,9 @@ Xavier is an open source project that provides a backend and frontend for open s
 Xavier will eventually support SAML authentication. For now, as a new project, it only supports local user accounts. There are two types of accounts: administrator (can do anything) and auditor (read-only, cannot do anything). See the deployment guide for the backend in order to setup your first administrator account.
 
 ## Recommended Architecture
-details coming soon (the official launch is December 15, 2023)
+The backend server can be especially busy - it handles requests from both the frontend and the MDM server. In a medium to large environment, it would be helpful to have a load balancer and multiple backend servers. This diagram is an idea of what the architecture could look like.
+![Xavier Architecture](https://storage.googleapis.com/github-images/XavierArchitecture.png)
+This diagram includes *Cloud Functions*, which are not currently used in the app but are on the future roadmap. Cloud Functions will be used to handle mass deployment of config profiles or MDM commands.
 
 
 
