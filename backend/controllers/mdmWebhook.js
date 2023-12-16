@@ -2,6 +2,7 @@ import macOSDevice from '../models/macOSDevice.js';
 import iOSDevice from '../models/iOSDevice.js';
 import iPadOSDevice from '../models/iPadOSDevice.js';
 import plist from 'plist';
+import { logResponse } from '../services/logCommand.js';
 
 import { 
     getCertificateList_MDM_Command, 
@@ -200,10 +201,17 @@ async function handleConnect(event) {
         // TODO: add OSUpdateStatus
         // TODO: add ProvisioningProfileList
 
+
+        
         // for testing, remove this....
         else {
             console.log(`Received uncategorized data from ${udid}:`);
             console.log(JSON.stringify(plistData));
+        }
+
+        // update command history log
+        if (plistData.CommandUUID) {
+            logResponse(plistData.CommandUUID, plistData.Status, plistData.UDID);
         }
     }
 }

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 const router = express.Router();
 import macOSDevice from '../models/macOSDevice.js';
 import iOSDevice from '../models/iOSDevice.js';
@@ -27,17 +27,18 @@ import isAdministrator from '../utilities/checkPrivileges.js';
 
 // get iOS devices
 const updateiOSDeviceDetails = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     if (udid) {
-        getiOSDeviceInfo_MDM_Command(udid);
-        getInstalledApplications_MDM_Command(udid);
-        getCertificateList_MDM_Command(udid);
-        getProfileList_MDM_Command(udid);
-        getSecurityInfo_MDM_Command(udid);
+        getiOSDeviceInfo_MDM_Command(udid, requester);
+        getInstalledApplications_MDM_Command(udid, requester);
+        getCertificateList_MDM_Command(udid, requester);
+        getProfileList_MDM_Command(udid, requester);
+        getSecurityInfo_MDM_Command(udid, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -46,17 +47,18 @@ const updateiOSDeviceDetails = (req, res) => {
 
 // get mac details
 const updateMacDeviceDetails = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     if (udid) {
-        getDeviceInfo_MDM_Command(udid);
-        getInstalledApplications_MDM_Command(udid);
-        getSecurityInfo_MDM_Command(udid);
-        getCertificateList_MDM_Command(udid);
-        getProfileList_MDM_Command(udid);
+        getDeviceInfo_MDM_Command(udid, requester);
+        getInstalledApplications_MDM_Command(udid, requester);
+        getSecurityInfo_MDM_Command(udid, requester);
+        getCertificateList_MDM_Command(udid, requester);
+        getProfileList_MDM_Command(udid, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -65,14 +67,15 @@ const updateMacDeviceDetails = (req, res) => {
 
 // install config profile
 const installConfigProfile = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     const { profileObject } = req.body;
     // update database with profile details
-    installConfigProfile_MDM_Command(udid, profileObject.MobileConfigData);
+    installConfigProfile_MDM_Command(udid, profileObject.MobileConfigData, requester);
     await profile.updateOne({
             'PayloadIdentifier': profileObject.PayloadIdentifier
         }, 
@@ -94,19 +97,21 @@ const installConfigProfile = async (req, res) => {
 
 // remove config profile
 const removeConfigProfile = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     const { identifier } = req.body;
-    removeConfigProfile_MDM_Command(udid, identifier);
+    removeConfigProfile_MDM_Command(udid, identifier, requester);
     return res.sendStatus(200);
 }
 
 // upload config profile
 const uploadConfigProfile = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
@@ -133,7 +138,8 @@ return res.sendStatus(200);
 
 // clear passcode (iOS and iPadOS)
 const clearPasscode = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
@@ -145,13 +151,14 @@ const clearPasscode = async (req, res) => {
     } else if (platform === 'iOS') {
         UnlockToken = await iOSDevice.findOne({UDID: udid}).select('UnlockToken -_id');
     }
-    clearPasscode_MDM_Command(udid, UnlockToken);
+    clearPasscode_MDM_Command(udid, UnlockToken, requester);
     return res.sendStatus(200);
 }
 
 // lock device
 const lockDevice = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
@@ -159,31 +166,33 @@ const lockDevice = async (req, res) => {
     const { message, phoneNumber } = req.body;
     const pin = createRandom6DigitPin();
     await macOSDevice.updateOne({ UDID: udid }, { $push: { unlockPins: {'pin': pin }}});
-    lockDevice_MDM_Command(udid, pin, message, phoneNumber);
+    lockDevice_MDM_Command(udid, pin, message, phoneNumber, requester);
     return res.sendStatus(200);
 }
 
 // erase device
 const eraseDevice = async (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
-    eraseDevice_MDM_Command(udid);
+    eraseDevice_MDM_Command(udid, requester);
     return res.sendStatus(200);
 }
 
 // restart device
 const restartDevice = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     const { notifyUser } = req.body;
     if (udid) {
-        restartDevice_MDM_Command(udid, notifyUser);
+        restartDevice_MDM_Command(udid, notifyUser, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -192,13 +201,14 @@ const restartDevice = (req, res) => {
 
 // shutdown device
 const shutdownDevice = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     if (udid) {
-        shutdownDevice_MDM_Command(udid);
+        shutdownDevice_MDM_Command(udid, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -207,13 +217,14 @@ const shutdownDevice = (req, res) => {
 
 // enable remote desktop (mac)
 const enableRemoteDesktop = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     if (udid) {
-        enableRemoteDesktop_MDM_Command(udid);
+        enableRemoteDesktop_MDM_Command(udid, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -222,13 +233,14 @@ const enableRemoteDesktop = (req, res) => {
 
 // disable remote desktop (mac)
 const disableRemoteDesktop = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     if (udid) {
-        disableRemoteDesktop_MDM_Command(udid);
+        disableRemoteDesktop_MDM_Command(udid, requester);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -237,18 +249,19 @@ const disableRemoteDesktop = (req, res) => {
 
 // rename device 
 const renameDevice = (req, res) => {
-    if (!isAdministrator(req.user._id)) {
+    const requester = req.user._id;
+    if (!isAdministrator(requester)) {
         res.status(400);
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
     const { newName, platform } = req.body;
     if (udid) {
-        renameDevice_MDM_Command(udid, newName);
+        renameDevice_MDM_Command(udid, newName, requester);
         if (platform === 'macOS') {
-            getDeviceInfo_MDM_Command(udid);
+            getDeviceInfo_MDM_Command(udid, requester);
         } else if (platform === 'iOS' || platform === 'iPadOS') {
-            getiOSDeviceInfo_MDM_Command(udid);
+            getiOSDeviceInfo_MDM_Command(udid, requester);
         }
         return res.sendStatus(200);
     } else {

@@ -1,6 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import { logCommand } from './logCommand.js';
 
-export const createRawCommandPlist = (args) => {
+export const createRawCommandPlist = (args, RequestType, Requester, DeviceUDID) => {
+    const CommandUUID = uuidv4().toUpperCase();
+
+    // log command
+    logCommand(CommandUUID, RequestType, Requester, DeviceUDID)
+
     return `<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -10,7 +16,7 @@ export const createRawCommandPlist = (args) => {
             ${args}
         </dict>
         <key>CommandUUID</key>
-        <string>${uuidv4().toUpperCase()}</string>
+        <string>${CommandUUID}</string>
     </dict>
     </plist>`;
 }
