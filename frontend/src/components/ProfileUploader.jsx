@@ -5,7 +5,7 @@ function ProfileUploader({returnBase64String}) {
 
   useEffect(() => {
     returnBase64String(base64String);
-  }, [base64String, returnBase64String]);
+  }, [base64String]);
 
   const handleFileInputChange = async (event) => {
     const file = event.target.files[0];

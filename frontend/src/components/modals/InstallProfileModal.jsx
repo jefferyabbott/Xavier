@@ -5,13 +5,12 @@ import ProfileUploader from '../ProfileUploader';
 import plist from 'plist';
 import ProfilePayload from '../ProfilePayload';
 
-  function InstallProfileModal({visible, UDID, currentProfiles, configProfiles, hideInstallProfileModal}) {
+function InstallProfileModal({visible, UDID, currentProfiles, configProfiles, hideInstallProfileModal}) {
 
   const [show, setShow] = useState(false);
   const [profile, setProfile] = useState();
   const [plistData, setPlistData] = useState();
   const [profileAlreadyInstalled, setProfileAlreadyInstalled] = useState(false);
-  
   
   const handleClose = () => {
     setShow(false);
@@ -36,7 +35,7 @@ import ProfilePayload from '../ProfilePayload';
         }
       })
     }
-  }, [plistData, UDID, currentProfiles]);
+  }, [plistData]);
 
   function deployProfile() {
     if (profile) {
@@ -53,7 +52,6 @@ import ProfilePayload from '../ProfilePayload';
       } else {
         uploadProfile(profileObject);
       }
-      
     }
     handleClose();
   }
@@ -122,7 +120,7 @@ import ProfilePayload from '../ProfilePayload';
               Close
             </Button>
             {
-                (profile && !profileAlreadyInstalled) ? <button type="button" className="btn btn-success" onClick={deployProfile}>{ (UDID) ? 'Install' : 'Upload' } Profile</button> : null
+              (profile && !profileAlreadyInstalled) ? <Button variant="warning" onClick={deployProfile}>{ (UDID) ? 'Install' : 'Upload' } Profile</Button> : null
             }
             
             
