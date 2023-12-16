@@ -24,13 +24,11 @@ const GET_COMPLIANCE_DATA = gql`
                 FDE_Enabled
             }
             Applications {
-                Identifier
                 Name
                 Version
             }
             Profiles {
                 PayloadDisplayName
-                PayloadUUID
             }
         }
         iphones {
@@ -40,13 +38,11 @@ const GET_COMPLIANCE_DATA = gql`
                 OSVersion
             }
             Applications {
-                Identifier
                 Name
                 Version
             }
             Profiles {
                 PayloadDisplayName
-                PayloadUUID
             }
         }
         ipads {
@@ -56,13 +52,11 @@ const GET_COMPLIANCE_DATA = gql`
                 OSVersion
             }
             Applications {
-                Identifier
                 Name
                 Version
             }
             Profiles {
                 PayloadDisplayName
-                PayloadUUID
             }
         }
     }
