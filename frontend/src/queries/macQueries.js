@@ -100,6 +100,7 @@ const GET_MAC = gql`
                 CommonName
                 IsIdentity
             }
+            updatedAt
         }
     }
 `

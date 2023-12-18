@@ -76,6 +76,7 @@ const GET_IPHONE = gql`
                 CommonName
                 IsIdentity
             }
+            updatedAt
         }
     }
 `

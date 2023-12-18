@@ -76,6 +76,7 @@ const GET_IPAD = gql`
                 CommonName
                 IsIdentity
             }
+            updatedAt
         }
     }
 `

@@ -5,6 +5,7 @@ import iPadOSDevice from '../models/iPadOSDevice.js';
 import profile from '../models/profile.js';
 import consoleUser from '../models/consoleUser.js';
 import complianceCardPrefs from '../models/complianceCard.js';
+import command from '../models/commandHistory.js';
 
 const ApplicationType = new GraphQLObjectType({
     name: 'application',
@@ -183,7 +184,9 @@ const ConfigProfileType = new GraphQLObjectType({
     PayloadOrganization: { type: GraphQLString },
     PayloadType: { type: GraphQLString },
     PayloadUUID: { type: GraphQLString },
-    MobileConfigData: { type: GraphQLString }
+    MobileConfigData: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString }
   })
 });
 
@@ -210,7 +213,9 @@ const MacType = new GraphQLObjectType({
         Applications: { type: new GraphQLList(ApplicationType) },
         Profiles: { type: new GraphQLList(ProfileType) },
         CertificateList: { type: new GraphQLList(CertificateType) }, 
-        unlockPins: { type: new GraphQLList(UnlockPinType)}  
+        unlockPins: { type: new GraphQLList(UnlockPinType)},
+        createdAt: { type: GraphQLString },
+        updatedAt: { type: GraphQLString }
     })
 });
 
@@ -228,7 +233,9 @@ const iPhoneType = new GraphQLObjectType({
       QueryResponses: { type: iOSQueryResponseType },
       Applications: { type: new GraphQLList(ApplicationType) },
       Profiles: { type: new GraphQLList(ProfileType) },
-      CertificateList: { type: new GraphQLList(CertificateType) }     
+      CertificateList: { type: new GraphQLList(CertificateType) },
+      createdAt: { type: GraphQLString },
+      updatedAt: { type: GraphQLString }      
   })
 });
 
@@ -246,7 +253,9 @@ const iPadType = new GraphQLObjectType({
       QueryResponses: { type: iOSQueryResponseType },
       Applications: { type: new GraphQLList(ApplicationType) },
       Profiles: { type: new GraphQLList(ProfileType) },
-      CertificateList: { type: new GraphQLList(CertificateType) }     
+      CertificateList: { type: new GraphQLList(CertificateType) },
+      createdAt: { type: GraphQLString },
+      updatedAt: { type: GraphQLString }
   })
 });
 
@@ -273,7 +282,23 @@ const ConsoleUserType = new GraphQLObjectType({
   fields: () => ({
     name: { type: GraphQLString },
     email: { type: GraphQLString },
-    userType: { type: GraphQLString }
+    userType: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString }
+  })
+});
+
+const CommandLogType = new GraphQLObjectType({
+  name: 'commandlog',
+  fields: () => ({
+    CommandUUID: { type: GraphQLString },
+    RequestType: { type: GraphQLString },
+    Requester: { type: GraphQLID },
+    Approver: { type: GraphQLID },
+    DeviceUDID: { type: GraphQLString },
+    Response: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString }
   })
 });
 
@@ -354,6 +379,21 @@ const RootQuery = new GraphQLObjectType({
           type: new GraphQLList(GraphQLString),
           resolve(parent, args) {
             return iPadOSDevice.distinct('Applications.Name');
+          }
+        },
+        commandlogs: {
+          type: new GraphQLList(CommandLogType),
+          args: { DeviceUDID: { type: GraphQLString }},
+          resolve(parent, args) {
+            return command.find({'DeviceUDID': args.DeviceUDID});
+            // return command.find({'DeviceUDID': args.DeviceUDID}).populate('Requester');
+          }
+        },
+        lookupUser: {
+          type: ConsoleUserType,
+          args: { userId: { type: GraphQLID }},
+          resolve(parent, args) {
+            return consoleUser.findOne({'_id': args.userId}).select(['-password']);
           }
         }
     }

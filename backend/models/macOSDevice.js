@@ -363,17 +363,11 @@ const macOSDeviceSchema = new mongoose.Schema({
         type: Boolean
       }
     }
-  ],
-  lastCheckedIn: {
-    type: Date,
-    default: Date.now,
-  },
-
+  ]
+}, {
+  timestamps: true
 });
 
 const macOSDevice = mongoose.model('macOSDevices', macOSDeviceSchema);
 
 export default macOSDevice;
-
-
-

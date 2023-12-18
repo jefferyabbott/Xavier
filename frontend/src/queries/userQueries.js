@@ -10,4 +10,13 @@ query getConsoleUsers {
 }
 `
 
-export { GET_CONSOLE_USERS };
+const GET_USER_INFO = gql`
+query getUserInfo($userId: ID!) {
+    lookupUser(userId: $userId) {
+        name
+        email
+    }
+}
+`
+
+export { GET_CONSOLE_USERS, GET_USER_INFO };

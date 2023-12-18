@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createRawCommandPlist } from './createRawCommandPlist.js';
+import { createRawCommandPlistWithLog, createRawCommandPlistWithoutLog } from './createRawCommandPlist.js';
 
 // mdm details
 const convertedAuthToken = Buffer.from(`${process.env.MDM_USER}:${process.env.MDM_TOKEN}`).toString('base64');
@@ -8,25 +8,25 @@ const SERVER_URL = process.env.MDM_SERVER_URL;
 
 
 // update Application data
-function getInstalledApplications_MDM_Command(udid, requester) {
+function getInstalledApplications_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>InstalledApplicationList</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'InstalledApplicationList', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 // update CertificateList data
-function getCertificateList_MDM_Command(udid, requester) {
+function getCertificateList_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>CertificateList</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'CertificateList', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 // update Device Info (QueryResponses) data
-function getDeviceInfo_MDM_Command(udid, requester) {
+function getDeviceInfo_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>DeviceInformation</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'DeviceInformation', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 // update Device Info (iOS select responses) data
-function getiOSDeviceInfo_MDM_Command(udid, requester) {
+function getiOSDeviceInfo_MDM_Command(udid) {
   const args = `
     <key>RequestType</key>
     <string>DeviceInformation</string>
@@ -60,19 +60,19 @@ function getiOSDeviceInfo_MDM_Command(udid, requester) {
         <string>ServiceSubscriptions</string>
       </array>
   `.replace(/\n|\r/g, "");
-  sendMDMCommand(udid, createRawCommandPlist(args, 'DeviceInformation', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 // update ProfileList data
-function getProfileList_MDM_Command(udid, requester) {
+function getProfileList_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>ProfileList</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'ProfileList', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 // update Security data
-function getSecurityInfo_MDM_Command(udid, requester) {
+function getSecurityInfo_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>SecurityInfo</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'SecurityInfo', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
 
@@ -84,13 +84,13 @@ function restartDevice_MDM_Command(udid, notifyUser, requester) {
     <key>NotifyUser</key>
     <${notifyUser}/>
   `.replace(/\n|\r/g, "");
-  sendMDMCommand(udid, createRawCommandPlist(args, 'RestartDevice', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, notifyUser ? 'notify user to restart device' : 'restart device', requester, udid));
 }
 
 // shutdown device
 function shutdownDevice_MDM_Command(udid, requester) {
   const args = '<key>RequestType</key><string>ShutDownDevice</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'ShutDownDevice', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, 'shutdown device', requester, udid));
 }
 
 // clear passcode (iOS and iPadOS)
@@ -101,7 +101,7 @@ function clearPasscode_MDM_Command(udid, unlockToken, requester) {
     <key>UnlockToken</key>
     <data>${unlockToken}</data>
   `;
-  sendMDMCommand(udid, createRawCommandPlist(args, 'ClearPasscode', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, 'clear passcode', requester, udid));
 }
 
 // lock device
@@ -116,19 +116,19 @@ function lockDevice_MDM_Command(udid, pin, message, phoneNumber, requester) {
     <key>Message</key>
     <string>${message}</string>
   `.replace(/\n|\r/g, "");
-  sendMDMCommand(udid, createRawCommandPlist(args, 'DeviceLock', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, `lock device with pin ${pin}`, requester, udid));
 }
 
 // erase device
 function eraseDevice_MDM_Command(udid, requester) {
   const args = '<key>RequestType</key><string>EraseDevice</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'EraseDevice', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, 'erase device', requester, udid));
 }
 
 // enable remote desktop (mac)
 function enableRemoteDesktop_MDM_Command(udid, requester) {
   const args = '<key>RequestType</key><string>EnableRemoteDesktop</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'EnableRemoteDesktop', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, 'enable remote desktop', requester, udid));
   getSecurityInfo_MDM_Command(udid, requester);
 }
 
@@ -136,31 +136,31 @@ function enableRemoteDesktop_MDM_Command(udid, requester) {
 // disable remote desktop (mac)
 function disableRemoteDesktop_MDM_Command(udid, requester) {
   const args = '<key>RequestType</key><string>DisableRemoteDesktop</string>';
-  sendMDMCommand(udid, createRawCommandPlist(args, 'DisableRemoteDesktop', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, 'disable remote desktop', requester, udid));
   getSecurityInfo_MDM_Command(udid, requester);
 }
 
 // install config profile
-function installConfigProfile_MDM_Command(udid, profile, requester) {
+function installConfigProfile_MDM_Command(udid, profile, profileName, requester) {
   const args = `
     <key>RequestType</key>
     <string>InstallProfile</string>
     <key>Payload</key>
     <data>${profile}</data>
   `;
-  sendMDMCommand(udid, createRawCommandPlist(args, 'InstallProfile', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, `install profile ${profileName}`, requester, udid));
   getProfileList_MDM_Command(udid, requester);
 }
 
 // remove config profile
-function removeConfigProfile_MDM_Command(udid, identifier, requester) {
+function removeConfigProfile_MDM_Command(udid, identifier, profileName, requester) {
   const args = `
     <key>RequestType</key>
     <string>RemoveProfile</string>
     <key>Identifier</key>
     <string>${identifier}</string>
   `.replace(/\n|\r/g, "");
-  sendMDMCommand(udid, createRawCommandPlist(args, 'RemoveProfile', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, `remove profile ${profileName}`, requester, udid));
   getProfileList_MDM_Command(udid, requester);
 }
 
@@ -178,7 +178,7 @@ function renameDevice_MDM_Command(udid, newName, requester) {
           </dict>
       </array>
   `.replace(/\n|\r/g, "");
-  sendMDMCommand(udid, createRawCommandPlist(args, 'DeviceName', requester, udid));
+  sendMDMCommand(udid, createRawCommandPlistWithLog(args, `rename device to ${newName}`, requester, udid));
 }
 
 // send raw command to MDM server

@@ -76,10 +76,11 @@ function installProfile(udid, profile) {
     postCommandWithOptions(API_URL, options, message);
 }
 
-function removeProfile(udid, identifier) {
+function removeProfile(udid, identifier, profileName) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/removeProfile/${udid}`;
     const options = {
-        identifier
+        identifier,
+        profileName
     }
     const message = "The remove profile command has been issued."; 
     postCommandWithOptions(API_URL, options, message);

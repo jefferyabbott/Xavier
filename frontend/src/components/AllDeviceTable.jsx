@@ -32,6 +32,7 @@ export default function AllDeviceTable({ deviceData }) {
             <th>name</th>
             <th>model</th>
             <th>OS version</th>
+            <th>checked in</th>
           </tr>
         </thead>
         <tbody>
