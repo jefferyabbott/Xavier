@@ -8,6 +8,7 @@ import AuditSymbolCompliance from "../components/AuditSymbolCompliance";
 import ApplicationsTable from "../components/ApplicationsTable";
 import CertificateListTable from "../components/CertificateListTable";
 import ProfilesTable from "../components/ProfilesTable";
+import MDMLogTable from "../components/MDMLogTable.jsx";
 import { FaBolt } from "react-icons/fa";
 import {
   enableRemoteDesktop,
@@ -22,6 +23,7 @@ import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
 import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
 import PinHistoryTable from "../components/PinHistoryTable.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
+import timeSince from "../utilities/timeSince.js";
 
 export default function MacDetail() {
   const { SerialNumber } = useParams();
@@ -39,10 +41,13 @@ export default function MacDetail() {
   const applicationsTabLabel = useRef(null);
   const profilesTabLabel = useRef(null);
   const certificateListTabLabel = useRef(null);
+  const mdmLogTabLabel = useRef(null);
+
   const allTabs = [
     applicationsTabLabel,
     profilesTabLabel,
     certificateListTabLabel,
+    mdmLogTabLabel
   ];
 
   function clearTabs() {
@@ -67,6 +72,10 @@ export default function MacDetail() {
         certificateListTabLabel.current.classList.add("active");
         certificateListTabLabel.current.classList.remove("cursor");
         break;
+      case "MDM Log":
+        mdmLogTabLabel.current.classList.add("active");
+        mdmLogTabLabel.current.classList.remove("cursor");
+        break;
       default:
         break;
     }
@@ -79,6 +88,8 @@ export default function MacDetail() {
       return <ProfilesTable Profiles={data.mac.Profiles} Administrator={hasAdminRights} UDID={data.mac.UDID}/>;
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.mac.CertificateList} />;
+    } else if (activeTab === "MDM Log") {
+      return <MDMLogTable DeviceUDID={data.mac.UDID} />;
     }
   }
 
@@ -146,7 +157,11 @@ export default function MacDetail() {
       {!loading && !error && (
         <main>
           <div className='header'>
-            <h1>{data.mac.QueryResponses.DeviceName}</h1>
+            <div>
+              <h1>{data.mac.QueryResponses.DeviceName}</h1>
+              <h6>Last seen {timeSince(new Date(Number(data.mac.updatedAt)))}</h6>
+            </div>
+            
             {/* <h6>{data.mac.modelYear}</h6> */}
 
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
@@ -548,6 +563,17 @@ export default function MacDetail() {
                 }}
               >
                 Certificates
+              </a>
+            </li>
+            <li className='nav-item'>
+              <a
+                className='nav-link cursor tabText'
+                ref={mdmLogTabLabel}
+                onClick={(e) => {
+                  switchTab(e, "MDM Log");
+                }}
+              >
+                MDM Log
               </a>
             </li>
           </ul>

@@ -17,7 +17,7 @@ import { removeProfile } from '../../commands/mdmCommands';
 
 
   function uninstallProfile() {
-    removeProfile(UDID, identifier);
+    removeProfile(UDID, identifier, displayName);
     handleClose();
   }
   

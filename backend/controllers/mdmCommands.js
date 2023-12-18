@@ -34,11 +34,11 @@ const updateiOSDeviceDetails = (req, res) => {
     }
     const { udid } = req.params;
     if (udid) {
-        getiOSDeviceInfo_MDM_Command(udid, requester);
-        getInstalledApplications_MDM_Command(udid, requester);
-        getCertificateList_MDM_Command(udid, requester);
-        getProfileList_MDM_Command(udid, requester);
-        getSecurityInfo_MDM_Command(udid, requester);
+        getiOSDeviceInfo_MDM_Command(udid);
+        getInstalledApplications_MDM_Command(udid);
+        getCertificateList_MDM_Command(udid);
+        getProfileList_MDM_Command(udid);
+        getSecurityInfo_MDM_Command(udid);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -54,11 +54,11 @@ const updateMacDeviceDetails = (req, res) => {
     }
     const { udid } = req.params;
     if (udid) {
-        getDeviceInfo_MDM_Command(udid, requester);
-        getInstalledApplications_MDM_Command(udid, requester);
-        getSecurityInfo_MDM_Command(udid, requester);
-        getCertificateList_MDM_Command(udid, requester);
-        getProfileList_MDM_Command(udid, requester);
+        getDeviceInfo_MDM_Command(udid);
+        getInstalledApplications_MDM_Command(udid);
+        getSecurityInfo_MDM_Command(udid);
+        getCertificateList_MDM_Command(udid);
+        getProfileList_MDM_Command(udid);
         return res.sendStatus(200);
     } else {
         return res.sendStatus(404);
@@ -75,7 +75,7 @@ const installConfigProfile = async (req, res) => {
     const { udid } = req.params;
     const { profileObject } = req.body;
     // update database with profile details
-    installConfigProfile_MDM_Command(udid, profileObject.MobileConfigData, requester);
+    installConfigProfile_MDM_Command(udid, profileObject.MobileConfigData, profileObject.PayloadDisplayName, requester);
     await profile.updateOne({
             'PayloadIdentifier': profileObject.PayloadIdentifier
         }, 
@@ -103,8 +103,8 @@ const removeConfigProfile = async (req, res) => {
         throw new Error('This request must be made by an administrator');
     }
     const { udid } = req.params;
-    const { identifier } = req.body;
-    removeConfigProfile_MDM_Command(udid, identifier, requester);
+    const { identifier, profileName } = req.body;
+    removeConfigProfile_MDM_Command(udid, identifier, profileName, requester);
     return res.sendStatus(200);
 }
 
@@ -259,7 +259,7 @@ const renameDevice = (req, res) => {
     if (udid) {
         renameDevice_MDM_Command(udid, newName, requester);
         if (platform === 'macOS') {
-            getDeviceInfo_MDM_Command(udid, requester);
+            getDeviceInfo_MDM_Command(udid);
         } else if (platform === 'iOS' || platform === 'iPadOS') {
             getiOSDeviceInfo_MDM_Command(udid, requester);
         }

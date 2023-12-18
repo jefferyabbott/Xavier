@@ -287,17 +287,11 @@ const iOSDeviceSchema = new mongoose.Schema({
     PasscodePresent: {
       type: Boolean
     }
-  },
-  lastCheckedIn: {
-    type: Date,
-    default: Date.now,
-  },
-
+  }
+}, {
+  timestamps: true
 });
 
 const iOSDevice = mongoose.model('iOSDevices', iOSDeviceSchema);
 
 export default iOSDevice;
-
-
-

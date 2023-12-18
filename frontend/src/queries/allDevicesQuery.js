@@ -11,6 +11,7 @@ const GET_ALL_DEVICES = gql`
                 DeviceName
                 OSVersion
             }
+            updatedAt
         }
         iphones {
             SerialNumber
@@ -21,6 +22,7 @@ const GET_ALL_DEVICES = gql`
                 DeviceName
                 OSVersion
             }
+            updatedAt
         }
         ipads {
             SerialNumber
@@ -31,6 +33,7 @@ const GET_ALL_DEVICES = gql`
                 DeviceName
                 OSVersion
             }
+            updatedAt
         }
     }
 `
