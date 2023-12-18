@@ -23,7 +23,6 @@ export default function MDMLogTable({ DeviceUDID }) {
                 <thead>
                     <tr>
                         <th>Initiated</th>
-                        <th>Fulfilled</th>
                         <th>Request</th>
                         <th>Requested by</th>
                         {/* <th>Approved by</th> */}

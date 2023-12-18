@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_USER_INFO } from "../queries/userQueries.js";
 import Spinner from "./Spinner.jsx";
+import AuditSymbolCompliance from "./AuditSymbolCompliance.jsx";
 
 export default function MDMLogRow({ logData }) {
   
@@ -32,14 +33,13 @@ export default function MDMLogRow({ logData }) {
                 
                 <tr key={logData.CommandUUID} className={logData.Response ? '' : "table-danger"}>
                         <td>{`${requestDate} ${requestTime}`}</td>
-                        {
-                          (logData.Response) ? <td>{`${responseDate} ${responseTime}`}</td> : <td>no response</td>
-                        }
                         <td>{logData.RequestType}</td>
                         <td>{data.lookupUser.name}</td>
                         {/* <td>Approved by</td> */}
                         {
-                          (logData.Response) ? <td>{logData.Response}</td> : <td>no response</td>
+                          (logData.Response) ? 
+                          <td><AuditSymbolCompliance status={logData.Response === 'Acknowledged'}/>{` ${responseDate} ${responseTime}`}</td> 
+                          : <td>no response</td>
                         }
                 </tr>
              )}
