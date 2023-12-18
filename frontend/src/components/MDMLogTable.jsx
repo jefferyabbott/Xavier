@@ -31,7 +31,7 @@ export default function MDMLogTable({ DeviceUDID }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.commandlogs.map((command) => <MDMLogRow logData={command} />)}
+                    {data.commandlogs.toReversed().map((command) => <MDMLogRow logData={command} />)}
                 </tbody>
             </table>
         </div>
