@@ -30,13 +30,17 @@ export default function MDMLogRow({ logData }) {
             <>
               {!loading && !error && (
                 
-                <tr key={logData.CommandUUID}>
+                <tr key={logData.CommandUUID} className={logData.Response ? '' : "table-danger"}>
                         <td>{`${requestDate} ${requestTime}`}</td>
-                        <td>{logData.Response ? `${responseDate} ${responseTime}` : 'no response'}</td>
+                        {
+                          (logData.Response) ? <td>{`${responseDate} ${responseTime}`}</td> : <td>no response</td>
+                        }
                         <td>{logData.RequestType}</td>
                         <td>{data.lookupUser.name}</td>
                         {/* <td>Approved by</td> */}
-                        <td>{logData.Response}</td>
+                        {
+                          (logData.Response) ? <td>{logData.Response}</td> : <td>no response</td>
+                        }
                 </tr>
              )}
             </>

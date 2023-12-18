@@ -113,6 +113,8 @@ export default function IPhoneDetail() {
   if (loading) return <Spinner />;
   if (error) return <NotFound />;
 
+  const lastCheckin = timeSince(new Date(Number(data.iphone.updatedAt)));
+
   return (
     <>
       {!loading && !error && (
@@ -120,7 +122,7 @@ export default function IPhoneDetail() {
           <div className='header'>
             <div>
               <h1>{data.iphone.QueryResponses.DeviceName}</h1>
-              <h6>Last seen {timeSince(new Date(Number(data.iphone.updatedAt)))}</h6>
+              <h6>Last seen {lastCheckin === '0 second' ? 'just now' : lastCheckin}</h6>
             </div>
             {/* <h6>{data.iphone.modelYear}</h6> */}
 
