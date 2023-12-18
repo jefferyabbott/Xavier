@@ -16,6 +16,7 @@ import IPhoneDetail from './pages/IPhoneDetail';
 import IPadDetail from './pages/IPadDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ScrollToTop } from './components/ScrollToTop.jsx';
 
 
 const cache = new InMemoryCache({
@@ -56,6 +57,7 @@ function App() {
     <>
     <ApolloProvider client={client}>
       <Router>
+        <ScrollToTop />
         <Navbar/>
         <div className='page'>
         <Sidebar/>
