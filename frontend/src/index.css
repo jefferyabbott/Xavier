@@ -264,6 +264,17 @@ canvas {
   margin-right: 20px;
 }
 
+.stickyTop {
+  position: sticky;
+  top: 0;
+}
+
+.scrollableTBody {
+  max-height: 250px;
+  overflow-y: scroll;
+  display: block;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

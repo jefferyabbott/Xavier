@@ -65,12 +65,12 @@ function SearchForApps({
       <table className='table tableList'>
         <thead>
           <tr>
-            <th>
+            <th className="stickyTop">
               <SearchBar searchHandler={searchHandler} />
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="scrollableTBody">
           {sortApps(searchedApps).map((app, index) => {
             return (
               <tr key={app + index}>
