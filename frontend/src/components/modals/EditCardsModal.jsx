@@ -83,7 +83,12 @@ function EditCardsModal({
 
       // type app version
       if (addCardType === "appVersion") {
-        const currentApps = cards.filter((card) => (card.platform === addCardPlatform && card.type === "appVersion")).map((item) => item.title);
+        const currentApps = cards
+          .filter(
+            (card) =>
+              card.platform === addCardPlatform && card.type === "appVersion"
+          )
+          .map((item) => item.title);
         let platformData;
         let installedApps;
         switch (addCardPlatform) {
@@ -119,7 +124,12 @@ function EditCardsModal({
 
       // type boolean (compliance status)
       if (addCardType === "boolean") {
-        const currentBooleans = cards.filter((card) => (card.platform === addCardPlatform && card.type === "boolean")).map((item) => item.title);
+        const currentBooleans = cards
+          .filter(
+            (card) =>
+              card.platform === addCardPlatform && card.type === "boolean"
+          )
+          .map((item) => item.title);
         setCardDataSelect(
           <SearchForComplianceStatus
             platform={addCardPlatform}
@@ -133,7 +143,15 @@ function EditCardsModal({
         setShowAddCard(false);
       }
     }
-  }, [visible, addCardPlatform, addCardType, cards, iPadData, iPhoneData, macData]);
+  }, [
+    visible,
+    addCardPlatform,
+    addCardType,
+    cards,
+    iPadData,
+    iPhoneData,
+    macData,
+  ]);
 
   function cardType(type) {
     switch (type) {

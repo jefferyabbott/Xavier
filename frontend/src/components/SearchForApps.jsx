@@ -16,10 +16,9 @@ function SearchForApps({
   addCards,
   clearAddCard,
 }) {
-
-
-  const Applications = installedApps.filter((installedApp) => !currentCardApps.includes(installedApp));
-  
+  const Applications = installedApps.filter(
+    (installedApp) => !currentCardApps.includes(installedApp)
+  );
 
   const [searchedApps, setSearchedApps] = useState(Applications);
   const [selectedApps, setSelectedApps] = useState([]);
@@ -65,12 +64,12 @@ function SearchForApps({
       <table className='table tableList'>
         <thead>
           <tr>
-            <th className="stickyTop">
+            <th className='stickyTop'>
               <SearchBar searchHandler={searchHandler} />
             </th>
           </tr>
         </thead>
-        <tbody className="scrollableTBody">
+        <tbody className='scrollableTBody'>
           {sortApps(searchedApps).map((app, index) => {
             return (
               <tr key={app + index}>

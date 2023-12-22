@@ -41,7 +41,7 @@ export default function IPadDetail() {
     applicationsTabLabel,
     profilesTabLabel,
     certificateListTabLabel,
-    mdmLogTabLabel
+    mdmLogTabLabel,
   ];
 
   function clearTabs() {
@@ -79,7 +79,13 @@ export default function IPadDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.ipad.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.ipad.Profiles} Administrator={hasAdminRights} UDID={data.ipad.UDID}/>;
+      return (
+        <ProfilesTable
+          Profiles={data.ipad.Profiles}
+          Administrator={hasAdminRights}
+          UDID={data.ipad.UDID}
+        />
+      );
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.ipad.CertificateList} />;
     } else if (activeTab === "MDM Log") {
@@ -127,9 +133,12 @@ export default function IPadDetail() {
           <div className='header'>
             <div>
               <h1>{data.ipad.QueryResponses.DeviceName}</h1>
-              <h6>Last seen {lastCheckin === '0 second' ? 'just now' : lastCheckin}</h6>
+              <h6>
+                Last seen{" "}
+                {lastCheckin === "0 second" ? "just now" : lastCheckin}
+              </h6>
             </div>
-            
+
             {/* <h6>{data.ipad.modelYear}</h6> */}
 
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
@@ -159,8 +168,9 @@ export default function IPadDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item'
-                          onClick={displayEraseDeviceModal}
+                          <button
+                            className='dropdown-item'
+                            onClick={displayEraseDeviceModal}
                           >
                             Erase Device
                           </button>

@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function ConfigProfileRow({ profile }) {
-
   return (
     <tr>
       <td>{profile.PayloadDisplayName}</td>

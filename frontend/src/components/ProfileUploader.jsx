@@ -1,7 +1,7 @@
-import { useState, useEffect, React } from 'react';
+import { useState, useEffect, React } from "react";
 
-function ProfileUploader({returnBase64String}) {
-  const [base64String, setBase64String] = useState('');
+function ProfileUploader({ returnBase64String }) {
+  const [base64String, setBase64String] = useState("");
 
   useEffect(() => {
     returnBase64String(base64String);
@@ -15,7 +15,7 @@ function ProfileUploader({returnBase64String}) {
         const base64Content = await readFileAsBase64(file);
         setBase64String(base64Content);
       } catch (error) {
-        console.error('Error reading file:', error);
+        console.error("Error reading file:", error);
       }
     }
   };
@@ -39,10 +39,13 @@ function ProfileUploader({returnBase64String}) {
 
   return (
     <form>
-        <input type="file" id="profileUploader" onChange={handleFileInputChange} />
+      <input
+        type='file'
+        id='profileUploader'
+        onChange={handleFileInputChange}
+      />
     </form>
   );
-};
+}
 
 export default ProfileUploader;
-
