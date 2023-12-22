@@ -29,7 +29,6 @@ export default function IPhoneDetail() {
 
   const hasAdminRights = isAdministrator();
 
-
   // tabs
   const applicationsTabLabel = useRef(null);
   const profilesTabLabel = useRef(null);
@@ -40,7 +39,7 @@ export default function IPhoneDetail() {
     applicationsTabLabel,
     profilesTabLabel,
     certificateListTabLabel,
-    mdmLogTabLabel
+    mdmLogTabLabel,
   ];
 
   function clearTabs() {
@@ -78,7 +77,13 @@ export default function IPhoneDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.iphone.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.iphone.Profiles} Administrator={hasAdminRights} UDID={data.iphone.UDID}/>;
+      return (
+        <ProfilesTable
+          Profiles={data.iphone.Profiles}
+          Administrator={hasAdminRights}
+          UDID={data.iphone.UDID}
+        />
+      );
     } else if (activeTab === "Certificates") {
       return (
         <CertificateListTable Certificates={data.iphone.CertificateList} />
@@ -104,8 +109,6 @@ export default function IPhoneDetail() {
     setShowEraseDeviceModal(false);
   }
 
-  
-
   const { loading, error, data } = useQuery(GET_IPHONE, {
     variables: { SerialNumber },
   });
@@ -122,7 +125,10 @@ export default function IPhoneDetail() {
           <div className='header'>
             <div>
               <h1>{data.iphone.QueryResponses.DeviceName}</h1>
-              <h6>Last seen {lastCheckin === '0 second' ? 'just now' : lastCheckin}</h6>
+              <h6>
+                Last seen{" "}
+                {lastCheckin === "0 second" ? "just now" : lastCheckin}
+              </h6>
             </div>
             {/* <h6>{data.iphone.modelYear}</h6> */}
 
@@ -153,8 +159,9 @@ export default function IPhoneDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item'
-                          onClick={displayEraseDeviceModal}
+                          <button
+                            className='dropdown-item'
+                            onClick={displayEraseDeviceModal}
                           >
                             Erase Device
                           </button>

@@ -39,9 +39,6 @@ export default function AllDevices() {
   }
 
   if (!loading && !error) {
-    return (
-      <AllDeviceTable deviceData={combinedData} />
-    );
+    return <AllDeviceTable deviceData={combinedData} />;
   }
-  
 }

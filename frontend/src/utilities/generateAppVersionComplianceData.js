@@ -4,7 +4,6 @@ export default function generateAppVersionComplianceData(data, target) {
 
     data.forEach ((item) => {
         let version = '';
-        // let tempVersions = [];
         item.Applications.forEach((app) => {
             if (app.Name === target) {
                 version = app.Version;

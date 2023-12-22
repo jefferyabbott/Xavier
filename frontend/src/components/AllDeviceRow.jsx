@@ -2,7 +2,7 @@ import React from "react";
 import { FaApple } from "react-icons/fa";
 // import { FaApple, FaChrome, FaWindows } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
-import timeSince from '../utilities/timeSince.js';
+import timeSince from "../utilities/timeSince.js";
 
 export default function AllDeviceRow({ device }) {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function AllDeviceRow({ device }) {
       <td>{device.ProductName}</td>
       <td>{osVersion}</td>
 
-      <td>{lastCheckin === '0 second' ? 'just now' : lastCheckin}</td> 
+      <td>{lastCheckin === "0 second" ? "just now" : lastCheckin}</td>
     </tr>
   );
 }

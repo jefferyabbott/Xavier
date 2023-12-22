@@ -19,9 +19,12 @@ export default function ProfilesTable({ Profiles, Administrator, UDID }) {
   const [searchedProfiles, setSearchedProfiles] = useState(Profiles);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [selectedProfileDisplayName, setSelectedProfileDisplayName] = useState(null);
-  const [selectedProfileIdentifier, setSelectedProfileIdentifier] = useState(null);
-  const [showUninstallProfileModal, setShowUninstallModalProfile] = useState(false);
+  const [selectedProfileDisplayName, setSelectedProfileDisplayName] =
+    useState(null);
+  const [selectedProfileIdentifier, setSelectedProfileIdentifier] =
+    useState(null);
+  const [showUninstallProfileModal, setShowUninstallModalProfile] =
+    useState(false);
 
   function searchHandler(query) {
     setSearchedProfiles(
@@ -61,17 +64,19 @@ export default function ProfilesTable({ Profiles, Administrator, UDID }) {
             <th>Identifier</th>
             <th>Encrypted</th>
             <th>User Removable</th>
-            {
-              (Administrator) ? <th>Uninstall</th> : null
-            }
+            {Administrator ? <th>Uninstall</th> : null}
           </tr>
         </thead>
         <tbody>
           {sortProfiles(searchedProfiles).map((profile, index) => {
             return (
               <tr key={profile.PayloadDisplayName + index}>
-                <td onClick={() => showProfileDetails(profile)}>{profile.PayloadDisplayName}</td>
-                <td onClick={() => showProfileDetails(profile)}>{profile.PayloadIdentifier}</td>
+                <td onClick={() => showProfileDetails(profile)}>
+                  {profile.PayloadDisplayName}
+                </td>
+                <td onClick={() => showProfileDetails(profile)}>
+                  {profile.PayloadIdentifier}
+                </td>
                 <td onClick={() => showProfileDetails(profile)}>
                   {<AuditSymbolCompliance status={profile.IsEncrypted} />}
                 </td>
@@ -82,11 +87,18 @@ export default function ProfilesTable({ Profiles, Administrator, UDID }) {
                     />
                   }
                 </td>
-                {
-                  (Administrator) ? <td>
-                    <FaTrash onClick={() => displayUninstallProfileModal(profile.PayloadDisplayName, profile.PayloadIdentifier)}/>
-                  </td> : null
-                } 
+                {Administrator ? (
+                  <td>
+                    <FaTrash
+                      onClick={() =>
+                        displayUninstallProfileModal(
+                          profile.PayloadDisplayName,
+                          profile.PayloadIdentifier
+                        )
+                      }
+                    />
+                  </td>
+                ) : null}
               </tr>
             );
           })}

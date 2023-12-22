@@ -14,17 +14,16 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   let consoleUser;
-  const tokenStr = localStorage.getItem('user');
+  const tokenStr = localStorage.getItem("user");
   if (tokenStr) {
-      consoleUser = JSON.parse(tokenStr)._id;
-  } 
+    consoleUser = JSON.parse(tokenStr)._id;
+  }
 
   useEffect(() => {
     if (!consoleUser) {
       navigate("/login");
     }
   }, [consoleUser, navigate]);
-
 
   const { loading, error, data } = useQuery(GET_COMPLIANCE_DATA, {
     variables: { consoleUser },
@@ -59,28 +58,26 @@ export default function Dashboard() {
   if (error) return <p>Something went wrong</p>;
 
   if (data && !loading && !error) {
-      return (
-        <>
-          <div className='rightHeader'>
-            <div>
-              <button type='button' className='btn btn-dark' onClick={editCards}>
-                <FaEdit />
-              </button>
-            </div>
+    return (
+      <>
+        <div className='rightHeader'>
+          <div>
+            <button type='button' className='btn btn-dark' onClick={editCards}>
+              <FaEdit />
+            </button>
           </div>
+        </div>
 
-
-          <main className='d-flex flex-row justify-content-evenly flex-wrap'>
-          {
-            
-            (cardArray.length === 0) ? 
-            (
-              <div className="welcomeMessage d-flex justify-content-center align-items-center flex-column">
-                <h2>Welcome to Xavier!</h2>
-                <h4>Click the edit button (top right) to build your custom dashboard.</h4>
-              </div>
-            ) : 
-              
+        <main className='d-flex flex-row justify-content-evenly flex-wrap'>
+          {cardArray.length === 0 ? (
+            <div className='welcomeMessage d-flex justify-content-center align-items-center flex-column'>
+              <h2>Welcome to Xavier!</h2>
+              <h4>
+                Click the edit button (top right) to build your custom
+                dashboard.
+              </h4>
+            </div>
+          ) : (
             cardArray.map((card, index) => {
               let platformData;
               switch (card.platform) {
@@ -132,26 +129,23 @@ export default function Dashboard() {
               } else {
                 return null;
               }
-            })}
-          
-            
-  
+            })
+          )}
+
           <EditCardsModal
-              visible={isModalVisible}
-              cardArray={cardArray}
-              macData={data.macs}
-              iPhoneData={data.iphones}
-              iPadData={data.ipads}
-              installedMacApps={data.installedMacApplications}
-              installediPhoneApps={data.installediPhoneApplications}
-              installediPadApps={data.installediPadApplications}
-              stopEditingCards={stopEditingCards}
-              updateCards={updateCards}
-            />
-          </main>
-          
-        </>
-      );
-    
+            visible={isModalVisible}
+            cardArray={cardArray}
+            macData={data.macs}
+            iPhoneData={data.iphones}
+            iPadData={data.ipads}
+            installedMacApps={data.installedMacApplications}
+            installediPhoneApps={data.installediPhoneApplications}
+            installediPadApps={data.installediPadApplications}
+            stopEditingCards={stopEditingCards}
+            updateCards={updateCards}
+          />
+        </main>
+      </>
+    );
   }
 }

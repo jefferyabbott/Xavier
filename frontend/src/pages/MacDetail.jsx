@@ -47,7 +47,7 @@ export default function MacDetail() {
     applicationsTabLabel,
     profilesTabLabel,
     certificateListTabLabel,
-    mdmLogTabLabel
+    mdmLogTabLabel,
   ];
 
   function clearTabs() {
@@ -85,7 +85,13 @@ export default function MacDetail() {
     if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.mac.Applications} />;
     } else if (activeTab === "Profiles") {
-      return <ProfilesTable Profiles={data.mac.Profiles} Administrator={hasAdminRights} UDID={data.mac.UDID}/>;
+      return (
+        <ProfilesTable
+          Profiles={data.mac.Profiles}
+          Administrator={hasAdminRights}
+          UDID={data.mac.UDID}
+        />
+      );
     } else if (activeTab === "Certificates") {
       return <CertificateListTable Certificates={data.mac.CertificateList} />;
     } else if (activeTab === "MDM Log") {
@@ -161,9 +167,12 @@ export default function MacDetail() {
           <div className='header'>
             <div>
               <h1>{data.mac.QueryResponses.DeviceName}</h1>
-              <h6>Last seen {lastCheckin === '0 second' ? 'just now' : lastCheckin}</h6>
+              <h6>
+                Last seen{" "}
+                {lastCheckin === "0 second" ? "just now" : lastCheckin}
+              </h6>
             </div>
-            
+
             {/* <h6>{data.mac.modelYear}</h6> */}
 
             {/* conditionally render MDM actions dropdown if MDM profile is installed */}
@@ -182,8 +191,9 @@ export default function MacDetail() {
                       </button>
                       <ul className='dropdown-menu hide'>
                         <li>
-                          <button className='dropdown-item'
-                          onClick={displayEraseDeviceModal}
+                          <button
+                            className='dropdown-item'
+                            onClick={displayEraseDeviceModal}
                           >
                             Erase Device
                           </button>
@@ -198,7 +208,10 @@ export default function MacDetail() {
                           </button>
                         </li>
                         <li>
-                          <button className='dropdown-item' onClick={displayLockDeviceModal}>
+                          <button
+                            className='dropdown-item'
+                            onClick={displayLockDeviceModal}
+                          >
                             Lock Device
                           </button>
                         </li>
@@ -321,20 +334,21 @@ export default function MacDetail() {
                       </td>
                     </tr>
 
-                    { data.mac.unlockPins && data.mac.unlockPins.length > 0 &&
-                      (
-                        <tr>
+                    {data.mac.unlockPins && data.mac.unlockPins.length > 0 && (
+                      <tr>
                         <td>unlock PIN</td>
-                        {
-                          (showPinHistory) ?
-                            <PinHistoryTable data={data.mac.unlockPins} hideShowPinHistoryTable={hideShowPinHistoryTable} />
-                          : <div onClick={() => setShowPinHistory(true)}>click to view</div>
-                      }
-
+                        {showPinHistory ? (
+                          <PinHistoryTable
+                            data={data.mac.unlockPins}
+                            hideShowPinHistoryTable={hideShowPinHistoryTable}
+                          />
+                        ) : (
+                          <div onClick={() => setShowPinHistory(true)}>
+                            click to view
+                          </div>
+                        )}
                       </tr>
-                      )
-
-                    }
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -613,15 +627,14 @@ export default function MacDetail() {
               hideShutdownDeviceModal={hideShutdownDeviceModal}
             />
           ) : null}
-          {
-            showLockDeviceModal ? (
-              <LockDeviceModal
-                visible={showLockDeviceModal}
-                UDID={data.mac.UDID}
-                hideLockDeviceModal={hideLockDeviceModal}
-              />
-            ) : null }
-            {showEraseDeviceModal ? (
+          {showLockDeviceModal ? (
+            <LockDeviceModal
+              visible={showLockDeviceModal}
+              UDID={data.mac.UDID}
+              hideLockDeviceModal={hideLockDeviceModal}
+            />
+          ) : null}
+          {showEraseDeviceModal ? (
             <EraseDeviceModal
               visible={showEraseDeviceModal}
               UDID={data.ipad.UDID}

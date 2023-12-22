@@ -21,7 +21,6 @@ const login = async (userData) => {
 }
 
 // logout user 
-// TODO: confirm that this actually works and doesn't cause a memory leak
 const logout = () => {
     localStorage.removeItem('user');
 }
