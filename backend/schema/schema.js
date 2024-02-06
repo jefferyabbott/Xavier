@@ -74,6 +74,28 @@ const MacQueryResponseType = new GraphQLObjectType({
   })
 });
 
+const iPhoneServiceSubscriptionType = new GraphQLObjectType({
+  name: 'iphoneservicesubscription',
+  fields: () => ({
+        CarrierSettingsVersion: { type: GraphQLString },
+        CurrentCarrierNetwork: { type: GraphQLString },
+        CurrentMCC: { type: GraphQLString },
+        CurrentMNC: { type: GraphQLString },
+        EID: { type: GraphQLString },
+        ICCID: { type: GraphQLString },
+        IMEI: { type: GraphQLString },
+        IsDataPreferred: { type: GraphQLBoolean },
+        IsRoaming: { type: GraphQLBoolean },
+        IsVoicePreferred: { type: GraphQLBoolean },
+        Label: { type: GraphQLString },
+        LabelID: { type: GraphQLString },
+        PhoneNumber: { type: GraphQLString },
+        Slot: { type: GraphQLString },
+        SubscriberCarrierNetwork: { type: GraphQLString }
+  })
+});
+
+
 const iOSQueryResponseType = new GraphQLObjectType({
   name: 'iSOQueryResponse',
   fields: () => ({
@@ -104,6 +126,7 @@ const iOSQueryResponseType = new GraphQLObjectType({
     TimeZone: { type: GraphQLString },
     UDID: { type: GraphQLString },
     WiFiMAC: { type: GraphQLString },
+    ServiceSubscriptions: { type: new GraphQLList(iPhoneServiceSubscriptionType) }
   })
 });
 
@@ -218,6 +241,11 @@ const MacType = new GraphQLObjectType({
         updatedAt: { type: GraphQLString }
     })
 });
+
+
+
+
+
 
 const iPhoneType = new GraphQLObjectType({
   name: 'iphonedevice',

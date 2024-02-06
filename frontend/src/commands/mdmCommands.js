@@ -48,6 +48,7 @@ function disableRemoteDesktop(udid) {
 }
 
 function updateDeviceInventory(platform, udid) {
+    console.log(tokenStr);
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/${platform}/updateInventory/${udid}`;
     postCommand(API_URL, 'Inventory update command has been issued.');
 }

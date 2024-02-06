@@ -118,6 +118,7 @@ export default function IPhoneDetail() {
 
   const lastCheckin = timeSince(new Date(Number(data.iphone.updatedAt)));
 
+
   return (
     <>
       {!loading && !error && (
@@ -245,6 +246,26 @@ export default function IPhoneDetail() {
               <div className='p-3 border bg-light'>
                 <table className='table'>
                   <tbody>
+                  <tr>
+                    <td>Celluar Network</td>
+                    <td>
+                      {data.iphone.QueryResponses.ServiceSubscriptions[0].SubscriberCarrierNetwork}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Phone Number</td>
+                    <td>
+                      {data.iphone.QueryResponses.ServiceSubscriptions[0].PhoneNumber}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      IMEI
+                    </td>
+                    <td>
+                      {data.iphone.QueryResponses.ServiceSubscriptions[0].IMEI}
+                    </td>
+                  </tr>
                     {data.iphone.QueryResponses.WiFiMAC && (
                       <tr>
                         <td>WiFi MAC address</td>

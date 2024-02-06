@@ -44,6 +44,23 @@ const GET_IPHONE = gql`
                 TimeZone
                 UDID
                 WiFiMAC
+                ServiceSubscriptions {
+                    CarrierSettingsVersion
+                    CurrentCarrierNetwork
+                    CurrentMCC
+                    CurrentMNC
+                    EID
+                    ICCID
+                    IMEI
+                    IsDataPreferred
+                    IsRoaming
+                    IsVoicePreferred
+                    Label
+                    LabelID
+                    PhoneNumber
+                    Slot
+                    SubscriberCarrierNetwork
+                }
             }
             Applications {
               Identifier
