@@ -77,7 +77,6 @@ function EditCardsModal({
               platform: addCardPlatform,
             },
           ]);
-          setCardDataSelect(`${title} has been added.`);
         }
       }
 
@@ -147,10 +146,6 @@ function EditCardsModal({
     visible,
     addCardPlatform,
     addCardType,
-    cards,
-    iPadData,
-    iPhoneData,
-    macData,
   ]);
 
   function cardType(type) {
