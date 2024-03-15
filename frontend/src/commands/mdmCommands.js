@@ -53,6 +53,11 @@ function updateDeviceInventory(platform, udid) {
     postCommand(API_URL, 'Inventory update command has been issued.');
 }
 
+function getAvailableSoftwareUpdates(udid) {
+    const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/getAvailableSoftwareUpdates/${udid}`;
+    postCommand(API_URL, 'Get available software updates command has been issued.');
+}
+
 function restartDevice(udid, notifyUser) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/mdm/commands/restartDevice/${udid}`;
     const options = {
@@ -147,5 +152,6 @@ export {
     uploadProfile,
     lockDevice,
     removeProfile,
-    eraseDevice
+    eraseDevice,
+    getAvailableSoftwareUpdates
 };

@@ -20,7 +20,8 @@ import {
     shutdownDevice_MDM_Command,
     lockDevice_MDM_Command,
     removeConfigProfile_MDM_Command,
-    eraseDevice_MDM_Command
+    eraseDevice_MDM_Command,
+    getAvailableSoftwareUpdates_MDM_Command
 } from '../services/mdmActions.js';
 import createRandom6DigitPin from '../utilities/randomPin.js';
 import isAdministrator from '../utilities/checkPrivileges.js';
@@ -182,6 +183,13 @@ const eraseDevice = async (req, res) => {
     return res.sendStatus(200);
 }
 
+// get available software updates
+const getAvailableSoftwareUpdates = async (req, res) => {
+    const { udid } = req.params;
+    getAvailableSoftwareUpdates_MDM_Command(udid);
+    return res.sendStatus(200); 
+}
+
 // restart device
 const restartDevice = (req, res) => {
     const requester = req.user._id;
@@ -282,5 +290,6 @@ export {
     uploadConfigProfile,
     lockDevice,
     removeConfigProfile,
-    eraseDevice
+    eraseDevice,
+    getAvailableSoftwareUpdates
 }

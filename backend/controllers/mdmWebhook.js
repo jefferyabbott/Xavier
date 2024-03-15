@@ -196,8 +196,21 @@ async function handleConnect(event) {
                     upsert: true
                 }
             );
-        } 
-        // TODO: add AvailableOSUpdates
+        }  else if (plistData.AvailableOSUpdates) {
+            const AvailableSoftwareUpdates = plistData.AvailableOSUpdates;
+            await device.updateOne(
+                {'UDID': udid},
+                {
+                    AvailableSoftwareUpdates,
+                    'mdmProfileInstalled': true,
+                    lastCheckedIn
+                },
+                {
+                    upsert: true
+                }
+            );
+
+        }
         // TODO: add OSUpdateStatus
         // TODO: add ProvisioningProfileList
 

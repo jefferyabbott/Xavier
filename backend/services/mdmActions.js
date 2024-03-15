@@ -19,6 +19,12 @@ function getCertificateList_MDM_Command(udid) {
   sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
 }
 
+// get available software updates list
+function getAvailableSoftwareUpdates_MDM_Command(udid) {
+  const args = '<key>RequestType</key><string>AvailableOSUpdates</string>';
+  sendMDMCommand(udid, createRawCommandPlistWithoutLog(args));
+}
+
 // update Device Info (QueryResponses) data
 function getDeviceInfo_MDM_Command(udid) {
   const args = '<key>RequestType</key><string>DeviceInformation</string>';
@@ -219,5 +225,6 @@ export {
   shutdownDevice_MDM_Command,
   lockDevice_MDM_Command,
   removeConfigProfile_MDM_Command,
-  eraseDevice_MDM_Command
+  eraseDevice_MDM_Command,
+  getAvailableSoftwareUpdates_MDM_Command
 };

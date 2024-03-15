@@ -13,7 +13,8 @@ import {
     uploadConfigProfile,
     lockDevice,
     removeConfigProfile,
-    eraseDevice
+    eraseDevice,
+    getAvailableSoftwareUpdates
 } from '../controllers/mdmCommands.js';
 
 router.post('/mac/updateInventory/:udid', updateMacDeviceDetails);
@@ -29,5 +30,6 @@ router.post('/uploadProfile', uploadConfigProfile);
 router.post('/lockDevice/:udid', lockDevice);
 router.post('/eraseDevice/:udid', eraseDevice);
 router.post('/removeProfile/:udid', removeConfigProfile);
+router.post('/getAvailableSoftwareUpdates/:udid', getAvailableSoftwareUpdates);
 
 export default router;
