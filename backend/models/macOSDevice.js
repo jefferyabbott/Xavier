@@ -354,6 +354,52 @@ const macOSDeviceSchema = new mongoose.Schema({
       ],
     },
   ],
+  AvailableSoftwareUpdates: [
+    {
+      AllowsInstallLater: {
+        type: Boolean
+      },
+      Build: {
+        type: String
+      },
+      DownloadSize: {
+        type: Number
+      },
+      HumanReadableName: {
+        type: String
+      },
+      HumanReadableNameLocale: {
+        type: String
+      },
+      IsConfigDataUpdate: {
+        type: Boolean
+      },
+      IsCritical: {
+        type: Boolean
+      },
+      IsFirmwareUpdate: {
+        type: Boolean
+      },
+      IsSecurityResponse: {
+        type: Boolean
+      },
+      ProductKey: {
+        type: String
+      },
+      RequiresBootstrapToken: {
+        type: Boolean
+      },
+      RestartRequired: {
+        type: Boolean
+      },
+      SupplementalBuildVersion: {
+        type: String
+      },
+      Version: {
+        type: String
+      }
+    }
+  ],
   CertificateList: [
     {
       CommonName: {

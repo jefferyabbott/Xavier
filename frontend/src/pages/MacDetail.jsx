@@ -14,6 +14,7 @@ import {
   enableRemoteDesktop,
   disableRemoteDesktop,
   updateDeviceInventory,
+  getAvailableSoftwareUpdates,
 } from "../commands/mdmCommands.js";
 import RestartDeviceModal from "../components/modals/RestartDeviceModal.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
@@ -190,6 +191,16 @@ export default function MacDetail() {
                         <FaBolt />
                       </button>
                       <ul className='dropdown-menu hide'>
+                        <li>
+                          <button
+                            className='dropdown-item'
+                            onClick={() =>
+                              getAvailableSoftwareUpdates(data.mac.UDID)
+                            }
+                          >
+                            Check for available software updates
+                          </button>
+                        </li>
                         <li>
                           <button
                             className='dropdown-item'
