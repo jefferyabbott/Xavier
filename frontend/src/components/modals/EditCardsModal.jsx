@@ -19,6 +19,7 @@ function EditCardsModal({
 }) {
   const [show, setShow] = useState(false);
   const [cards, setCards] = useState(cardArray);
+  const [originalCardArray, setOriginalCardArray] = useState(cardArray);
   const [showAddCard, setShowAddCard] = useState(false);
   const [addCardPlatform, setAddCardPlatform] = useState("");
   const [addCardType, setAddCardType] = useState("");
@@ -26,6 +27,7 @@ function EditCardsModal({
   const [showOkButton, setShowOkButton] = useState(false);
 
   const handleClose = () => {
+    setCards(originalCardArray);
     setShow(false);
     setShowAddCard(false);
     setShowOkButton(false);
@@ -36,6 +38,7 @@ function EditCardsModal({
   };
 
   const saveCardArray = () => {
+    setOriginalCardArray(cards);
     updateComplianceCardPrefs(cards);
     updateCards(cards);
     stopEditingCards();
