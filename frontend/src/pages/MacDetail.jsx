@@ -160,6 +160,7 @@ export default function MacDetail() {
   if (error) return <NotFound />;
 
   const lastCheckin = timeSince(new Date(Number(data.mac.updatedAt)));
+  const numberOfSoftwareUpdates = data.mac.AvailableSoftwareUpdates.length;
 
   return (
     <>
@@ -548,6 +549,17 @@ export default function MacDetail() {
                         }
                       </td>
                     </tr>
+
+                    { numberOfSoftwareUpdates > 0 && (
+                      <tr>
+                        <td>software updates</td>
+                        <td>
+                        <span className="badge text-bg-danger" style={{color: "red"}}>{numberOfSoftwareUpdates}</span>
+                        </td>
+                      </tr>
+                    )}
+
+
                   </tbody>
                 </table>
               </div>
