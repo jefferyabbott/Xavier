@@ -34,6 +34,26 @@ const MacOSUpdateSettingsType = new GraphQLObjectType({
   })
 });
 
+const AvailableSoftwareUpdatesType = new GraphQLObjectType({
+  name: 'AvailableSoftwareUpdates',
+  fields: () => ({
+    AllowsInstallLater: { type: GraphQLBoolean },
+    Build: { type: GraphQLString },
+    DownloadSize: { type: GraphQLInt },
+    HumanReadableName: { type: GraphQLString },
+    HumanReadableNameLocale: { type: GraphQLString },
+    IsConfigDataUpdate: { type: GraphQLBoolean },
+    IsCritical: { type: GraphQLBoolean },
+    IsFirmwareUpdate: { type: GraphQLBoolean },
+    IsSecurityResponse: { type: GraphQLBoolean },
+    ProductKey: { type: GraphQLString },
+    RequiresBootstrapToken: { type: GraphQLBoolean },
+    RestartRequired: { type: GraphQLBoolean },
+    SupplementalBuildVersion: { type: GraphQLString },
+    Version: { type: GraphQLString },
+  })
+});
+
 const MacQueryResponseType = new GraphQLObjectType({
   name: 'macQueryResponse',
   fields: () => ({
@@ -237,6 +257,7 @@ const MacType = new GraphQLObjectType({
         Profiles: { type: new GraphQLList(ProfileType) },
         CertificateList: { type: new GraphQLList(CertificateType) }, 
         unlockPins: { type: new GraphQLList(UnlockPinType)},
+        AvailableSoftwareUpdates: { type: new GraphQLList(AvailableSoftwareUpdatesType) },
         createdAt: { type: GraphQLString },
         updatedAt: { type: GraphQLString }
     })

@@ -100,6 +100,21 @@ const GET_MAC = gql`
                 CommonName
                 IsIdentity
             }
+            AvailableSoftwareUpdates {
+                AllowsInstallLater
+                Build
+                HumanReadableName
+                HumanReadableNameLocale
+                IsConfigDataUpdate
+                IsCritical
+                IsFirmwareUpdate
+                IsSecurityResponse
+                ProductKey
+                RequiresBootstrapToken
+                RestartRequired
+                SupplementalBuildVersion
+                Version
+            }
             updatedAt
         }
     }
