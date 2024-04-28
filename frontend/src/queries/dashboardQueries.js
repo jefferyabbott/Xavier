@@ -79,6 +79,27 @@ const GET_MAC_ENCRYPTION_LIST = gql`
     }
 `
 
+const GET_MAC_SIP_LIST = gql`
+    query getMacSIPList($SystemIntegrityProtectionEnabled: Boolean!) {
+        sipMacs(SystemIntegrityProtectionEnabled: $SystemIntegrityProtectionEnabled) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+                SystemIntegrityProtectionEnabled
+            }
+        }
+    }
+`
 
-export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST };
+
+
+
+
+
+
+
+export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST };
 

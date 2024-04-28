@@ -400,6 +400,13 @@ const RootQuery = new GraphQLObjectType({
             return macOSDevice.find({"SecurityInfo.FDE_Enabled": args.FDE_Enabled});
           }
         },
+        sipMacs: {
+          type: new GraphQLList(MacType),
+          args: { SystemIntegrityProtectionEnabled: { type: GraphQLBoolean }},
+          resolve(parent, args) {
+            return macOSDevice.find({"QueryResponses.SystemIntegrityProtectionEnabled": args.SystemIntegrityProtectionEnabled});
+          }
+        },
         compliancecardprefs: {
           type: ComplianceCardPrefsType,
           args: { consoleUser: { type: GraphQLID }},

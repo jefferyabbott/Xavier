@@ -15,6 +15,7 @@ import MacDetail from './pages/MacDetail';
 import IPhoneDetail from './pages/IPhoneDetail';
 import IPadDetail from './pages/IPadDetail';
 import MacEncryptionList from './pages/dashboardListPages/MacEncryptionList.jsx';
+import MacSIPList from './pages/dashboardListPages/MacSIPList.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ScrollToTop } from './components/ScrollToTop.jsx';
@@ -74,6 +75,7 @@ function App() {
               <Route path="/iphone/:SerialNumber" element={<IPhoneDetail />} />
               <Route path="/ipad/:SerialNumber" element={<IPadDetail />} />
               <Route path="/macos/encryptionStatus/:FDE_Enabled" element={<MacEncryptionList />} />
+              <Route path="/macos/sipStatus/:SystemIntegrityProtectionEnabled" element={<MacSIPList />} />
               <Route path="*" element={<NotFound />} /> 
             </Routes>
           </div>
