@@ -135,6 +135,7 @@ async function handleConnect(event) {
                 {
                     'SerialNumber': QueryResponses.SerialNumber,
                     'mdmProfileInstalled': true,
+                    'OSVersion': QueryResponses.OSVersion,
                     QueryResponses,
                     lastCheckedIn
                 },
