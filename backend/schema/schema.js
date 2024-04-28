@@ -407,6 +407,13 @@ const RootQuery = new GraphQLObjectType({
             return macOSDevice.find({"QueryResponses.SystemIntegrityProtectionEnabled": args.SystemIntegrityProtectionEnabled});
           }
         },
+        mdmEnrolledMacs: {
+          type: new GraphQLList(MacType),
+          args: { mdmProfileInstalled: { type: GraphQLBoolean }},
+          resolve(parent, args) {
+            return macOSDevice.find({"mdmProfileInstalled": args.mdmProfileInstalled});
+          }
+        },
         compliancecardprefs: {
           type: ComplianceCardPrefsType,
           args: { consoleUser: { type: GraphQLID }},

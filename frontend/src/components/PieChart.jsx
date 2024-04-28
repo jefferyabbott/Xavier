@@ -68,6 +68,8 @@ export default function PieChart({ title, data }) {
                 navigate(`/macos/encryptionStatus/${chartValue}`)
               } else if (chartLabel === 'System Integrity Protection') {
                 navigate(`/macos/sipStatus/${chartValue}`);
+              } else if (chartLabel === 'MDM Profile Installed') {
+                navigate(`/macos/mdmEnrolled/${chartValue}`);
               }
             // /macos/encryptionStatus/:FDE_Enabled
               // /dashboardCardDetail/bool?key=${chartLabel},value=${chartValue}
