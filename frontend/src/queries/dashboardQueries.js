@@ -157,10 +157,65 @@ const GET_IPHONES_BY_OSVERSION = gql`
     }
 `
 
+const GET_MACS_WITH_APP_VERSION = gql`
+query getMacsWithAppVersion($Name: String!, $Version: String!) {
+    macsWithAppVersion(Name: $Name, Version: $Version) {
+        SerialNumber
+        ProductName
+        OSVersion
+        UDID
+        QueryResponses {
+            DeviceName
+        }
+        Applications {
+            Name
+            Version
+        }
+        updatedAt
+    }
+}
+`
+
+const GET_IPADS_WITH_APP_VERSION = gql`
+query getiPadsWithAppVersion($Name: String!, $Version: String!) {
+    iPadsWithAppVersion(Name: $Name, Version: $Version) {
+        SerialNumber
+        ProductName
+        OSVersion
+        UDID
+        QueryResponses {
+            DeviceName
+        }
+        Applications {
+            Name
+            Version
+        }
+        updatedAt
+    }
+}
+`
+
+const GET_IPHONES_WITH_APP_VERSION = gql`
+query getiPhonesWithAppVersion($Name: String!, $Version: String!) {
+    iPhonesWithAppVersion(Name: $Name, Version: $Version) {
+        SerialNumber
+        ProductName
+        OSVersion
+        UDID
+        QueryResponses {
+            DeviceName
+        }
+        Applications {
+            Name
+            Version
+        }
+        updatedAt
+    }
+}
+`
 
 
 
 
-
-export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS, GET_MACS_BY_OSVERSION, GET_IPADS_BY_OSVERSION, GET_IPHONES_BY_OSVERSION };
+export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS, GET_MACS_BY_OSVERSION, GET_IPADS_BY_OSVERSION, GET_IPHONES_BY_OSVERSION, GET_MACS_WITH_APP_VERSION, GET_IPADS_WITH_APP_VERSION, GET_IPHONES_WITH_APP_VERSION };
 

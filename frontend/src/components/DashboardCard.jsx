@@ -30,7 +30,7 @@ export default function DashboardCard({ title, data, type, platformType }) {
           label: "compliant",
           data: [data.true, data.false],
           backgroundColor: trueFalseColors,
-          hoverOffset: 4,
+          hoverOffset: 1,
         },
       ],
     };
@@ -40,9 +40,10 @@ export default function DashboardCard({ title, data, type, platformType }) {
       datasets: [
         {
           label: "version",
+          platformType,
           data: data.map((d) => d.count),
           backgroundColor: createColorArray(data.length),
-          hoverOffset: 4,
+          hoverOffset: 1,
         },
       ],
     };

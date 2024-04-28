@@ -38,17 +38,11 @@ export default function PieChart({ title, data }) {
           // Event handler for a click on a chart element
           onClick: function (evt, elements) {
 
-
-              // chart type (boolean, app, compliance, config profile, etc)
             const chartType = evt.chart.config._config.data.datasets[0].label;
-            console.log(`CHART TYPE: ${chartType}`);
-   // chart label (DONE)
             const chartLabel = evt.chart.config._config.options.plugins.title.text;
-            console.log(`CHART LABEL: ${chartLabel}`);
-    // slice value
 
-    let clickedElement = '';
-    let datasetIndex = 0;
+            let clickedElement = '';
+            let datasetIndex = 0;
 
               if (elements[0]) {
                 clickedElement = elements[0];
@@ -81,6 +75,8 @@ export default function PieChart({ title, data }) {
                 navigate(`/devicesByOSVersion/iPad/${chartValue}`);
               } else if (chartLabel === 'iOS version') {
                 navigate(`/devicesByOSVersion/iPhone/${chartValue}`);
+              } else {
+                navigate(`/devicesWithAppVersion/${evt.chart.config._config.data.datasets[0].platformType}/${chartLabel}/${chartValue}`);
               }
             }       
   

@@ -435,6 +435,36 @@ const RootQuery = new GraphQLObjectType({
             return iPadOSDevice.find({"QueryResponses.OSVersion": args.OSVersion});
           }
         },
+        macsWithAppVersion: {
+          type: new GraphQLList(MacType),
+          args: { 
+            Name: { type: GraphQLString },
+            Version: { type: GraphQLString }
+          },
+          resolve(parent, args) {
+            return macOSDevice.find({"Applications": { $elemMatch: { "Name": args.Name, "Version": args.Version } }});
+          }
+        },
+        iPadsWithAppVersion: {
+          type: new GraphQLList(MacType),
+          args: { 
+            Name: { type: GraphQLString },
+            Version: { type: GraphQLString }
+          },
+          resolve(parent, args) {
+            return iPadOSDevice.find({"Applications": { $elemMatch: { "Name": args.Name, "Version": args.Version } }});
+          }
+        },
+        iPhonesWithAppVersion: {
+          type: new GraphQLList(MacType),
+          args: { 
+            Name: { type: GraphQLString },
+            Version: { type: GraphQLString }
+          },
+          resolve(parent, args) {
+            return iOSDevice.find({"Applications": { $elemMatch: { "Name": args.Name, "Version": args.Version } }});
+          }
+        },
         compliancecardprefs: {
           type: ComplianceCardPrefsType,
           args: { consoleUser: { type: GraphQLID }},

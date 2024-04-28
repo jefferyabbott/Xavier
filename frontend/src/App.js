@@ -18,6 +18,7 @@ import MacEncryptionList from './pages/dashboardListPages/MacEncryptionList.jsx'
 import MacSIPList from './pages/dashboardListPages/MacSIPList.jsx';
 import MacMDMEnrolledList from './pages/dashboardListPages/MacMDMEnrolledList.jsx';
 import DeviceByOSVersionList from './pages/dashboardListPages/DeviceByOSVersionList.jsx';
+import AppVersionsList from './pages/dashboardListPages/AppVersionsList.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ScrollToTop } from './components/ScrollToTop.jsx';
@@ -80,6 +81,7 @@ function App() {
               <Route path="/macos/sipStatus/:SystemIntegrityProtectionEnabled" element={<MacSIPList />} />
               <Route path="/macos/mdmEnrolled/:mdmProfileInstalled" element={<MacMDMEnrolledList />} />
               <Route path="/devicesByOSVersion/:deviceType/:OSVersion" element={<DeviceByOSVersionList />} />
+              <Route path="/devicesWithAppVersion/:deviceType/:Name/:Version" element={<AppVersionsList />} />
               <Route path="*" element={<NotFound />} /> 
             </Routes>
           </div>
