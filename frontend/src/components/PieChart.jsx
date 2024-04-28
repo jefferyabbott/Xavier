@@ -66,6 +66,8 @@ export default function PieChart({ title, data }) {
             if (chartType === 'compliant') {
               if (chartLabel === 'FileVault Encryption') {
                 navigate(`/macos/encryptionStatus/${chartValue}`)
+              } else if (chartLabel === 'System Integrity Protection') {
+                navigate(`/macos/sipStatus/${chartValue}`);
               }
             // /macos/encryptionStatus/:FDE_Enabled
               // /dashboardCardDetail/bool?key=${chartLabel},value=${chartValue}
