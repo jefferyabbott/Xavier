@@ -414,6 +414,27 @@ const RootQuery = new GraphQLObjectType({
             return macOSDevice.find({"mdmProfileInstalled": args.mdmProfileInstalled});
           }
         },
+        macsByOSVersion: {
+          type: new GraphQLList(MacType),
+          args: { OSVersion: { type: GraphQLString }},
+          resolve(parent, args) {
+            return macOSDevice.find({"QueryResponses.OSVersion": args.OSVersion});
+          }
+        },
+        iPhonesByOSVersion: {
+          type: new GraphQLList(iPhoneType),
+          args: { OSVersion: { type: GraphQLString }},
+          resolve(parent, args) {
+            return iOSDevice.find({"QueryResponses.OSVersion": args.OSVersion});
+          }
+        },
+        iPadsByOSVersion: {
+          type: new GraphQLList(iPadType),
+          args: { OSVersion: { type: GraphQLString }},
+          resolve(parent, args) {
+            return iPadOSDevice.find({"QueryResponses.OSVersion": args.OSVersion});
+          }
+        },
         compliancecardprefs: {
           type: ComplianceCardPrefsType,
           args: { consoleUser: { type: GraphQLID }},

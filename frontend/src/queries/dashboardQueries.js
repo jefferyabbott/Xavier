@@ -112,12 +112,55 @@ const GET_MDM_ENROLLED_MACS = gql`
     }
 `
 
+const GET_MACS_BY_OSVERSION = gql`
+    query getMacsByOSVersion($OSVersion: String!) {
+        macsByOSVersion(OSVersion: $OSVersion) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            updatedAt
+        }
+    }
+`
+
+const GET_IPADS_BY_OSVERSION = gql`
+    query getiPadsByOSVersion($OSVersion: String!) {
+        iPadsByOSVersion(OSVersion: $OSVersion) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            updatedAt
+        }
+    }
+`
+
+const GET_IPHONES_BY_OSVERSION = gql`
+    query getiPhonesByOSVersion($OSVersion: String!) {
+        iPhonesByOSVersion(OSVersion: $OSVersion) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            updatedAt
+        }
+    }
+`
 
 
 
 
 
 
-
-export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS };
+export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS, GET_MACS_BY_OSVERSION, GET_IPADS_BY_OSVERSION, GET_IPHONES_BY_OSVERSION };
 

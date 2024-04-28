@@ -62,7 +62,7 @@ export default function PieChart({ title, data }) {
             
             console.log(`chart value: ${chartValue}`);
 
-            // show boolean results
+            // show compliance boolean results
             if (chartType === 'compliant') {
               if (chartLabel === 'FileVault Encryption') {
                 navigate(`/macos/encryptionStatus/${chartValue}`)
@@ -71,15 +71,18 @@ export default function PieChart({ title, data }) {
               } else if (chartLabel === 'MDM Profile Installed') {
                 navigate(`/macos/mdmEnrolled/${chartValue}`);
               }
-            // /macos/encryptionStatus/:FDE_Enabled
-              // /dashboardCardDetail/bool?key=${chartLabel},value=${chartValue}
             }
 
-            //    /dashboardCardDetail/macOSVersion/:version
-            //    /dashboardCardDetail/iOSVersion/:version
-            //    /dashboardCardDetail/iPadOSVersion/:version
-
-          
+            // show verison types
+            if (chartType === 'version') {
+              if (chartLabel === 'macOS version') {
+                navigate(`/devicesByOSVersion/mac/${chartValue}`);
+              } else if (chartLabel === 'iPadOS version') {
+                navigate(`/devicesByOSVersion/iPad/${chartValue}`);
+              } else if (chartLabel === 'iOS version') {
+                navigate(`/devicesByOSVersion/iPhone/${chartValue}`);
+              }
+            }       
   
         },
           maintainAspectRatio: true,
