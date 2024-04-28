@@ -393,6 +393,13 @@ const RootQuery = new GraphQLObjectType({
                 return macOSDevice.findOne({'SerialNumber': args.SerialNumber});
             }
         },
+        encryptedMacs: {
+          type: new GraphQLList(MacType),
+          args: { FDE_Enabled: { type: GraphQLBoolean }},
+          resolve(parent, args) {
+            return macOSDevice.find({"SecurityInfo.FDE_Enabled": args.FDE_Enabled});
+          }
+        },
         compliancecardprefs: {
           type: ComplianceCardPrefsType,
           args: { consoleUser: { type: GraphQLID }},

@@ -1,9 +1,11 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Legend, Title, SubTitle } from "chart.js";
+import { useNavigate } from "react-router-dom";
 Chart.register(ArcElement, Legend, Title, SubTitle);
 
 export default function PieChart({ title, data }) {
+  const navigate = useNavigate();
   return (
     <div className='chart chartDimens'>
       <Pie
@@ -11,6 +13,9 @@ export default function PieChart({ title, data }) {
         width={"100%"}
         height={"100%"}
         options={{
+          interaction: {
+            includeInvisible: true
+          },
           plugins: {
             title: {
               display: true,
@@ -29,21 +34,50 @@ export default function PieChart({ title, data }) {
               position: "right",
             },
           },
-          onClick: function (evt) {
-            // const itemIndex = getElementAtEvent(evt)[0]._index;
 
-            const chartId = evt.chart.canvas.id; // this returns null in react app
+          // Event handler for a click on a chart element
+          onClick: function (evt, elements) {
 
-            // const idx = item[0].index;
-            // const labelName = evt.chart.config.data.labels[idx];
-            console.group();
 
-            console.log(evt);
-            // console.log(`chartId: ${chartId}`);
-            // console.log(`idx: ${idx}`);
-            // console.log(`labelName: ${labelName}`);
-            console.groupEnd();
-          },
+              // chart type (boolean, app, compliance, config profile, etc)
+            const chartType = evt.chart.config._config.data.datasets[0].label;
+            console.log(`CHART TYPE: ${chartType}`);
+   // chart label (DONE)
+            const chartLabel = evt.chart.config._config.options.plugins.title.text;
+            console.log(`CHART LABEL: ${chartLabel}`);
+    // slice value
+
+    let clickedElement = '';
+    let datasetIndex = 0;
+
+              if (elements[0]) {
+                clickedElement = elements[0];
+                datasetIndex = clickedElement.index;
+              } else {
+                clickedElement = elements;
+                datasetIndex = 0;
+              }
+            
+            const chartValue = data.labels[datasetIndex];
+            
+            console.log(`chart value: ${chartValue}`);
+
+            // show boolean results
+            if (chartType === 'compliant') {
+              if (chartLabel === 'FileVault Encryption') {
+                navigate(`/macos/encryptionStatus/${chartValue}`)
+              }
+            // /macos/encryptionStatus/:FDE_Enabled
+              // /dashboardCardDetail/bool?key=${chartLabel},value=${chartValue}
+            }
+
+            //    /dashboardCardDetail/macOSVersion/:version
+            //    /dashboardCardDetail/iOSVersion/:version
+            //    /dashboardCardDetail/iPadOSVersion/:version
+
+          
+  
+        },
           maintainAspectRatio: true,
         }}
       />

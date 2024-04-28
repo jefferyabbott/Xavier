@@ -62,5 +62,23 @@ const GET_COMPLIANCE_DATA = gql`
     }
 `
 
-export { GET_COMPLIANCE_DATA };
+const GET_MAC_ENCRYPTION_LIST = gql`
+    query getMacEncryptionList($FDE_Enabled: Boolean!) {
+        encryptedMacs(FDE_Enabled: $FDE_Enabled) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            SecurityInfo {
+                FDE_Enabled
+            }
+        }
+    }
+`
+
+
+export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST };
 
