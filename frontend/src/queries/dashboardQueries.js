@@ -75,6 +75,7 @@ const GET_MAC_ENCRYPTION_LIST = gql`
             SecurityInfo {
                 FDE_Enabled
             }
+            updatedAt
         }
     }
 `
@@ -90,6 +91,7 @@ const GET_MAC_SIP_LIST = gql`
                 DeviceName
                 SystemIntegrityProtectionEnabled
             }
+            updatedAt
         }
     }
 `
@@ -105,6 +107,7 @@ const GET_MDM_ENROLLED_MACS = gql`
             QueryResponses {
                 DeviceName
             }
+            updatedAt
         }
     }
 `
