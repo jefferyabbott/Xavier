@@ -94,6 +94,20 @@ const GET_MAC_SIP_LIST = gql`
     }
 `
 
+const GET_MDM_ENROLLED_MACS = gql`
+    query getMDMEnrolledMacs($mdmProfileInstalled: Boolean!) {
+        mdmEnrolledMacs(mdmProfileInstalled: $mdmProfileInstalled) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            mdmProfileInstalled
+            QueryResponses {
+                DeviceName
+            }
+        }
+    }
+`
 
 
 
@@ -101,5 +115,6 @@ const GET_MAC_SIP_LIST = gql`
 
 
 
-export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST };
+
+export { GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS };
 
