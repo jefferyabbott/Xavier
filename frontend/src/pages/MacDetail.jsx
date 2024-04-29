@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_MAC } from "../queries/macQueries";
 import Spinner from "../components/Spinner";
 import NotFound from "./NotFound";
 import AuditSymbolCompliance from "../components/AuditSymbolCompliance";
+import SoftwareUpdatesTable from "../components/SoftwareUpdatesTable.jsx";
 import ApplicationsTable from "../components/ApplicationsTable";
 import CertificateListTable from "../components/CertificateListTable";
 import ProfilesTable from "../components/ProfilesTable";
@@ -27,6 +28,9 @@ import isAdministrator from "../utilities/checkPrivileges";
 import timeSince from "../utilities/timeSince.js";
 
 export default function MacDetail() {
+
+  let softwareUpdates = 0;
+
   const { SerialNumber } = useParams();
   const [activeTab, setActiveTab] = useState("Applications");
   const [showRestartDeviceModal, setShowRestartDeviceModal] = useState(false);
@@ -36,20 +40,32 @@ export default function MacDetail() {
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
   const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
   const [showPinHistory, setShowPinHistory] = useState(false);
+  const [numberOfSoftwareUpdates, setNumberOfSoftwareUpdates] = useState(softwareUpdates);
   const hasAdminRights = isAdministrator();
 
   // tabs
+  const softwareUpdatesTabLabel = useRef(null);
   const applicationsTabLabel = useRef(null);
   const profilesTabLabel = useRef(null);
   const certificateListTabLabel = useRef(null);
   const mdmLogTabLabel = useRef(null);
 
   const allTabs = [
+    softwareUpdatesTabLabel,
     applicationsTabLabel,
     profilesTabLabel,
     certificateListTabLabel,
     mdmLogTabLabel,
   ];
+ 
+  useEffect(() => {
+    if (softwareUpdates > 0 && numberOfSoftwareUpdates !== softwareUpdates) {
+      setNumberOfSoftwareUpdates(softwareUpdates);
+    }
+    if (numberOfSoftwareUpdates > 0) {
+      setActiveTab("Software Updates");
+    }
+  }, [softwareUpdates, numberOfSoftwareUpdates]);
 
   function clearTabs() {
     allTabs.forEach((tab) => tab.current.classList.remove("active"));
@@ -61,6 +77,10 @@ export default function MacDetail() {
     setActiveTab(target);
     clearTabs();
     switch (target) {
+      case "Software Updates":
+        softwareUpdatesTabLabel.current.classList.add("active");
+        softwareUpdatesTabLabel.current.classList.remove("cursor");
+        break;
       case "Applications":
         applicationsTabLabel.current.classList.add("active");
         applicationsTabLabel.current.classList.remove("cursor");
@@ -83,7 +103,9 @@ export default function MacDetail() {
   }
 
   function renderSelectedTab(activeTab) {
-    if (activeTab === "Applications") {
+    if (activeTab === "Software Updates") {
+      return <SoftwareUpdatesTable Updates={data.mac.AvailableSoftwareUpdates} />;
+    } else if (activeTab === "Applications") {
       return <ApplicationsTable Applications={data.mac.Applications} />;
     } else if (activeTab === "Profiles") {
       return (
@@ -160,7 +182,10 @@ export default function MacDetail() {
   if (error) return <NotFound />;
 
   const lastCheckin = timeSince(new Date(Number(data.mac.updatedAt)));
-  const numberOfSoftwareUpdates = data.mac.AvailableSoftwareUpdates.length;
+
+  if (data.mac.AvailableSoftwareUpdates.length > 0) {
+    softwareUpdates = data.mac.AvailableSoftwareUpdates.length;
+  }
 
   return (
     <>
@@ -550,16 +575,6 @@ export default function MacDetail() {
                       </td>
                     </tr>
 
-                    { numberOfSoftwareUpdates > 0 && (
-                      <tr>
-                        <td>software updates</td>
-                        <td>
-                        <span className="badge text-bg-danger" style={{color: "red"}}>{numberOfSoftwareUpdates}</span>
-                        </td>
-                      </tr>
-                    )}
-
-
                   </tbody>
                 </table>
               </div>
@@ -570,7 +585,39 @@ export default function MacDetail() {
 
           {/* tab controller */}
           <ul className='nav nav-tabs'>
-            <li className='nav-item'>
+            { numberOfSoftwareUpdates > 0 && (
+              <>
+               <li className='nav-item'>
+               <a
+                 className='nav-link active tabText'
+                 aria-current='page'
+                 ref={softwareUpdatesTabLabel}
+                 onClick={(e) => {
+                   switchTab(e, "Software Updates");
+                 }}
+               >
+                 Software Updates <span className="badge text-bg-danger" style={{color: "red"}}>{numberOfSoftwareUpdates}</span>
+               </a>
+             </li>
+             
+
+             <li className='nav-item'>
+              <a
+                className='nav-link cursor tabText'
+                aria-current='page'
+                ref={applicationsTabLabel}
+                onClick={(e) => {
+                  switchTab(e, "Applications");
+                }}
+              >
+                Applications
+              </a>
+            </li>
+             </>
+            )}
+
+            { numberOfSoftwareUpdates === 0 && (
+              <li className='nav-item'>
               <a
                 className='nav-link active tabText'
                 aria-current='page'
@@ -582,6 +629,8 @@ export default function MacDetail() {
                 Applications
               </a>
             </li>
+            )}
+            
             <li className='nav-item'>
               <a
                 className='nav-link cursor tabText'
