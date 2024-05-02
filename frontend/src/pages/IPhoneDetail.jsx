@@ -5,16 +5,13 @@ import { GET_IPHONE } from "../queries/iPhoneQueries";
 import Spinner from "../components/Spinner";
 import NotFound from "./NotFound";
 import AuditSymbolCompliance from "../components/AuditSymbolCompliance";
-import ApplicationsTable from "../components/ApplicationsTable";
-import CertificateListTable from "../components/CertificateListTable";
-import ProfilesTable from "../components/ProfilesTable";
-import MDMLogTable from "../components/MDMLogTable.jsx";
 import { FaBolt } from "react-icons/fa";
 import {
   updateDeviceInventory,
   restartDevice,
   clearPasscode,
 } from "../commands/mdmCommands.js";
+import DetailTabs from "../components/DetailTabs.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
 import isAdministrator from "../utilities/checkPrivileges";
@@ -22,76 +19,8 @@ import timeSince from "../utilities/timeSince.js";
 
 export default function IPhoneDetail() {
   const { SerialNumber } = useParams();
-  const [activeTab, setActiveTab] = useState("Applications");
-
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
   const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
-
-  const hasAdminRights = isAdministrator();
-
-  // tabs
-  const applicationsTabLabel = useRef(null);
-  const profilesTabLabel = useRef(null);
-  const certificateListTabLabel = useRef(null);
-  const mdmLogTabLabel = useRef(null);
-
-  const allTabs = [
-    applicationsTabLabel,
-    profilesTabLabel,
-    certificateListTabLabel,
-    mdmLogTabLabel,
-  ];
-
-  function clearTabs() {
-    allTabs.forEach((tab) => tab.current.classList.remove("active"));
-    allTabs.forEach((tab) => tab.current.classList.add("cursor"));
-  }
-
-  function switchTab(e, target) {
-    e.preventDefault();
-    setActiveTab(target);
-    clearTabs();
-    switch (target) {
-      case "Applications":
-        applicationsTabLabel.current.classList.add("active");
-        applicationsTabLabel.current.classList.remove("cursor");
-        break;
-      case "Profiles":
-        profilesTabLabel.current.classList.add("active");
-        profilesTabLabel.current.classList.remove("cursor");
-        break;
-      case "Certificates":
-        certificateListTabLabel.current.classList.add("active");
-        certificateListTabLabel.current.classList.remove("cursor");
-        break;
-      case "MDM Log":
-        mdmLogTabLabel.current.classList.add("active");
-        mdmLogTabLabel.current.classList.remove("cursor");
-        break;
-      default:
-        break;
-    }
-  }
-
-  function renderSelectedTab(activeTab) {
-    if (activeTab === "Applications") {
-      return <ApplicationsTable Applications={data.iphone.Applications} />;
-    } else if (activeTab === "Profiles") {
-      return (
-        <ProfilesTable
-          Profiles={data.iphone.Profiles}
-          Administrator={hasAdminRights}
-          UDID={data.iphone.UDID}
-        />
-      );
-    } else if (activeTab === "Certificates") {
-      return (
-        <CertificateListTable Certificates={data.iphone.CertificateList} />
-      );
-    } else if (activeTab === "MDM Log") {
-      return <MDMLogTable DeviceUDID={data.iphone.UDID} />;
-    }
-  }
 
   function displayInstallProfileModal() {
     setShowInstallProfileModal(true);
@@ -330,55 +259,8 @@ export default function IPhoneDetail() {
           <hr />
 
           {/* tab controller */}
-          <ul className='nav nav-tabs'>
-            <li className='nav-item'>
-              <button
-                className='nav-link active tabText'
-                aria-current='page'
-                ref={applicationsTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Applications");
-                }}
-              >
-                Applications
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={profilesTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Profiles");
-                }}
-              >
-                Profiles
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={certificateListTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Certificates");
-                }}
-              >
-                Certificates
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={mdmLogTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "MDM Log");
-                }}
-              >
-                MDM Log
-              </button>
-            </li>
-          </ul>
-
-          <div>{renderSelectedTab(activeTab)}</div>
+          <DetailTabs device={data.iphone}/>
+          
           {showInstallProfileModal ? (
             <InstallProfileModal
               visible={showInstallProfileModal}

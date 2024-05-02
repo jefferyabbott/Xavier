@@ -1,15 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_MAC } from "../queries/macQueries";
 import Spinner from "../components/Spinner";
 import NotFound from "./NotFound";
 import AuditSymbolCompliance from "../components/AuditSymbolCompliance";
-import SoftwareUpdatesTable from "../components/SoftwareUpdatesTable.jsx";
-import ApplicationsTable from "../components/ApplicationsTable";
-import CertificateListTable from "../components/CertificateListTable";
-import ProfilesTable from "../components/ProfilesTable";
-import MDMLogTable from "../components/MDMLogTable.jsx";
 import { FaBolt } from "react-icons/fa";
 import {
   enableRemoteDesktop,
@@ -17,6 +12,7 @@ import {
   updateDeviceInventory,
   getAvailableSoftwareUpdates,
 } from "../commands/mdmCommands.js";
+import MacDetailTabs from "../components/DetailTabs.jsx";
 import RestartDeviceModal from "../components/modals/RestartDeviceModal.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
@@ -29,10 +25,7 @@ import timeSince from "../utilities/timeSince.js";
 
 export default function MacDetail() {
 
-  let softwareUpdates = 0;
-
   const { SerialNumber } = useParams();
-  const [activeTab, setActiveTab] = useState("Applications");
   const [showRestartDeviceModal, setShowRestartDeviceModal] = useState(false);
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
@@ -40,87 +33,7 @@ export default function MacDetail() {
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
   const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
   const [showPinHistory, setShowPinHistory] = useState(false);
-  const [numberOfSoftwareUpdates, setNumberOfSoftwareUpdates] = useState(softwareUpdates);
-  const hasAdminRights = isAdministrator();
-
-  // tabs
-  const softwareUpdatesTabLabel = useRef(null);
-  const applicationsTabLabel = useRef(null);
-  const profilesTabLabel = useRef(null);
-  const certificateListTabLabel = useRef(null);
-  const mdmLogTabLabel = useRef(null);
-
-  const allTabs = [
-    softwareUpdatesTabLabel,
-    applicationsTabLabel,
-    profilesTabLabel,
-    certificateListTabLabel,
-    mdmLogTabLabel,
-  ];
- 
-  useEffect(() => {
-    if (softwareUpdates > 0 && numberOfSoftwareUpdates !== softwareUpdates) {
-      setNumberOfSoftwareUpdates(softwareUpdates);
-    }
-    if (numberOfSoftwareUpdates > 0) {
-      setActiveTab("Software Updates");
-    }
-  }, [softwareUpdates, numberOfSoftwareUpdates]);
-
-  function clearTabs() {
-    allTabs.forEach((tab) => tab.current.classList.remove("active"));
-    allTabs.forEach((tab) => tab.current.classList.add("cursor"));
-  }
-
-  function switchTab(e, target) {
-    e.preventDefault();
-    setActiveTab(target);
-    clearTabs();
-    switch (target) {
-      case "Software Updates":
-        softwareUpdatesTabLabel.current.classList.add("active");
-        softwareUpdatesTabLabel.current.classList.remove("cursor");
-        break;
-      case "Applications":
-        applicationsTabLabel.current.classList.add("active");
-        applicationsTabLabel.current.classList.remove("cursor");
-        break;
-      case "Profiles":
-        profilesTabLabel.current.classList.add("active");
-        profilesTabLabel.current.classList.remove("cursor");
-        break;
-      case "Certificates":
-        certificateListTabLabel.current.classList.add("active");
-        certificateListTabLabel.current.classList.remove("cursor");
-        break;
-      case "MDM Log":
-        mdmLogTabLabel.current.classList.add("active");
-        mdmLogTabLabel.current.classList.remove("cursor");
-        break;
-      default:
-        break;
-    }
-  }
-
-  function renderSelectedTab(activeTab) {
-    if (activeTab === "Software Updates") {
-      return <SoftwareUpdatesTable Updates={data.mac.AvailableSoftwareUpdates} />;
-    } else if (activeTab === "Applications") {
-      return <ApplicationsTable Applications={data.mac.Applications} />;
-    } else if (activeTab === "Profiles") {
-      return (
-        <ProfilesTable
-          Profiles={data.mac.Profiles}
-          Administrator={hasAdminRights}
-          UDID={data.mac.UDID}
-        />
-      );
-    } else if (activeTab === "Certificates") {
-      return <CertificateListTable Certificates={data.mac.CertificateList} />;
-    } else if (activeTab === "MDM Log") {
-      return <MDMLogTable DeviceUDID={data.mac.UDID} />;
-    }
-  }
+  
 
   function displayRestartDeviceModal() {
     setShowRestartDeviceModal(true);
@@ -182,10 +95,6 @@ export default function MacDetail() {
   if (error) return <NotFound />;
 
   const lastCheckin = timeSince(new Date(Number(data.mac.updatedAt)));
-
-  if (data.mac.AvailableSoftwareUpdates.length > 0) {
-    softwareUpdates = data.mac.AvailableSoftwareUpdates.length;
-  }
 
   return (
     <>
@@ -584,89 +493,8 @@ export default function MacDetail() {
           <hr />
 
           {/* tab controller */}
-          <ul className='nav nav-tabs'>
-            { numberOfSoftwareUpdates > 0 && (
-              <>
-               <li className='nav-item'>
-               <button
-                 className='nav-link active tabText'
-                 aria-current='page'
-                 ref={softwareUpdatesTabLabel}
-                 onClick={(e) => {
-                   switchTab(e, "Software Updates");
-                 }}
-               >
-                 Software Updates <span className="badge text-bg-danger" style={{color: "red"}}>{numberOfSoftwareUpdates}</span>
-               </button>
-             </li>
-             
-
-             <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                aria-current='page'
-                ref={applicationsTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Applications");
-                }}
-              >
-                Applications
-              </button>
-            </li>
-             </>
-            )}
-
-            { numberOfSoftwareUpdates === 0 && (
-              <li className='nav-item'>
-              <button
-                className='nav-link active tabText'
-                aria-current='page'
-                ref={applicationsTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Applications");
-                }}
-              >
-                Applications
-              </button>
-            </li>
-            )}
-            
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={profilesTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Profiles");
-                }}
-              >
-                Profiles
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={certificateListTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "Certificates");
-                }}
-              >
-                Certificates
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button
-                className='nav-link cursor tabText'
-                ref={mdmLogTabLabel}
-                onClick={(e) => {
-                  switchTab(e, "MDM Log");
-                }}
-              >
-                MDM Log
-              </button>
-            </li>
-          </ul>
-
-          <div>{renderSelectedTab(activeTab)}</div>
+          <MacDetailTabs device={data.mac}/>
+          
           {showRestartDeviceModal ? (
             <RestartDeviceModal
               visible={showRestartDeviceModal}
