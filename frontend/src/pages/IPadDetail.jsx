@@ -329,7 +329,7 @@ export default function IPadDetail() {
           {/* tab controller */}
           <ul className='nav nav-tabs'>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link active tabText'
                 aria-current='page'
                 ref={applicationsTabLabel}
@@ -338,10 +338,10 @@ export default function IPadDetail() {
                 }}
               >
                 Applications
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={profilesTabLabel}
                 onClick={(e) => {
@@ -349,10 +349,10 @@ export default function IPadDetail() {
                 }}
               >
                 Profiles
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={certificateListTabLabel}
                 onClick={(e) => {
@@ -360,10 +360,10 @@ export default function IPadDetail() {
                 }}
               >
                 Certificates
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={mdmLogTabLabel}
                 onClick={(e) => {
@@ -371,7 +371,7 @@ export default function IPadDetail() {
                 }}
               >
                 MDM Log
-              </a>
+              </button>
             </li>
           </ul>
 
