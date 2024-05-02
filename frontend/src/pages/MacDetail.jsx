@@ -588,7 +588,7 @@ export default function MacDetail() {
             { numberOfSoftwareUpdates > 0 && (
               <>
                <li className='nav-item'>
-               <a
+               <button
                  className='nav-link active tabText'
                  aria-current='page'
                  ref={softwareUpdatesTabLabel}
@@ -597,12 +597,12 @@ export default function MacDetail() {
                  }}
                >
                  Software Updates <span className="badge text-bg-danger" style={{color: "red"}}>{numberOfSoftwareUpdates}</span>
-               </a>
+               </button>
              </li>
              
 
              <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 aria-current='page'
                 ref={applicationsTabLabel}
@@ -611,14 +611,14 @@ export default function MacDetail() {
                 }}
               >
                 Applications
-              </a>
+              </button>
             </li>
              </>
             )}
 
             { numberOfSoftwareUpdates === 0 && (
               <li className='nav-item'>
-              <a
+              <button
                 className='nav-link active tabText'
                 aria-current='page'
                 ref={applicationsTabLabel}
@@ -627,12 +627,12 @@ export default function MacDetail() {
                 }}
               >
                 Applications
-              </a>
+              </button>
             </li>
             )}
             
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={profilesTabLabel}
                 onClick={(e) => {
@@ -640,10 +640,10 @@ export default function MacDetail() {
                 }}
               >
                 Profiles
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={certificateListTabLabel}
                 onClick={(e) => {
@@ -651,10 +651,10 @@ export default function MacDetail() {
                 }}
               >
                 Certificates
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={mdmLogTabLabel}
                 onClick={(e) => {
@@ -662,7 +662,7 @@ export default function MacDetail() {
                 }}
               >
                 MDM Log
-              </a>
+              </button>
             </li>
           </ul>
 

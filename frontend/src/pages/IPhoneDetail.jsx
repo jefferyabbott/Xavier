@@ -332,7 +332,7 @@ export default function IPhoneDetail() {
           {/* tab controller */}
           <ul className='nav nav-tabs'>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link active tabText'
                 aria-current='page'
                 ref={applicationsTabLabel}
@@ -341,10 +341,10 @@ export default function IPhoneDetail() {
                 }}
               >
                 Applications
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={profilesTabLabel}
                 onClick={(e) => {
@@ -352,10 +352,10 @@ export default function IPhoneDetail() {
                 }}
               >
                 Profiles
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={certificateListTabLabel}
                 onClick={(e) => {
@@ -363,10 +363,10 @@ export default function IPhoneDetail() {
                 }}
               >
                 Certificates
-              </a>
+              </button>
             </li>
             <li className='nav-item'>
-              <a
+              <button
                 className='nav-link cursor tabText'
                 ref={mdmLogTabLabel}
                 onClick={(e) => {
@@ -374,7 +374,7 @@ export default function IPhoneDetail() {
                 }}
               >
                 MDM Log
-              </a>
+              </button>
             </li>
           </ul>
 

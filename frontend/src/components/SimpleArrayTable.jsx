@@ -11,7 +11,7 @@ function sortData(data) {
 export default function SimpleArrayTable({ data }) {
   const [searchedData, setSearchedData] = useState([]);
 
-  // useEffect is needed to force loadig of new data
+  // useEffect is needed to force loading of new data
   useEffect(() => {
     if (data && data.length > 0) {
       setSearchedData(data);
