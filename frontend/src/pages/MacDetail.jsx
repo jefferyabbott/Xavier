@@ -12,7 +12,7 @@ import {
   updateDeviceInventory,
   getAvailableSoftwareUpdates,
 } from "../commands/mdmCommands.js";
-import MacDetailTabs from "../components/DetailTabs.jsx";
+import DetailTabs from "../components/DetailTabs.jsx";
 import RestartDeviceModal from "../components/modals/RestartDeviceModal.jsx";
 import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
 import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
@@ -493,7 +493,7 @@ export default function MacDetail() {
           <hr />
 
           {/* tab controller */}
-          <MacDetailTabs device={data.mac}/>
+          <DetailTabs device={data.mac}/>
           
           {showRestartDeviceModal ? (
             <RestartDeviceModal
