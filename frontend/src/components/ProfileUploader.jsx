@@ -32,7 +32,7 @@ function ProfileUploader({ returnBase64String }) {
       reader.onerror = (error) => {
         reject(error);
       };
-
+ 
       reader.readAsBinaryString(file);
     });
   };

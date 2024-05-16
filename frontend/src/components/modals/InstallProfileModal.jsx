@@ -28,7 +28,16 @@ function InstallProfileModal({
 
   useEffect(() => {
     if (profile) {
-      setPlistData(plist.parse(atob(profile)));
+      try {
+        console.log(profile);
+        setPlistData(plist.parse(atob(profile)));
+      } catch (e) {
+        // profile may not be encoded
+        console.error("This was an error that was caught");
+        console.log(profile);
+        setPlistData(plist.parse(profile));
+      }
+      
     }
   }, [profile]);
 

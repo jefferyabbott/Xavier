@@ -220,6 +220,9 @@ const macOSDeviceSchema = new mongoose.Schema({
     FDE_HasPersonalRecoveryKey: {
       type: Boolean
     },
+    FDE_PersonalRecoveryKeyCMS: {
+      type: String
+    },
     AllowSigned: {
       type: Boolean
     },
