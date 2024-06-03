@@ -45,28 +45,6 @@ else
 fi
 
 
-# update
-section "updating the operating system"
-apt-get update
-
-
-# install node.js
-section "installing Node.js and NPM"
-apt install nodejs -y
-apt install npm -y
-
-
-# downooad Xavier
-section "downloading Xavier"
-mkdir /opt/xavier
-cd /opt/xavier
-git init
-git remote add origin https://github.com/jefferyabbott/Xavier
-git config core.sparseCheckout true
-echo "backend" > .git/info/sparse-checkout
-git pull origin main
-
-
 # create .env file
 section "setup environment variables"
 echo "PORT: "
@@ -90,6 +68,28 @@ echo "MDM server URL"
 read mdmServerURL
 echo "URL of the Xavier frontend"
 read xavierFrontendURL
+
+
+# update
+section "updating the operating system"
+apt-get update
+
+
+# install node.js
+section "installing Node.js and NPM"
+apt install nodejs -y
+apt install npm -y
+
+
+# downooad Xavier
+section "downloading Xavier"
+mkdir /opt/xavier
+cd /opt/xavier
+git init
+git remote add origin https://github.com/jefferyabbott/Xavier
+git config core.sparseCheckout true
+echo "backend" > .git/info/sparse-checkout
+git pull origin main
 
 
 # write dotenv file
@@ -127,11 +127,12 @@ if [ "$setupTLS" != "${setupTLS#[Yy]}" ] ;then
             # agree or decline sharing your email address with Electronic Frontier Foundation
             # domain name
         # need to capture the 2 file paths
-        echo "What is the SSL certificate path? (copy and paste from above)"
-        read sslCert
-        echo "What is the SSL key path? (copy and paste from above)"
-        read sslKey
-        #echo "$(cat $FILE)$APPEND" > $FILE
+        sslCert="/etc/letsencrypt/live/$domain/fullchain.pem"
+        sslKey="/etc/letsencrypt/live/$domain/privkey.pem"
+            # echo "What is the SSL certificate path? (copy and paste from above)"
+            # read sslCert
+            # echo "What is the SSL key path? (copy and paste from above)"
+            # read sslKey
         cat > /opt/xavier/backend/.env < "SSL_CERTIFICATE_FILE=$sslCert"
         cat > /opt/xavier/backend/.env < "SSL_KEY_FILE=$sslKey"
     fi
@@ -158,7 +159,11 @@ section "FINISHED!"
 
 
 # generate first user account ???
-
+# uncomment the route
+# run the server
+# post the new user details
+# comment the route
+# restart the server
 
 # restart the server after removing the user account creation line
 
