@@ -141,15 +141,15 @@ function EditCardsModal({
         switch (addCardPlatform) {
           case "macos":
             platformData = macData;
-            installedProfiles = installedMacProfiles;
+            installedProfiles = installedMacProfiles.filter((p) => p !== 'Enrollment Profile');
             break;
           case "ios":
             platformData = iPhoneData;
-            installedProfiles = installediPhoneProfiles;
+            installedProfiles = installediPhoneProfiles.filter((p) => p !== 'Enrollment Profile');
             break;
           case "ipados":
             platformData = iPadData;
-            installedProfiles = installediPadProfiles;
+            installedProfiles = installediPadProfiles.filter((p) => p !== 'Enrollment Profile');
             break;
           default:
             break;
