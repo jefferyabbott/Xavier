@@ -14,6 +14,7 @@ import AllDevices from './pages/AllDevices';
 import MacDetail from './pages/MacDetail';
 import IPhoneDetail from './pages/IPhoneDetail';
 import IPadDetail from './pages/IPadDetail';
+import InstalledProfileList from './pages/dashboardListPages/InstalledProfileList.jsx';
 import MacEncryptionList from './pages/dashboardListPages/MacEncryptionList.jsx';
 import MacSIPList from './pages/dashboardListPages/MacSIPList.jsx';
 import MacMDMEnrolledList from './pages/dashboardListPages/MacMDMEnrolledList.jsx';
@@ -80,6 +81,7 @@ function App() {
               <Route path="/macos/encryptionStatus/:FDE_Enabled" element={<MacEncryptionList />} />
               <Route path="/macos/sipStatus/:SystemIntegrityProtectionEnabled" element={<MacSIPList />} />
               <Route path="/macos/mdmEnrolled/:mdmProfileInstalled" element={<MacMDMEnrolledList />} />
+              <Route path="/installedProfile/:deviceType/:profile/:value" element={<InstalledProfileList />} />
               <Route path="/devicesByOSVersion/:deviceType/:OSVersion" element={<DeviceByOSVersionList />} />
               <Route path="/devicesWithAppVersion/:deviceType/:Name/:Version" element={<AppVersionsList />} />
               <Route path="*" element={<NotFound />} /> 

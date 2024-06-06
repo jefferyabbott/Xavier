@@ -484,6 +484,24 @@ const RootQuery = new GraphQLObjectType({
             return consoleUser.find();
           }
         },
+        installedMacProfiles: {
+          type: new GraphQLList(GraphQLString),
+          resolve(parent, args) {
+            return macOSDevice.distinct('Profiles.PayloadDisplayName');
+          }
+        },
+        installediPhoneProfiles: {
+          type: new GraphQLList(GraphQLString),
+          resolve(parent, args) {
+            return iOSDevice.distinct('Profiles.PayloadDisplayName');
+          }
+        },
+        installediPadProfiles: {
+          type: new GraphQLList(GraphQLString),
+          resolve(parent, args) {
+            return iPadOSDevice.distinct('Profiles.PayloadDisplayName');
+          }
+        },
         installedMacApplications: {
           type: new GraphQLList(GraphQLString),
           resolve(parent, args) {

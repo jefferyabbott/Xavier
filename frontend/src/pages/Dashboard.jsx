@@ -7,6 +7,7 @@ import DashboardCard from "../components/DashboardCard";
 import generateBooleanComplianceData from "../utilities/generateBooleanComplianceData.js";
 import generateOSVersionComplianceData from "../utilities/generateOSVersionComplianceData.js";
 import generateAppVersionComplianceData from "../utilities/generateAppVersionComplianceData.js";
+import generateProfileInstalledData from "../utilities/generateProfileInstalledData.js";
 import { FaEdit } from "react-icons/fa";
 import EditCardsModal from "../components/modals/EditCardsModal.jsx";
 
@@ -103,6 +104,16 @@ export default function Dashboard() {
                     key={`compliancecard${index}`}
                   />
                 );
+              } else if (card.type === "profileInstalled") {
+                return (
+                  <DashboardCard
+                    title={card.title}
+                    data={generateProfileInstalledData(platformData, card.arg)}
+                    type={card.type}
+                    platformType={card.platform}
+                    key={`compliancecard${index}`}
+                  />
+                );
               } else if (card.type === "osVersion") {
                 return (
                   <DashboardCard
@@ -141,6 +152,9 @@ export default function Dashboard() {
             installedMacApps={data.installedMacApplications}
             installediPhoneApps={data.installediPhoneApplications}
             installediPadApps={data.installediPadApplications}
+            installedMacProfiles={data.installedMacProfiles}
+            installediPhoneProfiles={data.installediPhoneProfiles}
+            installediPadProfiles={data.installediPadProfiles}
             stopEditingCards={stopEditingCards}
             updateCards={updateCards}
           />

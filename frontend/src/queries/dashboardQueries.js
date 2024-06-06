@@ -5,6 +5,9 @@ const GET_COMPLIANCE_DATA = gql`
         installedMacApplications
         installediPhoneApplications
         installediPadApplications
+        installedMacProfiles
+        installediPhoneProfiles
+        installediPadProfiles
         compliancecardprefs(consoleUser: $consoleUser) {
             complianceCardPrefs {
                 type

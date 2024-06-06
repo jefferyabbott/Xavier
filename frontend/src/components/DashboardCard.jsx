@@ -34,6 +34,18 @@ export default function DashboardCard({ title, data, type, platformType }) {
         },
       ],
     };
+  } else if (type === "profileInstalled") {
+    chartData = {
+      labels: ["true", "false"],
+      datasets: [
+        {
+          label: `profileInstalledFor${platformType}`,
+          data: [data.true, data.false],
+          backgroundColor: trueFalseColors,
+          hoverOffset: 1,
+        },
+      ],
+    };
   } else {
     chartData = {
       labels: data.map((d) => d.version),
