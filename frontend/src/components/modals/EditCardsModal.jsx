@@ -2,6 +2,7 @@ import { useState, useEffect, React } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import SearchForApps from "../SearchForApps.jsx";
+import SearchForProfiles from "../SearchForProfiles.jsx";
 import SearchForComplianceStatus from "../SearchForComplianceStatus.jsx";
 import { updateComplianceCardPrefs } from "../../commands/updateComplianceCardPrefs.js";
 
@@ -14,6 +15,9 @@ function EditCardsModal({
   installedMacApps,
   installediPhoneApps,
   installediPadApps,
+  installedMacProfiles,
+  installediPhoneProfiles,
+  installediPadProfiles,
   stopEditingCards,
   updateCards,
 }) {
@@ -124,6 +128,47 @@ function EditCardsModal({
         setShowAddCard(false);
       }
 
+      // type profile installed
+      if (addCardType === "profileInstalled") {
+        const currentProfiles = cards
+          .filter(
+            (card) =>
+              card.platform === addCardPlatform && card.type === "profileInstalled"
+          )
+          .map((item) => item.title);
+        let platformData;
+        let installedProfiles;
+        switch (addCardPlatform) {
+          case "macos":
+            platformData = macData;
+            installedProfiles = installedMacProfiles;
+            break;
+          case "ios":
+            platformData = iPhoneData;
+            installedProfiles = installediPhoneProfiles;
+            break;
+          case "ipados":
+            platformData = iPadData;
+            installedProfiles = installediPadProfiles;
+            break;
+          default:
+            break;
+        }
+        setCardDataSelect(
+          <SearchForProfiles
+            data={platformData}
+            installedProfiles={installedProfiles}
+            platform={addCardPlatform}
+            currentCardProfiles={currentProfiles}
+            addCards={addCardsExt}
+            clearAddCard={clearAddCard}
+          />
+        );
+        setAddCardPlatform("");
+        setAddCardType("");
+        setShowAddCard(false);
+      }
+
       // type boolean (compliance status)
       if (addCardType === "boolean") {
         const currentBooleans = cards
@@ -155,6 +200,8 @@ function EditCardsModal({
     switch (type) {
       case "boolean":
         return "compliance status";
+      case "profileInstalled":
+        return "profile installed";
       case "osVersion":
         return "OS version";
       case "appVersion":
@@ -318,6 +365,21 @@ function EditCardsModal({
                   htmlFor='flexRadioDefault3-type'
                 >
                   app version
+                </label>
+              </div>
+              <div className='form-check'>
+                <input
+                  className='form-check-input'
+                  type='radio'
+                  name='radioType'
+                  id='flexRadioDefault4-type'
+                  onChange={() => setAddCardType("profileInstalled")}
+                />
+                <label
+                  className='form-check-label'
+                  htmlFor='flexRadioDefault4-type'
+                >
+                  profile installed
                 </label>
               </div>
             </div>

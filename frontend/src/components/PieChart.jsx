@@ -53,8 +53,6 @@ export default function PieChart({ title, data }) {
               }
             
             const chartValue = data.labels[datasetIndex];
-            
-            console.log(`chart value: ${chartValue}`);
 
             // show compliance boolean results
             if (chartType === 'compliant') {
@@ -65,6 +63,15 @@ export default function PieChart({ title, data }) {
               } else if (chartLabel === 'MDM Profile Installed') {
                 navigate(`/macos/mdmEnrolled/${chartValue}`);
               }
+            }
+
+            // show installed profiles
+            if (chartType === 'profileInstalledFormacos') {
+              navigate(`/installedProfile/macos/${chartLabel}/${chartValue}`);
+            } else if (chartType === 'profileInstalledForios') {
+              navigate(`/installedProfile/ios/${chartLabel}/${chartValue}`);
+            } else if (chartType === 'profileInstalledForipados') {
+              navigate(`/installedProfile/ipados/${chartLabel}/${chartValue}`);
             }
 
             // show verison types

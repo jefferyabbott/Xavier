@@ -80,4 +80,58 @@ const GET_ALL_IPHONES = gql`
     }
 `
 
-export { GET_ALL_DEVICES, GET_ALL_IPADS, GET_ALL_IPHONES, GET_ALL_MACS };
+const GET_ALL_MACS_AND_PROFILES = gql`
+    query getAllDevices {
+        macs {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            Profiles {
+                PayloadDisplayName
+            }
+            updatedAt
+        }
+    }
+`
+
+const GET_ALL_IPADS_AND_PROFILES = gql`
+    query getAllDevices {
+        ipads {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            Profiles {
+                PayloadDisplayName
+            }
+            updatedAt
+        }
+    }
+`
+
+const GET_ALL_IPHONES_AND_PROFILES = gql`
+    query getAllDevices {
+        iphones {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            Profiles {
+                PayloadDisplayName
+            }
+            updatedAt
+        }
+    }
+`
+
+export { GET_ALL_DEVICES, GET_ALL_IPADS, GET_ALL_IPHONES, GET_ALL_MACS, GET_ALL_MACS_AND_PROFILES, GET_ALL_IPADS_AND_PROFILES, GET_ALL_IPHONES_AND_PROFILES };
