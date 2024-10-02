@@ -7,6 +7,21 @@ import consoleUser from '../models/consoleUser.js';
 import complianceCardPrefs from '../models/complianceCard.js';
 import command from '../models/commandHistory.js';
 
+
+const ApplicationVersionInfoType = new GraphQLObjectType({
+  name: 'applicationVersionInfo',
+  fields: () => ({
+    deviceSerialNumber: { type: GraphQLString },
+    deviceName: { type: GraphQLString },
+    deviceModel: { type: GraphQLString },
+    osVersion: { type: GraphQLString },
+    appVersion: { type: GraphQLString },
+    appShortVersion: { type: GraphQLString },
+    bundleSize: { type: GraphQLFloat },
+    installing: { type: GraphQLBoolean }
+  })
+});
+
 const ApplicationType = new GraphQLObjectType({
     name: 'application',
     fields: () => ({
@@ -534,7 +549,56 @@ const RootQuery = new GraphQLObjectType({
           resolve(parent, args) {
             return consoleUser.findOne({'_id': args.userId}).select(['-password']);
           }
-        }
+        },
+        macApplicationVersions: {
+          type: new GraphQLList(ApplicationVersionInfoType),
+          args: { 
+            applicationName: { type: GraphQLString },
+          },
+          resolve(parent, args) {
+            return macOSDevice.aggregate([
+              { $unwind: '$Applications' },
+              { $match: { 'Applications.Name': args.applicationName } },
+              { $project: {
+                deviceSerialNumber: '$SerialNumber',
+                deviceName: '$QueryResponses.DeviceName',
+                deviceModel: '$QueryResponses.Model',
+                osVersion: '$QueryResponses.OSVersion',
+                appVersion: '$Applications.Version',
+                appShortVersion: '$Applications.ShortVersion',
+                bundleSize: '$Applications.BundleSize',
+                installing: '$Applications.Installing'
+              }}
+            ]);
+          }
+        },
+        macApplicationVersionDistribution: {
+          type: new GraphQLList(new GraphQLObjectType({
+            name: 'versionDistribution',
+            fields: () => ({
+              version: { type: GraphQLString },
+              deviceCount: { type: GraphQLInt }
+            })
+          })),
+          args: {
+            applicationName: { type: GraphQLString }
+          },
+          resolve(parent, args) {
+            return macOSDevice.aggregate([
+              { $unwind: '$Applications' },
+              { $match: { 'Applications.Name': args.applicationName } },
+              { $group: {
+                _id: '$Applications.Version',
+                deviceCount: { $sum: 1 }
+              }},
+              { $project: {
+                version: '$_id',
+                deviceCount: 1,
+                _id: 0
+              }}
+            ]);
+          }
+        },
     }
 });
 
