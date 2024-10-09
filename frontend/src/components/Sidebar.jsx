@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo } from "react";
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -9,50 +9,84 @@ import {
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-function Sidebar() {
+// Navigation items configuration
+const NAV_ITEMS = [
+  {
+    to: "/",
+    icon: "th-large",
+    label: "Dashboard",
+  },
+  {
+    to: "/all",
+    icon: "laptop",
+    label: "Devices",
+  },
+  {
+    to: "/applications",
+    icon: "book",
+    label: "Applications",
+  },
+  {
+    to: "/profiles",
+    icon: "clipboard",
+    label: "Profiles",
+  },
+  {
+    to: "/users",
+    icon: "users",
+    label: "Users",
+  },
+];
+
+export default function Sidebar() {
   const { user } = useSelector((state) => state.auth);
 
-  if (user) {
-    return (
-      <div className='sidebar'>
-        <CDBSidebar textColor='#fff' bg-dark>
-          <CDBSidebarHeader prefix={<i className='fa fa-bars fa-large'></i>}>
-            <a
-              href='/'
-              className='text-decoration-none'
-              style={{ color: "inherit" }}
-            ></a>
-          </CDBSidebarHeader>
+  const renderNavItems = useMemo(() => {
+    return NAV_ITEMS.map(({ to, icon, label }) => (
+      <NavLink 
+        key={to} 
+        to={to} 
+        className={({ isActive }) => 
+          isActive ? "activeClicked" : undefined
+        }
+      >
+        <CDBSidebarMenuItem icon={icon}>
+          {label}
+        </CDBSidebarMenuItem>
+      </NavLink>
+    ));
+  }, []);
 
-          <CDBSidebarContent className='sidebar-content'>
-            <CDBSidebarMenu>
-              <NavLink to='/' activeclassname='activeClicked'>
-                <CDBSidebarMenuItem icon='th-large'>
-                  Dashboard
-                </CDBSidebarMenuItem>
-              </NavLink>
-              <NavLink to='/all' activeclassname='activeClicked'>
-                <CDBSidebarMenuItem icon='laptop'>Devices</CDBSidebarMenuItem>
-              </NavLink>
-              <NavLink to='/applications' activeclassname='activeClicked'>
-                <CDBSidebarMenuItem icon='book'>
-                  Applications
-                </CDBSidebarMenuItem>
-              </NavLink>
-              <NavLink to='/profiles' activeclassname='activeClicked'>
-                <CDBSidebarMenuItem icon='clipboard'>
-                  Profiles
-                </CDBSidebarMenuItem>
-              </NavLink>
-              <NavLink to='/users' activeclassname='activeClicked'>
-                <CDBSidebarMenuItem icon='users'>Users </CDBSidebarMenuItem>
-              </NavLink>
-            </CDBSidebarMenu>
-          </CDBSidebarContent>
-        </CDBSidebar>
-      </div>
-    );
+  if (!user) {
+    return null;
   }
-}
 
-export default Sidebar;
+  return (
+    <aside className="sidebar h-screen">
+      <CDBSidebar 
+        textColor="#fff" 
+        className="bg-dark min-h-screen"
+      >
+        <CDBSidebarHeader 
+          prefix={
+            <i className="fa fa-bars fa-large hover:opacity-80 transition-opacity" />
+          }
+        >
+          <NavLink 
+            to="/" 
+            className="text-decoration-none hover:opacity-80 transition-opacity"
+            style={{ color: "inherit" }}
+          >
+            <span className="font-semibold">Admin Portal</span>
+          </NavLink>
+        </CDBSidebarHeader>
+
+        <CDBSidebarContent className="sidebar-content">
+          <CDBSidebarMenu>
+            {renderNavItems}
+          </CDBSidebarMenu>
+        </CDBSidebarContent>
+      </CDBSidebar>
+    </aside>
+  );
+}
