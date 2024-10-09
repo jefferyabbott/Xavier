@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import AllDeviceTable from "../../components/AllDeviceTable";
 import { useQuery } from "@apollo/client";
-import { GET_MACS_WITH_APP_VERSION, GET_IPADS_WITH_APP_VERSION, GET_IPHONES_WITH_APP_VERSION } from "../../queries/dashboardQueries";
+import { GET_MAC_APP_DISTRIBUTION, GET_MACS_WITH_APP_VERSION, GET_IPADS_WITH_APP_VERSION, GET_IPHONES_WITH_APP_VERSION } from "../../queries/dashboardQueries";
 import Spinner from "../../components/Spinner";
 
 export default function AppVersionsList() {
@@ -20,6 +20,7 @@ export default function AppVersionsList() {
 
   let queryType;
   if (deviceType === 'macos') {
+    // queryType = GET_MAC_APP_DISTRIBUTION;
     queryType = GET_MACS_WITH_APP_VERSION;
   } else if (deviceType === 'ipados') {
     queryType = GET_IPADS_WITH_APP_VERSION;
@@ -36,6 +37,7 @@ export default function AppVersionsList() {
   if (loading) return <Spinner />;
   if (error) return <p>Something went wrong!</p>;
   if (data) {
+    console.log(data);
     if (deviceType === 'macos') {
         data.macsWithAppVersion.forEach((device) => {
             const newObject = Object.assign({}, device, { type: "mac" });

@@ -12,9 +12,9 @@ export default function AllDeviceTable({ deviceData }) {
   function searchHandler(query) {
     const lowerQuery = query.toLowerCase();
     setSearchedDevices(
-      deviceData.filter((device) =>
-        device.QueryResponses.DeviceName.toLowerCase().includes(lowerQuery)
-      )
+      deviceData.filter((device) => {
+        return device.QueryResponses.DeviceName.toLowerCase().includes(lowerQuery) || device.SerialNumber.toLowerCase().includes(lowerQuery);
+      })
     );
   }
 
