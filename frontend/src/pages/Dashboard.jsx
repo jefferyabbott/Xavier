@@ -1,24 +1,48 @@
-import { useEffect, useState, useMemo, React } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_COMPLIANCE_DATA } from "../queries/dashboardQueries.js";
+import { FaEdit } from "react-icons/fa";
+
 import Spinner from "../components/Spinner.jsx";
 import DashboardCard from "../components/DashboardCard";
-import generateBooleanComplianceData from "../utilities/generateBooleanComplianceData.js";
-import generateOSVersionComplianceData from "../utilities/generateOSVersionComplianceData.js";
-import generateAppVersionComplianceData from "../utilities/generateAppVersionComplianceData.js";
-import generateProfileInstalledData from "../utilities/generateProfileInstalledData.js";
-import { FaEdit } from "react-icons/fa";
 import EditCardsModal from "../components/modals/EditCardsModal.jsx";
+import {
+  generateBooleanComplianceData,
+  generateOSVersionComplianceData,
+  generateAppVersionComplianceData,
+  generateProfileInstalledData
+} from "../utilities/complianceDataGenerators";
+
+const PLATFORM_DATA_MAP = {
+  macos: 'macs',
+  ios: 'iphones',
+  ipados: 'ipads'
+};
+
+const CARD_TYPE_GENERATORS = {
+  boolean: generateBooleanComplianceData,
+  profileInstalled: generateProfileInstalledData,
+  osVersion: generateOSVersionComplianceData,
+  appVersion: generateAppVersionComplianceData
+};
+
+const WelcomeMessage = () => (
+  <div className="welcomeMessage d-flex justify-content-center align-items-center flex-column">
+    <h2>Welcome to Xavier!</h2>
+    <h4>Click the edit button (top right) to build your custom dashboard.</h4>
+  </div>
+);
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [cardArray, setCardArray] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  let consoleUser;
-  const tokenStr = localStorage.getItem("user");
-  if (tokenStr) {
-    consoleUser = JSON.parse(tokenStr)._id;
-  }
+  const consoleUser = useMemo(() => {
+    const tokenStr = localStorage.getItem("user");
+    return tokenStr ? JSON.parse(tokenStr)._id : null;
+  }, []);
 
   useEffect(() => {
     if (!consoleUser) {
@@ -28,138 +52,83 @@ export default function Dashboard() {
 
   const { loading, error, data } = useQuery(GET_COMPLIANCE_DATA, {
     variables: { consoleUser },
+    skip: !consoleUser
   });
 
-  const [cardArray, setCardArray] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  useMemo(() => {
-    if (data && data.compliancecardprefs) {
+  useEffect(() => {
+    if (data?.compliancecardprefs) {
       setCardArray(data.compliancecardprefs.complianceCardPrefs);
     }
   }, [data]);
 
-  // TODO-
-  // move cards
+  const renderDashboardCard = (card, index) => {
+    const platformDataKey = PLATFORM_DATA_MAP[card.platform];
+    const platformData = data?.[platformDataKey];
+    
+    if (!platformData) return null;
 
-  function stopEditingCards() {
-    setIsModalVisible(false);
-  }
+    const generator = CARD_TYPE_GENERATORS[card.type];
+    if (!generator) return null;
 
-  function editCards() {
-    setIsModalVisible(true);
-  }
+    const cardData = card.type === 'osVersion' 
+      ? generator(platformData)
+      : generator(platformData, card.arg);
 
-  function updateCards(newCards) {
-    setCardArray(newCards);
-    setIsModalVisible(false);
-  }
+    return (
+      <DashboardCard
+        key={`compliancecard${index}`}
+        title={card.title}
+        data={cardData}
+        type={card.type}
+        platformType={card.platform}
+      />
+    );
+  };
 
   if (loading) return <Spinner />;
   if (error) return <p>Something went wrong</p>;
+  if (!data) return null;
 
-  if (data && !loading && !error) {
-    return (
-      <>
-        <div className='rightHeader'>
-          <div>
-            <button type='button' className='btn btn-dark' onClick={editCards}>
-              <FaEdit />
-            </button>
-          </div>
+  return (
+    <>
+      <div className="rightHeader">
+        <div>
+          <button 
+            type="button" 
+            className="btn btn-dark" 
+            onClick={() => setIsModalVisible(true)}
+          >
+            <FaEdit />
+          </button>
         </div>
+      </div>
 
-        <main className='d-flex flex-row justify-content-evenly flex-wrap'>
-          {cardArray.length === 0 ? (
-            <div className='welcomeMessage d-flex justify-content-center align-items-center flex-column'>
-              <h2>Welcome to Xavier!</h2>
-              <h4>
-                Click the edit button (top right) to build your custom
-                dashboard.
-              </h4>
-            </div>
-          ) : (
-            cardArray.map((card, index) => {
-              let platformData;
-              switch (card.platform) {
-                case "macos":
-                  platformData = data.macs;
-                  break;
-                case "ios":
-                  platformData = data.iphones;
-                  break;
-                case "ipados":
-                  platformData = data.ipads;
-                  break;
-                default:
-                  break;
-              }
-              if (card.type === "boolean") {
-                return (
-                  <DashboardCard
-                    title={card.title}
-                    data={generateBooleanComplianceData(platformData, card.arg)}
-                    type={card.type}
-                    platformType={card.platform}
-                    key={`compliancecard${index}`}
-                  />
-                );
-              } else if (card.type === "profileInstalled") {
-                return (
-                  <DashboardCard
-                    title={card.title}
-                    data={generateProfileInstalledData(platformData, card.arg)}
-                    type={card.type}
-                    platformType={card.platform}
-                    key={`compliancecard${index}`}
-                  />
-                );
-              } else if (card.type === "osVersion") {
-                return (
-                  <DashboardCard
-                    title={card.title}
-                    data={generateOSVersionComplianceData(platformData)}
-                    type={card.type}
-                    platformType={card.platform}
-                    key={`compliancecard${index}`}
-                  />
-                );
-              } else if (card.type === "appVersion") {
-                return (
-                  <DashboardCard
-                    title={card.title}
-                    data={generateAppVersionComplianceData(
-                      platformData,
-                      card.arg
-                    )}
-                    type={card.type}
-                    platformType={card.platform}
-                    key={`compliancecard${index}`}
-                  />
-                );
-              } else {
-                return null;
-              }
-            })
-          )}
+      <main className="d-flex flex-row justify-content-evenly flex-wrap">
+        {cardArray.length === 0 ? (
+          <WelcomeMessage />
+        ) : (
+          cardArray.map(renderDashboardCard)
+        )}
 
-          <EditCardsModal
-            visible={isModalVisible}
-            cardArray={cardArray}
-            macData={data.macs}
-            iPhoneData={data.iphones}
-            iPadData={data.ipads}
-            installedMacApps={data.installedMacApplications}
-            installediPhoneApps={data.installediPhoneApplications}
-            installediPadApps={data.installediPadApplications}
-            installedMacProfiles={data.installedMacProfiles}
-            installediPhoneProfiles={data.installediPhoneProfiles}
-            installediPadProfiles={data.installediPadProfiles}
-            stopEditingCards={stopEditingCards}
-            updateCards={updateCards}
-          />
-        </main>
-      </>
-    );
-  }
+        <EditCardsModal
+          visible={isModalVisible}
+          cardArray={cardArray}
+          macData={data.macs}
+          iPhoneData={data.iphones}
+          iPadData={data.ipads}
+          installedMacApps={data.installedMacApplications}
+          installediPhoneApps={data.installediPhoneApplications}
+          installediPadApps={data.installediPadApplications}
+          installedMacProfiles={data.installedMacProfiles}
+          installediPhoneProfiles={data.installediPhoneProfiles}
+          installediPadProfiles={data.installediPadProfiles}
+          stopEditingCards={() => setIsModalVisible(false)}
+          updateCards={(newCards) => {
+            setCardArray(newCards);
+            setIsModalVisible(false);
+          }}
+        />
+      </main>
+    </>
+  );
 }
