@@ -1,46 +1,64 @@
-import { useState, React } from "react";
+import { useState, useMemo } from "react";
 import AllDeviceRow from "./AllDeviceRow";
 import SearchBar from "./SearchBar";
 
 export default function AllDeviceTable({ deviceData }) {
-  const [searchedDevices, setSearchedDevices] = useState(
-    deviceData.sort((a, b) =>
-      a.QueryResponses.DeviceName > b.QueryResponses.DeviceName ? 1 : -1
-    )
-  );
-
-  function searchHandler(query) {
-    const lowerQuery = query.toLowerCase();
-    setSearchedDevices(
-      deviceData.filter((device) => {
-        return device.QueryResponses.DeviceName.toLowerCase().includes(lowerQuery) || device.SerialNumber.toLowerCase().includes(lowerQuery);
-      })
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // Sort devices once on initial render
+  const sortedDevices = useMemo(() => {
+    return [...deviceData].sort((a, b) => 
+      a.QueryResponses.DeviceName.localeCompare(b.QueryResponses.DeviceName)
     );
-  }
+  }, [deviceData]);
+  
+  // Filter devices based on search query
+  const searchedDevices = useMemo(() => {
+    const lowerQuery = searchQuery.toLowerCase().trim();
+    
+    if (!lowerQuery) return sortedDevices;
+    
+    return sortedDevices.filter((device) => {
+      return (
+        device.QueryResponses.DeviceName.toLowerCase().includes(lowerQuery) || 
+        device.SerialNumber.toLowerCase().includes(lowerQuery)
+      );
+    });
+  }, [sortedDevices, searchQuery]);
 
   return (
-    <div className='container'>
-      <div className='positionRightAndWithMargins'>
-        <SearchBar searchHandler={searchHandler} />
+    <div className="container">
+      <div className="positionRightAndWithMargins">
+        <SearchBar 
+          searchHandler={(query) => setSearchQuery(query)}
+          value={searchQuery}
+        />
       </div>
-
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>OS</th>
-            <th>serial number</th>
-            <th>name</th>
-            <th>model</th>
-            <th>OS version</th>
-            <th>checked in</th>
-          </tr>
-        </thead>
-        <tbody>
-          {searchedDevices.map((device) => (
-            <AllDeviceRow key={device.SerialNumber} device={device} />
-          ))}
-        </tbody>
-      </table>
+      
+      {searchedDevices.length === 0 ? (
+        <p className="text-center my-4">No devices found</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">OS</th>
+              <th scope="col">Serial Number</th>
+              <th scope="col">Name</th>
+              <th scope="col">Model</th>
+              <th scope="col">OS Version</th>
+              <th scope="col">Checked In</th>
+            </tr>
+          </thead>
+          <tbody>
+            {searchedDevices.map((device) => (
+              <AllDeviceRow 
+                key={device.SerialNumber} 
+                device={device} 
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

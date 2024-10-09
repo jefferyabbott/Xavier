@@ -1,39 +1,70 @@
-import React from "react";
-import { FaApple } from "react-icons/fa";
-// import { FaApple, FaChrome, FaWindows } from 'react-icons/fa';
+import { useMemo } from "react";
+import { FaApple, FaChrome, FaWindows } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import timeSince from "../utilities/timeSince.js";
+
+const OS_ICONS = {
+  apple: FaApple,
+  chrome: FaChrome,
+  windows: FaWindows,
+};
 
 export default function AllDeviceRow({ device }) {
   const navigate = useNavigate();
 
-  let type;
-  let linkAddress = `/${device.type}/`;
-  let osVersion;
+  const {
+    formattedLastCheckin,
+    deviceType,
+    linkAddress,
+    osVersion,
+    name
+  } = useMemo(() => {
+    const lastCheckin = timeSince(new Date(Number(device.updatedAt)));
+    const formattedLastCheckin = lastCheckin === "0 second" ? "just now" : lastCheckin;
 
-  let name;
-  const lastCheckin = timeSince(new Date(Number(device.updatedAt)));
+    // Determine OS type and icon
+    const deviceType = (() => {
+      const IconComponent = OS_ICONS[device.type?.toLowerCase()] || FaApple;
+      return <IconComponent className="text-gray-700" />;
+    })();
 
-  linkAddress += device.SerialNumber;
-  osVersion = device.QueryResponses.OSVersion
-    ? device.QueryResponses.OSVersion
-    : device.OSVersion;
-  name = device.QueryResponses.DeviceName;
-  type = <FaApple />;
+    const linkAddress = `/${device.type}/${device.SerialNumber}`;
+    
+    const osVersion = device.QueryResponses?.OSVersion || device.OSVersion;
+    const name = device.QueryResponses?.DeviceName;
 
-  function showDevice(url) {
-    navigate(url);
-  }
+    return {
+      formattedLastCheckin,
+      deviceType,
+      linkAddress,
+      osVersion,
+      name
+    };
+  }, [device]);
+
+  const handleClick = () => {
+    navigate(linkAddress);
+  };
 
   return (
-    <tr className='cursor' onClick={() => showDevice(linkAddress)}>
-      <td>{type}</td>
-      <td>{device.SerialNumber}</td>
-      <td>{name}</td>
-      <td>{device.ProductName}</td>
-      <td>{osVersion}</td>
-
-      <td>{lastCheckin === "0 second" ? "just now" : lastCheckin}</td>
+    <tr 
+      className="cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
+      <td className="py-2 px-4">{deviceType}</td>
+      <td className="py-2 px-4">{device.SerialNumber}</td>
+      <td className="py-2 px-4">{name}</td>
+      <td className="py-2 px-4">{device.ProductName}</td>
+      <td className="py-2 px-4">{osVersion}</td>
+      <td className="py-2 px-4">{formattedLastCheckin}</td>
     </tr>
   );
 }
