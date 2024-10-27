@@ -13,14 +13,13 @@ export default function AllDeviceRow({ device }) {
   const navigate = useNavigate();
 
   const {
-    formattedLastCheckin,
+    lastCheckin,
     deviceType,
     linkAddress,
     osVersion,
     name
   } = useMemo(() => {
-    const lastCheckin = timeSince(new Date(Number(device.updatedAt)));
-    const formattedLastCheckin = lastCheckin === "0 second" ? "just now" : lastCheckin;
+    const lastCheckin = timeSince(device.updatedAt);
 
     // Determine OS type and icon
     const deviceType = (() => {
@@ -34,7 +33,7 @@ export default function AllDeviceRow({ device }) {
     const name = device.QueryResponses?.DeviceName;
 
     return {
-      formattedLastCheckin,
+      lastCheckin,
       deviceType,
       linkAddress,
       osVersion,
@@ -64,7 +63,7 @@ export default function AllDeviceRow({ device }) {
       <td className="py-2 px-4">{name}</td>
       <td className="py-2 px-4">{device.ProductName}</td>
       <td className="py-2 px-4">{osVersion}</td>
-      <td className="py-2 px-4">{formattedLastCheckin}</td>
+      <td className="py-2 px-4">{lastCheckin}</td>
     </tr>
   );
 }

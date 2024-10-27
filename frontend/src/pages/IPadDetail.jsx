@@ -55,7 +55,7 @@ export default function IPadDetail() {
   if (loading) return <Spinner />;
   if (error) return <NotFound />;
 
-  const lastCheckin = timeSince(new Date(Number(data.ipad.updatedAt)));
+  const lastCheckin = timeSince(data.ipad.updatedAt);
 
   return (
     <>
@@ -66,7 +66,7 @@ export default function IPadDetail() {
               <h1>{data.ipad.QueryResponses.DeviceName}</h1>
               <h6>
                 Last seen{" "}
-                {lastCheckin === "0 second" ? "just now" : lastCheckin}
+                {lastCheckin}
               </h6>
             </div>
 
