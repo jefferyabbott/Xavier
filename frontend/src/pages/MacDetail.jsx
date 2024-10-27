@@ -94,7 +94,7 @@ export default function MacDetail() {
   if (loading) return <Spinner />;
   if (error) return <NotFound />;
 
-  const lastCheckin = timeSince(new Date(Number(data.mac.updatedAt)));
+  const lastCheckin = timeSince(data.mac.updatedAt);
 
   return (
     <>
@@ -105,7 +105,7 @@ export default function MacDetail() {
               <h1>{data.mac.QueryResponses.DeviceName}</h1>
               <h6>
                 Last seen{" "}
-                {lastCheckin === "0 second" ? "just now" : lastCheckin}
+                {lastCheckin}
               </h6>
             </div>
 
