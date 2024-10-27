@@ -1,31 +1,22 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@apollo/client";
 import { GET_MAC } from "../queries/macQueries";
-import Spinner from "../components/Spinner";
-import NotFound from "./NotFound";
-import AuditSymbolCompliance from "../components/AuditSymbolCompliance";
-import { FaBolt } from "react-icons/fa";
+import DeviceDetailBase from "../components/DeviceDetailBase";
 import {
   enableRemoteDesktop,
   disableRemoteDesktop,
   updateDeviceInventory,
   getAvailableSoftwareUpdates,
 } from "../commands/mdmCommands.js";
-import DetailTabs from "../components/DetailTabs.jsx";
-import RestartDeviceModal from "../components/modals/RestartDeviceModal.jsx";
-import InstallProfileModal from "../components/modals/InstallProfileModal.jsx";
-import RenameDeviceModal from "../components/modals/RenameDeviceModal.jsx";
-import ShutdownDeviceModal from "../components/modals/ShutdownDeviceModal.jsx";
-import LockDeviceModal from "../components/modals/LockDeviceModal.jsx";
-import EraseDeviceModal from "../components/modals/EraseDeviceModal.jsx";
+import RestartDeviceModal from '../components/modals/RestartDeviceModal.jsx';
+import InstallProfileModal from '../components/modals/InstallProfileModal.jsx';
+import RenameDeviceModal from '../components/modals/RenameDeviceModal.jsx';
+import ShutdownDeviceModal from '../components/modals/ShutdownDeviceModal.jsx';
+import LockDeviceModal from '../components/modals/LockDeviceModal.jsx';
+import EraseDeviceModal from '../components/modals/EraseDeviceModal.jsx';
 import PinHistoryTable from "../components/PinHistoryTable.jsx";
-import isAdministrator from "../utilities/checkPrivileges";
-import timeSince from "../utilities/timeSince.js";
+import { calculateStoragePercentage, formatMacAddress } from '../components/DeviceDetailBase';
 
 export default function MacDetail() {
-
-  const { SerialNumber } = useParams();
   const [showRestartDeviceModal, setShowRestartDeviceModal] = useState(false);
   const [showInstallProfileModal, setShowInstallProfileModal] = useState(false);
   const [showRenameDeviceModal, setShowRenameDeviceModal] = useState(false);
@@ -33,516 +24,161 @@ export default function MacDetail() {
   const [showLockDeviceModal, setShowLockDeviceModal] = useState(false);
   const [showEraseDeviceModal, setShowEraseDeviceModal] = useState(false);
   const [showPinHistory, setShowPinHistory] = useState(false);
-  
 
-  function displayRestartDeviceModal() {
-    setShowRestartDeviceModal(true);
-  }
+  const actionButtons = [
+    {
+      label: "Check for available software updates",
+      onClick: (device) => getAvailableSoftwareUpdates(device.UDID),
+    },
+    {
+      label: "Erase Device",
+      onClick: () => setShowEraseDeviceModal(true),
+    },
+    {
+      label: "Install Profile",
+      onClick: () => setShowInstallProfileModal(true),
+    },
+    {
+      label: "Lock Device",
+      onClick: () => setShowLockDeviceModal(true),
+    },
+    {
+      label: "Remote Desktop",
+      onClick: (device) => device.SecurityInfo.RemoteDesktopEnabled
+        ? disableRemoteDesktop(device.UDID)
+        : enableRemoteDesktop(device.UDID),
+      getLabel: (device) => `${device.SecurityInfo.RemoteDesktopEnabled ? "Disable" : "Enable"} Remote Desktop`
+    },
+    {
+      label: "Restart Device",
+      onClick: () => setShowRestartDeviceModal(true),
+    },
+    {
+      label: "Rename Device",
+      onClick: () => setShowRenameDeviceModal(true),
+    },
+    {
+      label: "Shutdown Device",
+      onClick: () => setShowShutdownDeviceModal(true),
+    },
+    {
+      label: "Update Device Inventory",
+      onClick: (device) => updateDeviceInventory("mac", device.UDID),
+    },
+  ];
 
-  function hideRestartDeviceModal() {
-    setShowRestartDeviceModal(false);
-  }
+  const infoSections = [
+    {
+      title: 'hardware',
+      getData: (device) => ({
+        "serial number": device.SerialNumber,
+        "architecture": device.QueryResponses.IsAppleSilicon ? "Apple Silicon" : "Intel",
+        "product name": device.QueryResponses.ProductName,
+        "model number": device.QueryResponses.ModelNumber,
+        "storage": calculateStoragePercentage(device),
+        "enrolled via DEP": device.SecurityInfo.EnrolledViaDEP,
+        "FileVault encryption": device.SecurityInfo.FDE_Enabled,
+        ...(device.unlockPins?.length > 0 && {
+          "unlock PIN": showPinHistory ? (
+            <PinHistoryTable
+              data={device.unlockPins}
+              hideShowPinHistoryTable={() => setShowPinHistory(false)}
+            />
+          ) : (
+            <div onClick={() => setShowPinHistory(true)}>click to view</div>
+          )
+        })
+      })
+    },
+    {
+      title: 'network',
+      getData: (device) => ({
+        "hostname": device.QueryResponses.HostName,
+        "local hostname": device.QueryResponses.LocalHostName,
+        "WiFi MAC address": formatMacAddress(device.QueryResponses.WiFiMAC),
+        "ethernet MAC address": formatMacAddress(device.QueryResponses.EthernetMAC),
+        "bluetooth MAC address": formatMacAddress(device.QueryResponses.BluetoothMAC),
+        "firewall": device.SecurityInfo.FirewallEnabled,
+        "firewall: block all incoming traffic": device.SecurityInfo.BlockAllIncoming,
+      })
+    },
+    {
+      title: 'operating system',
+      getData: (device) => ({
+        "macOS version": device.QueryResponses.OSVersion,
+        "build version": device.QueryResponses.BuildVersion,
+        "MDM profile installed": device.mdmProfileInstalled,
+        "SIP enabled": device.QueryResponses.SystemIntegrityProtectionEnabled,
+        "supervised": device.QueryResponses.IsSupervised,
+        "check for updates": device.QueryResponses.OSUpdateSettings.AutoCheckEnabled,
+        "download updates in background": device.QueryResponses.OSUpdateSettings.BackgroundDownloadEnabled,
+        "install macOS updates": device.QueryResponses.OSUpdateSettings.AutomaticOSInstallationEnabled,
+        "install App Store updates": device.QueryResponses.OSUpdateSettings.AutomaticAppInstallationEnabled,
+        "install security updates": device.QueryResponses.OSUpdateSettings.AutomaticSecurityUpdatesEnabled,
+        "remote desktop": device.SecurityInfo.RemoteDesktopEnabled,
+      })
+    },
+  ];
 
-  function displayInstallProfileModal() {
-    setShowInstallProfileModal(true);
-  }
-
-  function hideInstallProfileModal() {
-    setShowInstallProfileModal(false);
-  }
-
-  function displayRenameDeviceModal() {
-    setShowRenameDeviceModal(true);
-  }
-
-  function hideRenameDeviceModal() {
-    setShowRenameDeviceModal(false);
-  }
-
-  function displayShutdownDeviceModal() {
-    setShowShutdownDeviceModal(true);
-  }
-
-  function hideShutdownDeviceModal() {
-    setShowShutdownDeviceModal(false);
-  }
-
-  function displayLockDeviceModal() {
-    setShowLockDeviceModal(true);
-  }
-
-  function hideLockDeviceModal() {
-    setShowLockDeviceModal(false);
-  }
-
-  function displayEraseDeviceModal() {
-    setShowEraseDeviceModal(true);
-  }
-
-  function hideEraseDeviceModal() {
-    setShowEraseDeviceModal(false);
-  }
-
-  function hideShowPinHistoryTable() {
-    setShowPinHistory(false);
-  }
-
-  const { loading, error, data } = useQuery(GET_MAC, {
-    variables: { SerialNumber },
-  });
-
-  if (loading) return <Spinner />;
-  if (error) return <NotFound />;
-
-  const lastCheckin = timeSince(data.mac.updatedAt);
-
-  return (
+  const renderModals = (device) => (
     <>
-      {!loading && !error && (
-        <main>
-          <div className='header'>
-            <div>
-              <h1>{data.mac.QueryResponses.DeviceName}</h1>
-              <h6>
-                Last seen{" "}
-                {lastCheckin}
-              </h6>
-            </div>
-
-            {/* <h6>{data.mac.modelYear}</h6> */}
-
-            {/* conditionally render MDM actions dropdown if MDM profile is installed */}
-            <div>
-              {(() => {
-                if (data.mac.mdmProfileInstalled && isAdministrator()) {
-                  return (
-                    <div className='dropdown'>
-                      <button
-                        className='btn dropdown-toggle'
-                        type='button'
-                        data-bs-toggle='dropdown'
-                        aria-expanded='false'
-                      >
-                        <FaBolt />
-                      </button>
-                      <ul className='dropdown-menu hide'>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={() =>
-                              getAvailableSoftwareUpdates(data.mac.UDID)
-                            }
-                          >
-                            Check for available software updates
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={displayEraseDeviceModal}
-                          >
-                            Erase Device
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            href='#'
-                            onClick={displayInstallProfileModal}
-                          >
-                            Install Profile
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={displayLockDeviceModal}
-                          >
-                            Lock Device
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={() =>
-                              data.mac.SecurityInfo.RemoteDesktopEnabled
-                                ? disableRemoteDesktop(data.mac.UDID)
-                                : enableRemoteDesktop(data.mac.UDID)
-                            }
-                          >
-                            {data.mac.SecurityInfo.RemoteDesktopEnabled
-                              ? "Disable"
-                              : "Enable"}{" "}
-                            Remote Desktop
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={displayRestartDeviceModal}
-                          >
-                            Restart Device
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={displayRenameDeviceModal}
-                          >
-                            Rename Device
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={displayShutdownDeviceModal}
-                          >
-                            Shutdown Device
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            className='dropdown-item'
-                            onClick={() =>
-                              updateDeviceInventory("mac", data.mac.UDID)
-                            }
-                          >
-                            Update Device Inventory
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  );
-                }
-              })()}
-            </div>
-          </div>
-
-          <div className='row gx-5'>
-            <div className='col col-sm-12 col-md-6 col-xl-4'>
-              <h5>hardware</h5>
-              <div className='p-3 border bg-light'>
-                <table className='table'>
-                  <tbody>
-                    <tr>
-                      <td>serial number</td>
-                      <td>{data.mac.SerialNumber}</td>
-                    </tr>
-
-                    <tr>
-                      <td>architecture</td>
-                      <td>
-                        {data.mac.QueryResponses.IsAppleSilicon
-                          ? "Apple Silicon"
-                          : "Intel"}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>product name</td>
-                      <td>{data.mac.QueryResponses.ProductName}</td>
-                    </tr>
-                    <tr>
-                      <td>model number</td>
-                      <td>{data.mac.QueryResponses.ModelNumber}</td>
-                    </tr>
-                    <tr>
-                      <td>storage</td>
-                      <td>
-                        {Math.round(
-                          (data.mac.QueryResponses.AvailableDeviceCapacity /
-                            data.mac.QueryResponses.DeviceCapacity) *
-                            100
-                        )}
-                        % free of {data.mac.QueryResponses.DeviceCapacity} GB
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>enrolled via DEP</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.SecurityInfo.EnrolledViaDEP}
-                          />
-                        }
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>FileVault encryption</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.SecurityInfo.FDE_Enabled}
-                          />
-                        }
-                      </td>
-                    </tr>
-
-                    {data.mac.unlockPins && data.mac.unlockPins.length > 0 && (
-                      <tr>
-                        <td>unlock PIN</td>
-                        {showPinHistory ? (
-                          <PinHistoryTable
-                            data={data.mac.unlockPins}
-                            hideShowPinHistoryTable={hideShowPinHistoryTable}
-                          />
-                        ) : (
-                          <div onClick={() => setShowPinHistory(true)}>
-                            click to view
-                          </div>
-                        )}
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className='col col-sm-12 col-md-6 col-xl-4'>
-              <h5>network</h5>
-              <div className='p-3 border bg-light'>
-                <table className='table'>
-                  <tbody>
-                    <tr>
-                      <td>hostname</td>
-                      <td>{data.mac.QueryResponses.HostName}</td>
-                    </tr>
-                    <tr>
-                      <td>local hostname</td>
-                      <td>{data.mac.QueryResponses.LocalHostName}</td>
-                    </tr>
-
-                    {data.mac.QueryResponses.WiFiMAC && (
-                      <tr>
-                        <td>WiFi MAC address</td>
-                        <td>{data.mac.QueryResponses.WiFiMAC.toUpperCase()}</td>
-                      </tr>
-                    )}
-                    {data.mac.QueryResponses.EthernetMAC && (
-                      <tr>
-                        <td>ethernet MAC address</td>
-                        <td>
-                          {data.mac.QueryResponses.EthernetMAC.toUpperCase()}
-                        </td>
-                      </tr>
-                    )}
-                    {data.mac.QueryResponses.BluetoothMAC && (
-                      <tr>
-                        <td>bluetooth MAC address</td>
-                        <td>
-                          {data.mac.QueryResponses.BluetoothMAC.toUpperCase()}
-                        </td>
-                      </tr>
-                    )}
-                    <tr>
-                      <td>firewall</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.SecurityInfo.FirewallEnabled}
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>firewall: block all incoming traffic</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.SecurityInfo.BlockAllIncoming}
-                          />
-                        }
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className='col col-sm-12 col-md-6 col-xl-4'>
-              <h5>operating system</h5>
-              <div className='p-3 border bg-light'>
-                <table className='table'>
-                  <tbody>
-                    <tr>
-                      <td>macOS version</td>
-                      <td>{data.mac.QueryResponses.OSVersion}</td>
-                    </tr>
-
-                    <tr>
-                      <td>build version</td>
-                      <td>{data.mac.QueryResponses.BuildVersion}</td>
-                    </tr>
-                    <tr>
-                      <td>MDM profile installed</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.mdmProfileInstalled}
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>SIP enabled</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses
-                                .SystemIntegrityProtectionEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>supervised</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.QueryResponses.IsSupervised}
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>check for updates</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses.OSUpdateSettings
-                                .AutoCheckEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>download updates in background</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses.OSUpdateSettings
-                                .BackgroundDownloadEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>install macOS updates</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses.OSUpdateSettings
-                                .AutomaticOSInstallationEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>install App Store updates</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses.OSUpdateSettings
-                                .AutomaticAppInstallationEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>install security updates</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={
-                              data.mac.QueryResponses.OSUpdateSettings
-                                .AutomaticSecurityUpdatesEnabled
-                            }
-                          />
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>remote desktop</td>
-                      <td>
-                        {
-                          <AuditSymbolCompliance
-                            status={data.mac.SecurityInfo.RemoteDesktopEnabled}
-                          />
-                        }
-                      </td>
-                    </tr>
-
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <hr />
-
-          {/* tab controller */}
-          <DetailTabs device={data.mac}/>
-          
-          {showRestartDeviceModal ? (
-            <RestartDeviceModal
-              visible={showRestartDeviceModal}
-              UDID={data.mac.UDID}
-              hideRestartDeviceModal={hideRestartDeviceModal}
-            />
-          ) : null}
-          {showInstallProfileModal ? (
-            <InstallProfileModal
-              visible={showInstallProfileModal}
-              UDID={data.mac.UDID}
-              currentProfiles={data.mac.Profiles}
-              configProfiles={data.configProfiles}
-              hideInstallProfileModal={hideInstallProfileModal}
-            />
-          ) : null}
-          {showRenameDeviceModal ? (
-            <RenameDeviceModal
-              visible={showRenameDeviceModal}
-              UDID={data.mac.UDID}
-              platform='macOS'
-              oldName={data.mac.QueryResponses.DeviceName}
-              hideRenameDeviceModal={hideRenameDeviceModal}
-            />
-          ) : null}
-          {showShutdownDeviceModal ? (
-            <ShutdownDeviceModal
-              visible={showShutdownDeviceModal}
-              UDID={data.mac.UDID}
-              hideShutdownDeviceModal={hideShutdownDeviceModal}
-            />
-          ) : null}
-          {showLockDeviceModal ? (
-            <LockDeviceModal
-              visible={showLockDeviceModal}
-              UDID={data.mac.UDID}
-              hideLockDeviceModal={hideLockDeviceModal}
-            />
-          ) : null}
-          {showEraseDeviceModal ? (
-            <EraseDeviceModal
-              visible={showEraseDeviceModal}
-              UDID={data.ipad.UDID}
-              hideEraseDeviceModal={hideEraseDeviceModal}
-            />
-          ) : null}
-        </main>
+      {showRestartDeviceModal && (
+        <RestartDeviceModal
+          visible={showRestartDeviceModal}
+          UDID={device.UDID}
+          hideRestartDeviceModal={() => setShowRestartDeviceModal(false)}
+        />
+      )}
+      {showInstallProfileModal && (
+        <InstallProfileModal
+          visible={showInstallProfileModal}
+          UDID={device.UDID}
+          currentProfiles={device.Profiles}
+          configProfiles={device.configProfiles}
+          hideInstallProfileModal={() => setShowInstallProfileModal(false)}
+        />
+      )}
+      {showRenameDeviceModal && (
+        <RenameDeviceModal
+          visible={showRenameDeviceModal}
+          UDID={device.UDID}
+          platform='macOS'
+          oldName={device.QueryResponses.DeviceName}
+          hideRenameDeviceModal={() => setShowRenameDeviceModal(false)}
+        />
+      )}
+      {showShutdownDeviceModal && (
+        <ShutdownDeviceModal
+          visible={showShutdownDeviceModal}
+          UDID={device.UDID}
+          hideShutdownDeviceModal={() => setShowShutdownDeviceModal(false)}
+        />
+      )}
+      {showLockDeviceModal && (
+        <LockDeviceModal
+          visible={showLockDeviceModal}
+          UDID={device.UDID}
+          hideLockDeviceModal={() => setShowLockDeviceModal(false)}
+        />
+      )}
+      {showEraseDeviceModal && (
+        <EraseDeviceModal
+          visible={showEraseDeviceModal}
+          UDID={device.UDID}
+          hideEraseDeviceModal={() => setShowEraseDeviceModal(false)}
+        />
       )}
     </>
+  );
+
+  return (
+    <DeviceDetailBase
+      query={GET_MAC}
+      deviceType="mac"
+      getDeviceData={(data) => data.mac}
+      actionButtons={actionButtons}
+      renderModals={renderModals}
+      infoSections={infoSections}
+    />
   );
 }
