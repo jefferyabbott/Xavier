@@ -1,41 +1,18 @@
-import { useEffect, React } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import AllDeviceTable from "../../components/AllDeviceTable";
-import { useQuery } from "@apollo/client";
-import { GET_MAC_ENCRYPTION_LIST } from "../../queries/dashboardQueries";
-import Spinner from "../../components/Spinner";
+import { useParams } from 'react-router-dom';
+import DeviceListBase from '../../components/DeviceListBase';
+import { GET_MAC_ENCRYPTION_LIST } from '../../queries/dashboardQueries';
 
-export default function MacEncryptionList() {
-  let { FDE_Enabled } = useParams();
-  FDE_Enabled = (FDE_Enabled === 'true');
+const MacEncryptionList = () => {
+  const { FDE_Enabled } = useParams();
   
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  return (
+    <DeviceListBase
+      query={GET_MAC_ENCRYPTION_LIST}
+      variables={{ FDE_Enabled: FDE_Enabled === 'true' }}
+      dataKey="encryptedMacs"
+      deviceType="mac"
+    />
+  );
+};
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
-
-  const { loading, error, data } = useQuery(GET_MAC_ENCRYPTION_LIST, {
-    variables: { FDE_Enabled }
-  });
-
-  const combinedData = [];
-
-  if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong!</p>;
-  if (data) {
-    data.encryptedMacs.forEach((device) => {
-      const newObject = Object.assign({}, device, { type: "mac" });
-      combinedData.push(newObject);
-    });
-  }
-
-  if (!loading && !error) {
-    return <AllDeviceTable deviceData={combinedData} />;
-  }
-}
-
+export default MacEncryptionList;

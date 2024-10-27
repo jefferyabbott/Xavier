@@ -1,63 +1,41 @@
-import { useEffect, React } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import AllDeviceTable from "../../components/AllDeviceTable";
-import { useQuery } from "@apollo/client";
-import { GET_MAC_APP_DISTRIBUTION, GET_MACS_WITH_APP_VERSION, GET_IPADS_WITH_APP_VERSION, GET_IPHONES_WITH_APP_VERSION } from "../../queries/dashboardQueries";
-import Spinner from "../../components/Spinner";
+import { useParams } from 'react-router-dom';
+import DeviceListBase from '../../components/DeviceListBase';
+import { 
+  GET_MACS_WITH_APP_VERSION,
+  GET_IPADS_WITH_APP_VERSION,
+  GET_IPHONES_WITH_APP_VERSION 
+} from '../../queries/dashboardQueries';
 
-export default function AppVersionsList() {
-  let { deviceType, Name, Version } = useParams();
-  
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
-
-  let queryType;
-  if (deviceType === 'macos') {
-    // queryType = GET_MAC_APP_DISTRIBUTION;
-    queryType = GET_MACS_WITH_APP_VERSION;
-  } else if (deviceType === 'ipados') {
-    queryType = GET_IPADS_WITH_APP_VERSION;
-  } else if (deviceType === 'ios') {
-    queryType = GET_IPHONES_WITH_APP_VERSION;
+const DEVICE_CONFIGS = {
+  macos: {
+    query: GET_MACS_WITH_APP_VERSION,
+    dataKey: 'macsWithAppVersion',
+    deviceType: 'mac'
+  },
+  ipados: {
+    query: GET_IPADS_WITH_APP_VERSION,
+    dataKey: 'iPadsWithAppVersion',
+    deviceType: 'ipados'
+  },
+  ios: {
+    query: GET_IPHONES_WITH_APP_VERSION,
+    dataKey: 'iPhonesWithAppVersion',
+    deviceType: 'iphone'
   }
+};
 
-  const { loading, error, data } = useQuery(queryType, {
-    variables: { Name, Version }
-  });
+const AppVersionsList = () => {
+  const { deviceType, Name, Version } = useParams();
 
-  const combinedData = [];
+  const config = DEVICE_CONFIGS[deviceType];
+  if (!config) return null;
 
-  if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong!</p>;
-  if (data) {
-    console.log(data);
-    if (deviceType === 'macos') {
-        data.macsWithAppVersion.forEach((device) => {
-            const newObject = Object.assign({}, device, { type: "mac" });
-            combinedData.push(newObject);
-          });
-      } else if (deviceType === 'ipados') {
-        data.iPadsWithAppVersion.forEach((device) => {
-            const newObject = Object.assign({}, device, { type: "ipados" });
-            combinedData.push(newObject);
-          });
-      } else if (deviceType === 'ios') {
-        data.iPhonesWithAppVersion.forEach((device) => {
-            const newObject = Object.assign({}, device, { type: "iphone" });
-            combinedData.push(newObject);
-          });
-      }
-  }
+  return (
+    <DeviceListBase
+      {...config}
+      variables={{ Name, Version }}
+    />
+  );
+};
 
-  if (!loading && !error) {
-    return <AllDeviceTable deviceData={combinedData} />;
-  }
-}
-
+export default AppVersionsList;

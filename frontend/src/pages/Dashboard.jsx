@@ -1,18 +1,17 @@
-import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@apollo/client";
-import { GET_COMPLIANCE_DATA } from "../queries/dashboardQueries.js";
-import { FaEdit } from "react-icons/fa";
-
-import Spinner from "../components/Spinner.jsx";
-import DashboardCard from "../components/DashboardCard";
-import EditCardsModal from "../components/modals/EditCardsModal.jsx";
+import { useEffect, useMemo, useCallback, useState, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
+import { GET_COMPLIANCE_DATA } from '../queries/dashboardQueries.js';
+import { FaEdit } from 'react-icons/fa';
+import Spinner from '../components/Spinner.jsx';
+import DashboardCard from '../components/DashboardCard';
+import EditCardsModal from '../components/modals/EditCardsModal.jsx';
 import {
   generateBooleanComplianceData,
   generateOSVersionComplianceData,
   generateAppVersionComplianceData,
   generateProfileInstalledData
-} from "../utilities/complianceDataGenerators";
+} from '../utilities/complianceDataGenerators';
 
 const PLATFORM_DATA_MAP = {
   macos: 'macs',
@@ -27,50 +26,73 @@ const CARD_TYPE_GENERATORS = {
   appVersion: generateAppVersionComplianceData
 };
 
-const WelcomeMessage = () => (
+const WelcomeMessage = memo(() => (
   <div className="welcomeMessage d-flex justify-content-center align-items-center flex-column">
     <h2>Welcome to Xavier!</h2>
     <h4>Click the edit button (top right) to build your custom dashboard.</h4>
   </div>
-);
+));
 
-export default function Dashboard() {
+// Custom hook for auth state
+const useAuthCheck = () => {
   const navigate = useNavigate();
-  const [cardArray, setCardArray] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
+  
   const consoleUser = useMemo(() => {
-    const tokenStr = localStorage.getItem("user");
-    return tokenStr ? JSON.parse(tokenStr)._id : null;
+    try {
+      const tokenStr = localStorage.getItem('user');
+      return tokenStr ? JSON.parse(tokenStr)._id : null;
+    } catch (error) {
+      console.error('Error parsing user token:', error);
+      return null;
+    }
   }, []);
 
   useEffect(() => {
     if (!consoleUser) {
-      navigate("/login");
+      navigate('/login');
     }
   }, [consoleUser, navigate]);
 
+  return consoleUser;
+};
+
+// Custom hook for dashboard data
+const useDashboardData = (consoleUser) => {
   const { loading, error, data } = useQuery(GET_COMPLIANCE_DATA, {
     variables: { consoleUser },
-    skip: !consoleUser
+    skip: !consoleUser,
+    fetchPolicy: 'cache-and-network'
   });
 
-  useEffect(() => {
-    if (data?.compliancecardprefs) {
-      setCardArray(data.compliancecardprefs.complianceCardPrefs);
-    }
-  }, [data]);
+  const cardArray = useMemo(() => 
+    data?.compliancecardprefs?.complianceCardPrefs || [], 
+    [data]
+  );
 
-  const renderDashboardCard = (card, index) => {
+  return { loading, error, data, cardArray };
+};
+
+const Dashboard = () => {
+  const consoleUser = useAuthCheck();
+  const { loading, error, data, cardArray } = useDashboardData(consoleUser);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [cards, setCards] = useState(cardArray);
+
+  useEffect(() => {
+    setCards(cardArray);
+  }, [cardArray]);
+
+  // Memoized card rendering function
+  const renderDashboardCard = useCallback((card, index) => {
     const platformDataKey = PLATFORM_DATA_MAP[card.platform];
     const platformData = data?.[platformDataKey];
     
     if (!platformData) return null;
-
+    
     const generator = CARD_TYPE_GENERATORS[card.type];
     if (!generator) return null;
-
-    const cardData = card.type === 'osVersion' 
+    
+    const cardData = card.type === 'osVersion'
       ? generator(platformData)
       : generator(platformData, card.arg);
 
@@ -83,52 +105,67 @@ export default function Dashboard() {
         platformType={card.platform}
       />
     );
-  };
+  }, [data]);
+
+  // Modal handlers
+  const handleModalClose = useCallback(() => setIsModalVisible(false), []);
+  
+  const handleCardsUpdate = useCallback((newCards) => {
+    setCards(newCards);
+    setIsModalVisible(false);
+  }, []);
 
   if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong</p>;
+  if (error) {
+    console.error('Dashboard error:', error);
+    return (
+      <div className="alert alert-danger m-3">
+        Error loading dashboard data. Please try refreshing the page.
+      </div>
+    );
+  }
   if (!data) return null;
+
+  const modalProps = {
+    visible: isModalVisible,
+    cardArray: cards,
+    macData: data.macs,
+    iPhoneData: data.iphones,
+    iPadData: data.ipads,
+    installedMacApps: data.installedMacApplications,
+    installediPhoneApps: data.installediPhoneApplications,
+    installediPadApps: data.installediPadApplications,
+    installedMacProfiles: data.installedMacProfiles,
+    installediPhoneProfiles: data.installediPhoneProfiles,
+    installediPadProfiles: data.installediPadProfiles,
+    stopEditingCards: handleModalClose,
+    updateCards: handleCardsUpdate
+  };
 
   return (
     <>
       <div className="rightHeader">
-        <div>
-          <button 
-            type="button" 
-            className="btn btn-dark" 
-            onClick={() => setIsModalVisible(true)}
-          >
-            <FaEdit />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="btn btn-dark"
+          onClick={() => setIsModalVisible(true)}
+          aria-label="Edit Dashboard"
+        >
+          <FaEdit />
+        </button>
       </div>
-
+      
       <main className="d-flex flex-row justify-content-evenly flex-wrap">
-        {cardArray.length === 0 ? (
+        {cards.length === 0 ? (
           <WelcomeMessage />
         ) : (
-          cardArray.map(renderDashboardCard)
+          cards.map(renderDashboardCard)
         )}
-
-        <EditCardsModal
-          visible={isModalVisible}
-          cardArray={cardArray}
-          macData={data.macs}
-          iPhoneData={data.iphones}
-          iPadData={data.ipads}
-          installedMacApps={data.installedMacApplications}
-          installediPhoneApps={data.installediPhoneApplications}
-          installediPadApps={data.installediPadApplications}
-          installedMacProfiles={data.installedMacProfiles}
-          installediPhoneProfiles={data.installediPhoneProfiles}
-          installediPadProfiles={data.installediPadProfiles}
-          stopEditingCards={() => setIsModalVisible(false)}
-          updateCards={(newCards) => {
-            setCardArray(newCards);
-            setIsModalVisible(false);
-          }}
-        />
+        
+        <EditCardsModal {...modalProps} />
       </main>
     </>
   );
-}
+};
+
+export default memo(Dashboard);

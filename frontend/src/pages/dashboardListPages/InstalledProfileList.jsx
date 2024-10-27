@@ -1,101 +1,59 @@
-import { useEffect, React } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import AllDeviceTable from "../../components/AllDeviceTable";
-import { useQuery } from "@apollo/client";
-import { GET_ALL_MACS_AND_PROFILES, GET_ALL_IPADS_AND_PROFILES, GET_ALL_IPHONES_AND_PROFILES } from "../../queries/allDevicesQuery";
-import Spinner from "../../components/Spinner";
+import { useParams } from 'react-router-dom';
+import DeviceListBase from '../../components/DeviceListBase';
+import { 
+  GET_ALL_MACS_AND_PROFILES,
+  GET_ALL_IPADS_AND_PROFILES,
+  GET_ALL_IPHONES_AND_PROFILES 
+} from '../../queries/allDevicesQuery';
 
-export default function InstalledProfileList() {
-  let { deviceType, profile, value } = useParams();
-  value = value === 'true';
-  
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
-
-  let query = '';
-  let type;
-  switch (deviceType) {
-    case 'macos':
-        query = GET_ALL_MACS_AND_PROFILES;
-        type = 'mac';
-        break;
-    case 'ios':
-        query = GET_ALL_IPHONES_AND_PROFILES;
-        type = 'iphone';
-        break;
-    case 'ipados':
-        query = GET_ALL_IPADS_AND_PROFILES;
-        type = 'ipad';
-        break;
-    default:
-        break;
+const PROFILE_CONFIGS = {
+  macos: {
+    query: GET_ALL_MACS_AND_PROFILES,
+    dataKey: 'macs',
+    deviceType: 'mac'
+  },
+  ios: {
+    query: GET_ALL_IPHONES_AND_PROFILES,
+    dataKey: 'iphones',
+    deviceType: 'iphone'
+  },
+  ipados: {
+    query: GET_ALL_IPADS_AND_PROFILES,
+    dataKey: 'ipads',
+    deviceType: 'ipad'
   }
-  const { loading, error, data } = useQuery(query);
+};
 
-  const combinedData = [];
+const InstalledProfileList = () => {
+  const { deviceType, profile, value } = useParams();
+  const boolValue = value === 'true';
 
-  if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong!</p>;
-  if (data) {
-    let devicesWithProfile = [];
-    if (deviceType === 'macos') {
-        devicesWithProfile = data.macs.filter((mac) => {
-          let profileInstalled = false;
-            mac.Profiles.forEach((pr) => {
-                if (pr.PayloadDisplayName === profile) {
-                    profileInstalled = true;
-                }
-            })
-            if (value === true) {
-              return profileInstalled;
-            } else {
-              return !profileInstalled;
-            }
-        });
-    } else if (deviceType === 'ios') {
-      devicesWithProfile = data.iphones.filter((iphone) => {
-        let profileInstalled = false;
-          iphone.Profiles.forEach((pr) => {
-              if (pr.PayloadDisplayName === profile) {
-                  profileInstalled = true;
-              }
-          })
-          if (value === true) {
-            return profileInstalled;
-          } else {
-            return !profileInstalled;
-          }
-      });
-    } else if (deviceType === 'ipados') {
-      devicesWithProfile = data.ipads.filter((ipad) => {
-        let profileInstalled = false;
-          ipad.Profiles.forEach((pr) => {
-              if (pr.PayloadDisplayName === profile) {
-                  profileInstalled = true;
-              }
-          })
-          if (value === true) {
-            return profileInstalled;
-          } else {
-            return !profileInstalled;
-          }
-      });
-    }
-    devicesWithProfile.forEach((device) => {
-      const newObject = Object.assign({}, device, { type: type });
-      combinedData.push(newObject);
-    });
-  }
+  const config = PROFILE_CONFIGS[deviceType];
+  if (!config) return null;
 
-  if (!loading && !error) {
-    return <AllDeviceTable deviceData={combinedData} />;
-  }
-}
+  const transformData = (devices) => {
+    return devices
+      .filter(device => {
+        const hasProfile = device.Profiles.some(
+          pr => pr.PayloadDisplayName === profile
+        );
+        return boolValue ? hasProfile : !hasProfile;
+      })
+      .map(device => ({
+        ...device,
+        type: config.deviceType
+      }));
+  };
+
+  return (
+    <DeviceListBase
+      query={config.query}
+      dataKey={config.dataKey}
+      deviceType={config.deviceType}
+      transformData={transformData}
+    />
+  );
+};
+
+export default InstalledProfileList;
 
