@@ -1,63 +1,53 @@
-import React from "react";
-import { useQuery } from "@apollo/client";
-import { GET_USER_INFO } from "../queries/userQueries.js";
-import Spinner from "./Spinner.jsx";
-import AuditSymbolCompliance from "./AuditSymbolCompliance.jsx";
+import React, { useMemo } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_USER_INFO } from '../queries/userQueries.js';
+import Spinner from './Spinner';
+import AuditSymbolCompliance from './AuditSymbolCompliance';
 
-export default function MDMLogRow({ logData }) {
-  const dateOptions = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
+const formatDate = (timestamp) => {
+  const date = new Date(Number(timestamp));
+  return {
+    date: date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    }),
+    time: date.toLocaleTimeString('en-US'),
   };
+};
 
-  const requestDate = new Date(Number(logData.createdAt)).toLocaleDateString(
-    undefined,
-    dateOptions
-  );
-  const responseDate = new Date(Number(logData.updatedAt)).toLocaleDateString(
-    undefined,
-    dateOptions
-  );
-  const requestTime = new Date(Number(logData.createdAt)).toLocaleTimeString(
-    "en-US"
-  );
-  const responseTime = new Date(Number(logData.updatedAt)).toLocaleTimeString(
-    "en-US"
-  );
-
+const MDMLogRow = ({ logData }) => {
   const { loading, error, data } = useQuery(GET_USER_INFO, {
     variables: { userId: logData.Requester },
   });
 
-  if (loading) return <Spinner />;
-  if (error) return <p>Data not found</p>;
+  const dates = useMemo(() => ({
+    request: formatDate(logData.createdAt),
+    response: formatDate(logData.updatedAt),
+  }), [logData.createdAt, logData.updatedAt]);
 
-  if (data) {
-    return (
-      <>
-        {!loading && !error && (
-          <tr
-            key={logData.CommandUUID}
-            className={logData.Response ? "" : "table-danger"}
-          >
-            <td>{`${requestDate} ${requestTime}`}</td>
-            <td>{logData.RequestType}</td>
-            <td>{data.lookupUser.name}</td>
-            {/* <td>Approved by</td> */}
-            {logData.Response ? (
-              <td>
-                <AuditSymbolCompliance
-                  status={logData.Response === "Acknowledged"}
-                />
-                {` ${responseDate} ${responseTime}`}
-              </td>
-            ) : (
-              <td>no response</td>
-            )}
-          </tr>
+  if (loading) return <tr><td colSpan="4"><Spinner /></td></tr>;
+  if (error) return <tr><td colSpan="4">Data not found</td></tr>;
+
+  return (
+    <tr className={logData.Response ? '' : 'table-danger'}>
+      <td>{`${dates.request.date} ${dates.request.time}`}</td>
+      <td>{logData.RequestType}</td>
+      <td>{data?.lookupUser?.name}</td>
+      <td>
+        {logData.Response ? (
+          <>
+            <AuditSymbolCompliance status={logData.Response === 'Acknowledged'} />
+            {` ${dates.response.date} ${dates.response.time}`}
+          </>
+        ) : (
+          'no response'
         )}
-      </>
-    );
-  }
-}
+      </td>
+    </tr>
+  );
+};
+
+export default React.memo(MDMLogRow, (prevProps, nextProps) => {
+  return prevProps.logData.CommandUUID === nextProps.logData.CommandUUID;
+});
