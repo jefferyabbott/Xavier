@@ -20,6 +20,14 @@ import complianceCardPrefs from '../models/complianceCard.js';
 import command from '../models/commandHistory.js';
 
 // Input Types
+const ApplicationFilterInput = new GraphQLInputObjectType({
+  name: 'ApplicationFilter',
+  fields: {
+    Name: { type: GraphQLString },
+    Version: { type: GraphQLString }
+  }
+});
+
 const ApplicationVersionFilterInput = new GraphQLInputObjectType({
   name: 'ApplicationVersionFilter',
   fields: {
@@ -345,7 +353,13 @@ const DeviceInterface = new GraphQLInterfaceType({
     Profiles: { type: new GraphQLList(ProfileType) },
     CertificateList: { type: new GraphQLList(CertificateType) },
     createdAt: { type: GraphQLString },
-    updatedAt: { type: GraphQLString }
+    updatedAt: { type: GraphQLString },
+    filteredApplications: {
+      type: new GraphQLList(ApplicationType),
+      args: {
+        filters: { type: new GraphQLList(ApplicationFilterInput) }
+      }
+    }
   },
   resolveType(device) {
     if (device.ProductName.includes('MacBook') || device.ProductName.includes('iMac')) {
@@ -379,10 +393,28 @@ const MacType = new GraphQLObjectType({
     Applications: { type: new GraphQLList(ApplicationType) },
     Profiles: { type: new GraphQLList(ProfileType) },
     CertificateList: { type: new GraphQLList(CertificateType) },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString },
     unlockPins: { type: new GraphQLList(UnlockPinType) },
     AvailableSoftwareUpdates: { type: new GraphQLList(AvailableSoftwareUpdatesType) },
-    createdAt: { type: GraphQLString },
-    updatedAt: { type: GraphQLString }
+    filteredApplications: {
+      type: new GraphQLList(ApplicationType),
+      args: {
+        filters: { type: new GraphQLList(ApplicationFilterInput) }
+      },
+      resolve(parent, { filters }) {
+        if (!filters || filters.length === 0) return [];
+        return parent.Applications.filter(app => 
+          filters.some(filter => {
+            const nameMatch = filter.Name === app.Name;
+            if (filter.Version) {
+              return nameMatch && filter.Version === app.Version;
+            }
+            return nameMatch;
+          })
+        );
+      }
+    }
   })
 });
 
@@ -403,7 +435,25 @@ const iPhoneType = new GraphQLObjectType({
     Profiles: { type: new GraphQLList(ProfileType) },
     CertificateList: { type: new GraphQLList(CertificateType) },
     createdAt: { type: GraphQLString },
-    updatedAt: { type: GraphQLString }
+    updatedAt: { type: GraphQLString },
+    filteredApplications: {
+      type: new GraphQLList(ApplicationType),
+      args: {
+        filters: { type: new GraphQLList(ApplicationFilterInput) }
+      },
+      resolve(parent, { filters }) {
+        if (!filters || filters.length === 0) return [];
+        return parent.Applications.filter(app => 
+          filters.some(filter => {
+            const nameMatch = filter.Name === app.Name;
+            if (filter.Version) {
+              return nameMatch && filter.Version === app.Version;
+            }
+            return nameMatch;
+          })
+        );
+      }
+    }
   })
 });
 
@@ -424,7 +474,25 @@ const iPadType = new GraphQLObjectType({
     Profiles: { type: new GraphQLList(ProfileType) },
     CertificateList: { type: new GraphQLList(CertificateType) },
     createdAt: { type: GraphQLString },
-    updatedAt: { type: GraphQLString }
+    updatedAt: { type: GraphQLString },
+    filteredApplications: {
+      type: new GraphQLList(ApplicationType),
+      args: {
+        filters: { type: new GraphQLList(ApplicationFilterInput) }
+      },
+      resolve(parent, { filters }) {
+        if (!filters || filters.length === 0) return [];
+        return parent.Applications.filter(app => 
+          filters.some(filter => {
+            const nameMatch = filter.Name === app.Name;
+            if (filter.Version) {
+              return nameMatch && filter.Version === app.Version;
+            }
+            return nameMatch;
+          })
+        );
+      }
+    }
   })
 });
 
@@ -764,6 +832,44 @@ const RootQuery = new GraphQLObjectType({
       args: { userId: { type: GraphQLID }},
       resolve(parent, args) {
         return consoleUser.findOne({'_id': args.userId}).select(['-password']);
+      }
+    },
+    deviceApplications: {
+      type: new GraphQLList(ApplicationType),
+      args: {
+        deviceId: { type: GraphQLString },
+        deviceType: { type: GraphQLString },
+        appNames: { type: new GraphQLList(GraphQLString) }
+      },
+      async resolve(parent, { deviceId, deviceType, appNames }) {
+        let device;
+        
+        // Get the device based on type
+        switch(deviceType) {
+          case 'mac':
+            device = await macOSDevice.findOne({ SerialNumber: deviceId });
+            break;
+          case 'iphone':
+            device = await iOSDevice.findOne({ SerialNumber: deviceId });
+            break;
+          case 'ipad':
+            device = await iPadOSDevice.findOne({ SerialNumber: deviceId });
+            break;
+        }
+        
+        if (!device || !device.Applications) return [];
+        
+        // If specific apps requested, filter for those
+        if (appNames && appNames.length > 0) {
+          return device.Applications.filter(app => 
+            appNames.includes(app.Name)
+          );
+        }
+        
+        // Otherwise return just basic info
+        return device.Applications.map(app => ({
+          Name: app.Name
+        }));
       }
     }
   }

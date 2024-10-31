@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback, useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { GET_COMPLIANCE_DATA } from '../queries/dashboardQueries.js';
+import { GET_OPTIMIZED_COMPLIANCE_DATA } from '../queries/dashboardQueries.js';
 import { FaEdit } from 'react-icons/fa';
 import Spinner from '../components/Spinner.jsx';
 import DashboardCard from '../components/DashboardCard';
@@ -58,70 +58,66 @@ const useAuthCheck = () => {
 };
 
 const useDashboardData = (consoleUser) => {
-    const { loading, error, data, fetchMore } = useQuery(GET_COMPLIANCE_DATA, {
-        variables: {
-            consoleUser,
-            first: ITEMS_PER_PAGE,
-            after: null
-        },
-        skip: !consoleUser,
-        fetchPolicy: 'cache-and-network'
+    const { loading, error, data, fetchMore } = useQuery(GET_OPTIMIZED_COMPLIANCE_DATA, {
+      variables: {
+        consoleUser,
+        first: ITEMS_PER_PAGE,
+        after: null
+      },
+      skip: !consoleUser,
+      fetchPolicy: 'cache-and-network'
     });
-
+  
     const transformedData = useMemo(() => {
-        if (!data) return null;
-
-        return {
-            ...data,
-            macs: data.macs?.edges?.map(edge => edge.node) || [],
-            iphones: data.iphones?.edges?.map(edge => edge.node) || [],
-            ipads: data.ipads?.edges?.map(edge => edge.node) || [],
-        };
+      if (!data) return null;
+  
+      return {
+        ...data,
+        macs: data.macs?.edges?.map(edge => edge.node) || [],
+        iphones: data.iphones?.edges?.map(edge => edge.node) || [],
+        ipads: data.ipads?.edges?.map(edge => edge.node) || []
+      };
     }, [data]);
-
-    const cardArray = useMemo(() => 
-        data?.compliancecardprefs?.complianceCardPrefs || [],
-        [data]
-    );
-
+  
     const loadMore = async (type) => {
-        if (!data?.[type]?.pageInfo?.hasNextPage) return;
-
-        await fetchMore({
-            variables: {
-                first: ITEMS_PER_PAGE,
-                after: data[type].pageInfo.endCursor
-            },
-            updateQuery: (prev, { fetchMoreResult }) => {
-                if (!fetchMoreResult) return prev;
-
-                return {
-                    ...prev,
-                    [type]: {
-                        ...fetchMoreResult[type],
-                        edges: [
-                            ...prev[type].edges,
-                            ...fetchMoreResult[type].edges
-                        ]
-                    }
-                };
+      if (!data?.[type]?.pageInfo?.hasNextPage) return;
+  
+      await fetchMore({
+        variables: {
+          consoleUser,
+          first: ITEMS_PER_PAGE,
+          after: data[type].pageInfo.endCursor
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+  
+          return {
+            ...prev,
+            [type]: {
+              ...fetchMoreResult[type],
+              edges: [
+                ...prev[type].edges,
+                ...fetchMoreResult[type].edges
+              ]
             }
-        });
-    };
-
-    return {
-        loading,
-        error,
-        data: transformedData,
-        cardArray,
-        loadMore,
-        hasNextPage: {
-            macs: data?.macs?.pageInfo?.hasNextPage,
-            iphones: data?.iphones?.pageInfo?.hasNextPage,
-            ipads: data?.ipads?.pageInfo?.hasNextPage
+          };
         }
+      });
     };
-};
+  
+    return {
+      loading,
+      error,
+      data: transformedData,
+      cardArray: data?.compliancecardprefs?.complianceCardPrefs || [],
+      loadMore,
+      hasNextPage: {
+        macs: data?.macs?.pageInfo?.hasNextPage,
+        iphones: data?.iphones?.pageInfo?.hasNextPage,
+        ipads: data?.ipads?.pageInfo?.hasNextPage
+      }
+    };
+  };
 
 const Dashboard = () => {
     const consoleUser = useAuthCheck();

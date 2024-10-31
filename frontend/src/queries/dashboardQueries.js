@@ -445,6 +445,132 @@ const GET_IPADS_WITH_PROFILES = gql`
     }
 `;
 
+const GET_OPTIMIZED_COMPLIANCE_DATA = gql`
+  query getOptimizedComplianceData(
+    $consoleUser: ID!,
+    $first: Int,
+    $after: String
+  ) {
+    installedMacApplications
+    installediPhoneApplications
+    installediPadApplications
+    installedMacProfiles
+    installediPhoneProfiles
+    installediPadProfiles
+    compliancecardprefs(consoleUser: $consoleUser) {
+      complianceCardPrefs {
+        type
+        title
+        arg
+        platform
+      }
+    }
+    macs(first: $first, after: $after) {
+      edges {
+        node {
+          SerialNumber
+          UDID
+          mdmProfileInstalled
+          BuildVersion
+          OSVersion
+          ProductName
+          QueryResponses {
+            OSVersion
+            SystemIntegrityProtectionEnabled
+            DeviceName
+          }
+          SecurityInfo {
+            FDE_Enabled
+          }
+          Applications {
+            Name
+            Version
+            ShortVersion
+            BundleSize
+            Installing
+          }
+          Profiles {
+            PayloadDisplayName
+          }
+          createdAt
+          updatedAt
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      totalCount
+    }
+    iphones(first: $first, after: $after) {
+      edges {
+        node {
+          SerialNumber
+          UDID
+          mdmProfileInstalled
+          BuildVersion
+          OSVersion
+          ProductName
+          QueryResponses {
+            OSVersion
+            DeviceName
+          }
+          Applications {
+            Name
+            Version
+            ShortVersion
+            BundleSize
+            Installing
+          }
+          Profiles {
+            PayloadDisplayName
+          }
+          createdAt
+          updatedAt
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      totalCount
+    }
+    ipads(first: $first, after: $after) {
+      edges {
+        node {
+          SerialNumber
+          UDID
+          mdmProfileInstalled
+          BuildVersion
+          OSVersion
+          ProductName
+          QueryResponses {
+            OSVersion
+            DeviceName
+          }
+          Applications {
+            Name
+            Version
+            ShortVersion
+            BundleSize
+            Installing
+          }
+          Profiles {
+            PayloadDisplayName
+          }
+          createdAt
+          updatedAt
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      totalCount
+    }
+  }
+`;
+
 export {
     GET_COMPLIANCE_DATA,
     GET_MAC_ENCRYPTION_LIST,
@@ -459,5 +585,6 @@ export {
     GET_MAC_APP_DISTRIBUTION,
     GET_MACS_WITH_PROFILES,
     GET_IPADS_WITH_PROFILES,
-    GET_IPHONES_WITH_PROFILES
+    GET_IPHONES_WITH_PROFILES,
+    GET_OPTIMIZED_COMPLIANCE_DATA
 };
