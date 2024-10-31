@@ -729,42 +729,6 @@ const RootQuery = new GraphQLObjectType({
         return iOSDevice.find({"Applications": { $elemMatch: { "Name": args.Name, "Version": args.Version } }});
       }
     },
-    macApplicationVersions: {
-      type: new GraphQLList(ApplicationVersionInfoType),
-      args: { 
-        applicationName: { type: GraphQLString },
-      },
-      async resolve(parent, args, context) {
-        return context.applicationLoader.load(args.applicationName);
-      }
-    },
-    macApplicationVersionDistribution: {
-      type: new GraphQLList(new GraphQLObjectType({
-        name: 'versionDistribution',
-        fields: () => ({
-          version: { type: GraphQLString },
-          deviceCount: { type: GraphQLInt }
-        })
-      })),
-      args: {
-        applicationName: { type: GraphQLString }
-      },
-      resolve(parent, args) {
-        return macOSDevice.aggregate([
-          { $unwind: '$Applications' },
-          { $match: { 'Applications.Name': args.applicationName } },
-          { $group: {
-            _id: '$Applications.Version',
-            deviceCount: { $sum: 1 }
-          }},
-          { $project: {
-            version: '$_id',
-            deviceCount: 1,
-            _id: 0
-          }}
-        ]);
-      }
-    },
     compliancecardprefs: {
       type: ComplianceCardPrefsType,
       args: { consoleUser: { type: GraphQLID }},

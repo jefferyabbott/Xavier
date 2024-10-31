@@ -1,98 +1,5 @@
 import { gql } from '@apollo/client';
 
-// Base compliance data query
-const GET_COMPLIANCE_DATA = gql`
-    query getComplianceData($consoleUser: ID!, $first: Int, $after: String) {
-        installedMacApplications
-        installediPhoneApplications
-        installediPadApplications
-        installedMacProfiles
-        installediPhoneProfiles
-        installediPadProfiles
-        compliancecardprefs(consoleUser: $consoleUser) {
-            complianceCardPrefs {
-                type
-                title
-                arg
-                platform
-            }
-        }
-        macs(first: $first, after: $after) {
-            edges {
-                node {
-                    SerialNumber
-                    mdmProfileInstalled
-                    QueryResponses {
-                        OSVersion
-                        SystemIntegrityProtectionEnabled
-                    }
-                    SecurityInfo {
-                        FDE_Enabled
-                    }
-                    Applications {
-                        Name
-                        Version
-                    }
-                    Profiles {
-                        PayloadDisplayName
-                    }
-                }
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
-            }
-            totalCount
-        }
-        iphones(first: $first, after: $after) {
-            edges {
-                node {
-                    SerialNumber
-                    mdmProfileInstalled
-                    QueryResponses {
-                        OSVersion
-                    }
-                    Applications {
-                        Name
-                        Version
-                    }
-                    Profiles {
-                        PayloadDisplayName
-                    }
-                }
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
-            }
-            totalCount
-        }
-        ipads(first: $first, after: $after) {
-            edges {
-                node {
-                    SerialNumber
-                    mdmProfileInstalled
-                    QueryResponses {
-                        OSVersion
-                    }
-                    Applications {
-                        Name
-                        Version
-                    }
-                    Profiles {
-                        PayloadDisplayName
-                    }
-                }
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
-            }
-            totalCount
-        }
-    }
-`;
-
 // Device security queries
 const GET_MAC_ENCRYPTION_LIST = gql`
     query getMacEncryptionList($FDE_Enabled: Boolean!, $first: Int, $after: String) {
@@ -572,7 +479,6 @@ const GET_OPTIMIZED_COMPLIANCE_DATA = gql`
 `;
 
 export {
-    GET_COMPLIANCE_DATA,
     GET_MAC_ENCRYPTION_LIST,
     GET_MAC_SIP_LIST,
     GET_MDM_ENROLLED_MACS,
