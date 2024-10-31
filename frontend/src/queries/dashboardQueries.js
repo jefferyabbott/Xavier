@@ -1,7 +1,8 @@
 import { gql } from '@apollo/client';
 
+// Base compliance data query
 const GET_COMPLIANCE_DATA = gql`
-    query getComplianceData($consoleUser: ID!) {
+    query getComplianceData($consoleUser: ID!, $first: Int, $after: String) {
         installedMacApplications
         installediPhoneApplications
         installediPadApplications
@@ -16,138 +17,255 @@ const GET_COMPLIANCE_DATA = gql`
                 platform
             }
         }
-        macs {
-            SerialNumber
-            mdmProfileInstalled
-            QueryResponses {
-                OSVersion
-                SystemIntegrityProtectionEnabled
+        macs(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    mdmProfileInstalled
+                    QueryResponses {
+                        OSVersion
+                        SystemIntegrityProtectionEnabled
+                    }
+                    SecurityInfo {
+                        FDE_Enabled
+                    }
+                    Applications {
+                        Name
+                        Version
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                }
             }
-            SecurityInfo {
-                FDE_Enabled
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            Applications {
-                Name
-                Version
-            }
-            Profiles {
-                PayloadDisplayName
-            }
+            totalCount
         }
-        iphones {
-            SerialNumber
-            mdmProfileInstalled
-            QueryResponses {
-                OSVersion
+        iphones(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    mdmProfileInstalled
+                    QueryResponses {
+                        OSVersion
+                    }
+                    Applications {
+                        Name
+                        Version
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                }
             }
-            Applications {
-                Name
-                Version
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            Profiles {
-                PayloadDisplayName
-            }
+            totalCount
         }
-        ipads {
-            SerialNumber
-            mdmProfileInstalled
-            QueryResponses {
-                OSVersion
+        ipads(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    mdmProfileInstalled
+                    QueryResponses {
+                        OSVersion
+                    }
+                    Applications {
+                        Name
+                        Version
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                }
             }
-            Applications {
-                Name
-                Version
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            Profiles {
-                PayloadDisplayName
-            }
+            totalCount
         }
     }
-`
+`;
 
+// Device security queries
 const GET_MAC_ENCRYPTION_LIST = gql`
-    query getMacEncryptionList($FDE_Enabled: Boolean!) {
-        encryptedMacs(FDE_Enabled: $FDE_Enabled) {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getMacEncryptionList($FDE_Enabled: Boolean!, $first: Int, $after: String) {
+        encryptedMacs(FDE_Enabled: $FDE_Enabled, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    SecurityInfo {
+                        FDE_Enabled
+                    }
+                    updatedAt
+                }
             }
-            SecurityInfo {
-                FDE_Enabled
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            updatedAt
+            totalCount
         }
     }
-`
+`;
 
 const GET_MAC_SIP_LIST = gql`
-    query getMacSIPList($SystemIntegrityProtectionEnabled: Boolean!) {
-        sipMacs(SystemIntegrityProtectionEnabled: $SystemIntegrityProtectionEnabled) {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-                SystemIntegrityProtectionEnabled
+    query getMacSIPList($SystemIntegrityProtectionEnabled: Boolean!, $first: Int, $after: String) {
+        sipMacs(SystemIntegrityProtectionEnabled: $SystemIntegrityProtectionEnabled, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        SystemIntegrityProtectionEnabled
+                    }
+                    updatedAt
+                }
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
     }
-`
+`;
+
 
 const GET_MDM_ENROLLED_MACS = gql`
-    query getMDMEnrolledMacs($mdmProfileInstalled: Boolean!) {
-        mdmEnrolledMacs(mdmProfileInstalled: $mdmProfileInstalled) {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            mdmProfileInstalled
-            QueryResponses {
-                DeviceName
+    query getMDMEnrolledMacs($mdmProfileInstalled: Boolean!, $first: Int, $after: String) {
+        mdmEnrolledMacs(mdmProfileInstalled: $mdmProfileInstalled, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    mdmProfileInstalled
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                        IsManaged
+                    }
+                    updatedAt
+                }
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
     }
-`
+`;
 
+// OS Version queries
 const GET_MACS_BY_OSVERSION = gql`
-    query getMacsByOSVersion($OSVersion: String!) {
-        macsByOSVersion(OSVersion: $OSVersion) {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getMacsByOSVersion($OSVersion: String!, $first: Int, $after: String) {
+        macs(filter: { OSVersion: $OSVersion }, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
     }
-`
+`;
 
 const GET_IPADS_BY_OSVERSION = gql`
-    query getiPadsByOSVersion($OSVersion: String!) {
-        iPadsByOSVersion(OSVersion: $OSVersion) {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getiPadsByOSVersion($OSVersion: String!, $first: Int, $after: String) {
+        ipads(filter: { OSVersion: $OSVersion }, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
     }
-`
+`;
 
 const GET_IPHONES_BY_OSVERSION = gql`
-    query getiPhonesByOSVersion($OSVersion: String!) {
-        iPhonesByOSVersion(OSVersion: $OSVersion) {
+    query getiPhonesByOSVersion($OSVersion: String!, $first: Int, $after: String) {
+        iphones(filter: { OSVersion: $OSVersion }, first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
+        }
+    }
+`;
+
+
+// Application version queries
+const GET_MACS_WITH_APP_VERSION = gql`
+    query getMacsWithAppVersion($Name: String!, $Version: String!) {
+        macsWithAppVersion(Name: $Name, Version: $Version) {
             SerialNumber
             ProductName
             OSVersion
@@ -155,79 +273,191 @@ const GET_IPHONES_BY_OSVERSION = gql`
             QueryResponses {
                 DeviceName
             }
+            Applications {
+                Name
+                Version
+                ShortVersion
+                BundleSize
+                Installing
+            }
+            Profiles {
+                PayloadDisplayName
+            }
             updatedAt
         }
     }
-`
+`;
 
-const GET_MACS_WITH_APP_VERSION = gql`
-query getMacsWithAppVersion($Name: String!, $Version: String!) {
-    macsWithAppVersion(Name: $Name, Version: $Version) {
-        SerialNumber
-        ProductName
-        OSVersion
-        UDID
-        QueryResponses {
-            DeviceName
-        }
-        Applications {
-            Name
-            Version
-        }
-        updatedAt
-    }
-}
-`
 
 const GET_IPADS_WITH_APP_VERSION = gql`
-query getiPadsWithAppVersion($Name: String!, $Version: String!) {
-    iPadsWithAppVersion(Name: $Name, Version: $Version) {
-        SerialNumber
-        ProductName
-        OSVersion
-        UDID
-        QueryResponses {
-            DeviceName
+    query getiPadsWithAppVersion($Name: String!, $Version: String!) {
+        iPadsWithAppVersion(Name: $Name, Version: $Version) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            Applications {
+                Name
+                Version
+                ShortVersion
+                BundleSize
+                Installing
+            }
+            Profiles {
+                PayloadDisplayName
+            }
+            updatedAt
         }
-        Applications {
-            Name
-            Version
-        }
-        updatedAt
     }
-}
-`
+`;
 
 const GET_IPHONES_WITH_APP_VERSION = gql`
-query getiPhonesWithAppVersion($Name: String!, $Version: String!) {
-    iPhonesWithAppVersion(Name: $Name, Version: $Version) {
-        SerialNumber
-        ProductName
-        OSVersion
-        UDID
-        QueryResponses {
-            DeviceName
+    query getiPhonesWithAppVersion($Name: String!, $Version: String!) {
+        iPhonesWithAppVersion(Name: $Name, Version: $Version) {
+            SerialNumber
+            ProductName
+            OSVersion
+            UDID
+            QueryResponses {
+                DeviceName
+            }
+            Applications {
+                Name
+                Version
+                ShortVersion
+                BundleSize
+                Installing
+            }
+            Profiles {
+                PayloadDisplayName
+            }
+            updatedAt
         }
-        Applications {
-            Name
-            Version
-        }
-        updatedAt
     }
-}
-`
+`;
 
+// Application distribution query
 const GET_MAC_APP_DISTRIBUTION = gql`
-  query getMacAppDistribution($Name: String!){
-    macApplicationVersionDistribution(applicationName: $Name) {
-      version
-      deviceCount
+    query getMacAppDistribution($Name: String!) {
+        macApplicationVersionDistribution(applicationName: $Name) {
+            version
+            deviceCount
+        }
     }
-}
-`
+`;
+
+// Profile queries for each device type
 
 
+const GET_MACS_WITH_PROFILES = gql`
+    query getMacsWithProfiles($first: Int, $after: String) {
+        macs(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                        PayloadIdentifier
+                        PayloadUUID
+                        PayloadVersion
+                        IsManaged
+                    }
+                    updatedAt
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
+        }
+    }
+`;
 
+const GET_IPHONES_WITH_PROFILES = gql`
+    query getIPhonesWithProfiles($first: Int, $after: String) {
+        iphones(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                        PayloadIdentifier
+                        PayloadUUID
+                        PayloadVersion
+                        IsManaged
+                    }
+                    updatedAt
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
+        }
+    }
+`;
 
-export { GET_MAC_APP_DISTRIBUTION, GET_COMPLIANCE_DATA, GET_MAC_ENCRYPTION_LIST, GET_MAC_SIP_LIST, GET_MDM_ENROLLED_MACS, GET_MACS_BY_OSVERSION, GET_IPADS_BY_OSVERSION, GET_IPHONES_BY_OSVERSION, GET_MACS_WITH_APP_VERSION, GET_IPADS_WITH_APP_VERSION, GET_IPHONES_WITH_APP_VERSION };
+const GET_IPADS_WITH_PROFILES = gql`
+    query getIPadsWithProfiles($first: Int, $after: String) {
+        ipads(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                        PayloadIdentifier
+                        PayloadUUID
+                        PayloadVersion
+                        IsManaged
+                    }
+                    updatedAt
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
+        }
+    }
+`;
 
+export {
+    GET_COMPLIANCE_DATA,
+    GET_MAC_ENCRYPTION_LIST,
+    GET_MAC_SIP_LIST,
+    GET_MDM_ENROLLED_MACS,
+    GET_MACS_BY_OSVERSION,
+    GET_IPADS_BY_OSVERSION,
+    GET_IPHONES_BY_OSVERSION,
+    GET_MACS_WITH_APP_VERSION,
+    GET_IPADS_WITH_APP_VERSION,
+    GET_IPHONES_WITH_APP_VERSION,
+    GET_MAC_APP_DISTRIBUTION,
+    GET_MACS_WITH_PROFILES,
+    GET_IPADS_WITH_PROFILES,
+    GET_IPHONES_WITH_PROFILES
+};

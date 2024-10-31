@@ -1,137 +1,152 @@
 import { gql } from '@apollo/client';
 
 const GET_ALL_DEVICES = gql`
-    query getAllDevices {
-        macs {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-                OSVersion
+    query getAllDevices($first: Int, $after: String) {
+        macs(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    updatedAt
+                }
+                cursor
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
-        iphones {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-                OSVersion
+        iphones(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    updatedAt
+                }
+                cursor
             }
-            updatedAt
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
         }
-        ipads {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-                OSVersion
+        ipads(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                        OSVersion
+                    }
+                    updatedAt
+                }
+                cursor
             }
-            updatedAt
-        }
-    }
-`
-
-const GET_ALL_MACS = gql`
-    query getAllDevices {
-        macs {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-        }
-    }
-`
-
-const GET_ALL_IPADS = gql`
-    query getAllDevices {
-        ipads {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-            }
-        }
-    }
-`
-
-const GET_ALL_IPHONES = gql`
-    query getAllDevices {
-        iphones {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
-            }
+            totalCount
         }
     }
-`
+`;
 
 const GET_ALL_MACS_AND_PROFILES = gql`
-    query getAllDevices {
-        macs {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getAllDevices($first: Int, $after: String) {
+        macs(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
             }
-            Profiles {
-                PayloadDisplayName
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            updatedAt
+            totalCount
         }
     }
-`
+`;
 
 const GET_ALL_IPADS_AND_PROFILES = gql`
-    query getAllDevices {
-        ipads {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getAllDevices($first: Int, $after: String) {
+        ipads(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
             }
-            Profiles {
-                PayloadDisplayName
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            updatedAt
+            totalCount
         }
     }
-`
+`;
 
 const GET_ALL_IPHONES_AND_PROFILES = gql`
-    query getAllDevices {
-        iphones {
-            SerialNumber
-            ProductName
-            OSVersion
-            UDID
-            QueryResponses {
-                DeviceName
+    query getAllDevices($first: Int, $after: String) {
+        iphones(first: $first, after: $after) {
+            edges {
+                node {
+                    SerialNumber
+                    ProductName
+                    OSVersion
+                    UDID
+                    QueryResponses {
+                        DeviceName
+                    }
+                    Profiles {
+                        PayloadDisplayName
+                    }
+                    updatedAt
+                }
             }
-            Profiles {
-                PayloadDisplayName
+            pageInfo {
+                hasNextPage
+                endCursor
             }
-            updatedAt
+            totalCount
         }
     }
-`
+`;
 
-export { GET_ALL_DEVICES, GET_ALL_IPADS, GET_ALL_IPHONES, GET_ALL_MACS, GET_ALL_MACS_AND_PROFILES, GET_ALL_IPADS_AND_PROFILES, GET_ALL_IPHONES_AND_PROFILES };
+export { GET_ALL_DEVICES, GET_ALL_IPADS_AND_PROFILES, GET_ALL_MACS_AND_PROFILES, GET_ALL_IPHONES_AND_PROFILES };

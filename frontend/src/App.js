@@ -14,16 +14,10 @@ import AllDevices from './pages/AllDevices';
 import MacDetail from './pages/MacDetail';
 import IPhoneDetail from './pages/IPhoneDetail';
 import IPadDetail from './pages/IPadDetail';
-import InstalledProfileList from './pages/dashboardListPages/InstalledProfileList.jsx';
-import MacEncryptionList from './pages/dashboardListPages/MacEncryptionList.jsx';
-import MacSIPList from './pages/dashboardListPages/MacSIPList.jsx';
-import MacMDMEnrolledList from './pages/dashboardListPages/MacMDMEnrolledList.jsx';
-import DeviceByOSVersionList from './pages/dashboardListPages/DeviceByOSVersionList.jsx';
-import AppVersionsList from './pages/dashboardListPages/AppVersionsList.jsx';
+import FilteredDeviceList from './pages/dashboardListPages/FilteredDeviceList';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ScrollToTop } from './components/ScrollToTop.jsx';
-
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -61,37 +55,37 @@ const client = new ApolloClient({
 function App() {
   return (
     <>
-    <ApolloProvider client={client}>
-      <Router>
-        <ScrollToTop />
-        <Navbar/>
-        <div className='page'>
-        <Sidebar/>
-          <div className='container'>
-            <Routes>
-              <Route path="/login" element={<Login />}/>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/all" element={<AllDevices />} />
-              <Route path="/applications" element={<Applications />} />
-              <Route path="/profiles" element={<Profiles />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/mac/:SerialNumber" element={<MacDetail />} />
-              <Route path="/iphone/:SerialNumber" element={<IPhoneDetail />} />
-              <Route path="/ipad/:SerialNumber" element={<IPadDetail />} />
-              <Route path="/macos/encryptionStatus/:FDE_Enabled" element={<MacEncryptionList />} />
-              <Route path="/macos/sipStatus/:SystemIntegrityProtectionEnabled" element={<MacSIPList />} />
-              <Route path="/macos/mdmEnrolled/:mdmProfileInstalled" element={<MacMDMEnrolledList />} />
-              <Route path="/installedProfile/:deviceType/:profile/:value" element={<InstalledProfileList />} />
-              <Route path="/devicesByOSVersion/:deviceType/:OSVersion" element={<DeviceByOSVersionList />} />
-              <Route path="/devicesWithAppVersion/:deviceType/:Name/:Version" element={<AppVersionsList />} />
-              <Route path="*" element={<NotFound />} /> 
-            </Routes>
+      <ApolloProvider client={client}>
+        <Router>
+          <ScrollToTop />
+          <Navbar/>
+          <div className='page'>
+            <Sidebar/>
+            <div className='container'>
+              <Routes>
+                <Route path="/login" element={<Login />}/>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/all" element={<AllDevices />} />
+                <Route path="/applications" element={<Applications />} />
+                <Route path="/profiles" element={<Profiles />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/mac/:SerialNumber" element={<MacDetail />} />
+                <Route path="/iphone/:SerialNumber" element={<IPhoneDetail />} />
+                <Route path="/ipad/:SerialNumber" element={<IPadDetail />} />
+
+                <Route path="/filter/:filterType/:value" element={<FilteredDeviceList />} />
+                <Route path="/filter/profile/:profile/:value/:deviceType" element={<FilteredDeviceList />} />
+                <Route path="/filter/osversion/:deviceType/:OSVersion" element={<FilteredDeviceList />} />
+                <Route path="/filter/appversion/:deviceType/:Name/:Version" element={<FilteredDeviceList />} />
+
+                <Route path="*" element={<NotFound />} /> 
+              </Routes>
+            </div>
           </div>
-        </div>
         </Router>
         <ToastContainer position="bottom-right" theme="colored"/>
-    </ApolloProvider>
-  </>
+      </ApolloProvider>
+    </>
   );
 }
 

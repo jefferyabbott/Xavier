@@ -7,164 +7,222 @@ import Spinner from '../components/Spinner.jsx';
 import DashboardCard from '../components/DashboardCard';
 import EditCardsModal from '../components/modals/EditCardsModal.jsx';
 import {
-  generateBooleanComplianceData,
-  generateOSVersionComplianceData,
-  generateAppVersionComplianceData,
-  generateProfileInstalledData
+    generateBooleanComplianceData,
+    generateOSVersionComplianceData,
+    generateAppVersionComplianceData,
+    generateProfileInstalledData
 } from '../utilities/complianceDataGenerators';
 
 const PLATFORM_DATA_MAP = {
-  macos: 'macs',
-  ios: 'iphones',
-  ipados: 'ipads'
+    macos: 'macs',
+    ios: 'iphones',
+    ipados: 'ipads'
 };
 
 const CARD_TYPE_GENERATORS = {
-  boolean: generateBooleanComplianceData,
-  profileInstalled: generateProfileInstalledData,
-  osVersion: generateOSVersionComplianceData,
-  appVersion: generateAppVersionComplianceData
+    boolean: generateBooleanComplianceData,
+    profileInstalled: generateProfileInstalledData,
+    osVersion: generateOSVersionComplianceData,
+    appVersion: generateAppVersionComplianceData
 };
+
+const ITEMS_PER_PAGE = 1000; // Adjust based on your needs
 
 const WelcomeMessage = memo(() => (
-  <div className="welcomeMessage d-flex justify-content-center align-items-center flex-column">
-    <h2>Welcome to Xavier!</h2>
-    <h4>Click the edit button (top right) to build your custom dashboard.</h4>
-  </div>
+    <div className="welcomeMessage d-flex justify-content-center align-items-center flex-column">
+        <h2>Welcome to Xavier!</h2>
+        <h4>Click the edit button (top right) to build your custom dashboard.</h4>
+    </div>
 ));
 
-// Custom hook for auth state
 const useAuthCheck = () => {
-  const navigate = useNavigate();
-  
-  const consoleUser = useMemo(() => {
-    try {
-      const tokenStr = localStorage.getItem('user');
-      return tokenStr ? JSON.parse(tokenStr)._id : null;
-    } catch (error) {
-      console.error('Error parsing user token:', error);
-      return null;
-    }
-  }, []);
+    const navigate = useNavigate();
+    
+    const consoleUser = useMemo(() => {
+        try {
+            const tokenStr = localStorage.getItem('user');
+            return tokenStr ? JSON.parse(tokenStr)._id : null;
+        } catch (error) {
+            console.error('Error parsing user token:', error);
+            return null;
+        }
+    }, []);
 
-  useEffect(() => {
-    if (!consoleUser) {
-      navigate('/login');
-    }
-  }, [consoleUser, navigate]);
+    useEffect(() => {
+        if (!consoleUser) {
+            navigate('/login');
+        }
+    }, [consoleUser, navigate]);
 
-  return consoleUser;
+    return consoleUser;
 };
 
-// Custom hook for dashboard data
 const useDashboardData = (consoleUser) => {
-  const { loading, error, data } = useQuery(GET_COMPLIANCE_DATA, {
-    variables: { consoleUser },
-    skip: !consoleUser,
-    fetchPolicy: 'cache-and-network'
-  });
+    const { loading, error, data, fetchMore } = useQuery(GET_COMPLIANCE_DATA, {
+        variables: {
+            consoleUser,
+            first: ITEMS_PER_PAGE,
+            after: null
+        },
+        skip: !consoleUser,
+        fetchPolicy: 'cache-and-network'
+    });
 
-  const cardArray = useMemo(() => 
-    data?.compliancecardprefs?.complianceCardPrefs || [], 
-    [data]
-  );
+    const transformedData = useMemo(() => {
+        if (!data) return null;
 
-  return { loading, error, data, cardArray };
+        return {
+            ...data,
+            macs: data.macs?.edges?.map(edge => edge.node) || [],
+            iphones: data.iphones?.edges?.map(edge => edge.node) || [],
+            ipads: data.ipads?.edges?.map(edge => edge.node) || [],
+        };
+    }, [data]);
+
+    const cardArray = useMemo(() => 
+        data?.compliancecardprefs?.complianceCardPrefs || [],
+        [data]
+    );
+
+    const loadMore = async (type) => {
+        if (!data?.[type]?.pageInfo?.hasNextPage) return;
+
+        await fetchMore({
+            variables: {
+                first: ITEMS_PER_PAGE,
+                after: data[type].pageInfo.endCursor
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+                if (!fetchMoreResult) return prev;
+
+                return {
+                    ...prev,
+                    [type]: {
+                        ...fetchMoreResult[type],
+                        edges: [
+                            ...prev[type].edges,
+                            ...fetchMoreResult[type].edges
+                        ]
+                    }
+                };
+            }
+        });
+    };
+
+    return {
+        loading,
+        error,
+        data: transformedData,
+        cardArray,
+        loadMore,
+        hasNextPage: {
+            macs: data?.macs?.pageInfo?.hasNextPage,
+            iphones: data?.iphones?.pageInfo?.hasNextPage,
+            ipads: data?.ipads?.pageInfo?.hasNextPage
+        }
+    };
 };
 
 const Dashboard = () => {
-  const consoleUser = useAuthCheck();
-  const { loading, error, data, cardArray } = useDashboardData(consoleUser);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [cards, setCards] = useState(cardArray);
+    const consoleUser = useAuthCheck();
+    const { loading, error, data, cardArray, loadMore, hasNextPage } = useDashboardData(consoleUser);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [cards, setCards] = useState(cardArray);
 
-  useEffect(() => {
-    setCards(cardArray);
-  }, [cardArray]);
+    useEffect(() => {
+        setCards(cardArray);
+    }, [cardArray]);
 
-  // Memoized card rendering function
-  const renderDashboardCard = useCallback((card, index) => {
-    const platformDataKey = PLATFORM_DATA_MAP[card.platform];
-    const platformData = data?.[platformDataKey];
+    const renderDashboardCard = useCallback((card, index) => {
+        const platformDataKey = PLATFORM_DATA_MAP[card.platform];
+        const platformData = data?.[platformDataKey];
+        
+        if (!platformData) return null;
+        
+        const generator = CARD_TYPE_GENERATORS[card.type];
+        if (!generator) return null;
+        
+        const cardData = card.type === 'osVersion'
+            ? generator(platformData)
+            : generator(platformData, card.arg);
+
+        return (
+            <DashboardCard
+                key={`compliancecard${index}`}
+                title={card.title}
+                data={cardData}
+                type={card.type}
+                platformType={card.platform}
+                onLoadMore={() => loadMore(platformDataKey)}
+                hasMoreData={hasNextPage[platformDataKey]}
+            />
+        );
+    }, [data, loadMore, hasNextPage]);
+
+    const handleModalClose = useCallback(() => setIsModalVisible(false), []);
     
-    if (!platformData) return null;
-    
-    const generator = CARD_TYPE_GENERATORS[card.type];
-    if (!generator) return null;
-    
-    const cardData = card.type === 'osVersion'
-      ? generator(platformData)
-      : generator(platformData, card.arg);
+    const handleCardsUpdate = useCallback((newCards) => {
+        setCards(newCards);
+        setIsModalVisible(false);
+    }, []);
 
-    return (
-      <DashboardCard
-        key={`compliancecard${index}`}
-        title={card.title}
-        data={cardData}
-        type={card.type}
-        platformType={card.platform}
-      />
-    );
-  }, [data]);
+    if (loading) return <Spinner />;
+    if (error) {
+        console.error('Dashboard error:', error);
+        return (
+            <div className="alert alert-danger m-3">
+                Error loading dashboard data. Please try refreshing the page.
+            </div>
+        );
+    }
+    if (!data) return null;
 
-  // Modal handlers
-  const handleModalClose = useCallback(() => setIsModalVisible(false), []);
-  
-  const handleCardsUpdate = useCallback((newCards) => {
-    setCards(newCards);
-    setIsModalVisible(false);
-  }, []);
-
-  if (loading) return <Spinner />;
-  if (error) {
-    console.error('Dashboard error:', error);
-    return (
-      <div className="alert alert-danger m-3">
-        Error loading dashboard data. Please try refreshing the page.
-      </div>
-    );
-  }
-  if (!data) return null;
-
-  const modalProps = {
-    visible: isModalVisible,
-    cardArray: cards,
-    macData: data.macs,
-    iPhoneData: data.iphones,
-    iPadData: data.ipads,
-    installedMacApps: data.installedMacApplications,
-    installediPhoneApps: data.installediPhoneApplications,
-    installediPadApps: data.installediPadApplications,
-    installedMacProfiles: data.installedMacProfiles,
-    installediPhoneProfiles: data.installediPhoneProfiles,
-    installediPadProfiles: data.installediPadProfiles,
-    stopEditingCards: handleModalClose,
-    updateCards: handleCardsUpdate
+    const modalProps = {
+      visible: isModalVisible,
+      cardArray: cards,
+      macData: data.macs,
+      iPhoneData: data.iphones,
+      iPadData: data.ipads,
+      installedMacApps: data.installedMacApplications,
+      installediPhoneApps: data.installediPhoneApplications,
+      installediPadApps: data.installediPadApplications,
+      installedMacProfiles: data.installedMacProfiles,
+      installediPhoneProfiles: data.installediPhoneProfiles,
+      installediPadProfiles: data.installediPadProfiles,
+      stopEditingCards: handleModalClose,
+      updateCards: handleCardsUpdate,
+      totalCounts: {
+          macs: data.macs.totalCount,
+          iphones: data.iphones.totalCount,
+          ipads: data.ipads.totalCount
+      },
+      hasNextPage: hasNextPage,
+      onLoadMore: loadMore
   };
 
   return (
-    <>
-      <div className="rightHeader">
-        <button
-          type="button"
-          className="btn btn-dark"
-          onClick={() => setIsModalVisible(true)}
-          aria-label="Edit Dashboard"
-        >
-          <FaEdit />
-        </button>
-      </div>
-      
-      <main className="d-flex flex-row justify-content-evenly flex-wrap">
-        {cards.length === 0 ? (
-          <WelcomeMessage />
-        ) : (
-          cards.map(renderDashboardCard)
-        )}
-        
-        <EditCardsModal {...modalProps} />
-      </main>
-    </>
+      <>
+          <div className="rightHeader">
+              <button
+                  type="button"
+                  className="btn btn-dark"
+                  onClick={() => setIsModalVisible(true)}
+                  aria-label="Edit Dashboard"
+              >
+                  <FaEdit />
+              </button>
+          </div>
+          
+          <main className="d-flex flex-row justify-content-evenly flex-wrap">
+              {cards.length === 0 ? (
+                  <WelcomeMessage />
+              ) : (
+                  cards.map(renderDashboardCard)
+              )}
+              
+              <EditCardsModal {...modalProps} />
+          </main>
+      </>
   );
 };
 
