@@ -8,7 +8,6 @@ import timeSince from '../../utilities/timeSince.js';
 const DeviceListBase = ({
   query,
   dataKey,
-  deviceType,
   transformData,
   queryOptions = {},
   paginationConfig = {
