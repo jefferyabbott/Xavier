@@ -11,21 +11,18 @@ export default function AllDeviceTable({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({
-    key: 'DeviceName', // Default sort by name
+    key: 'DeviceName',
     direction: 'asc'
   });
 
-  // Handle sort click
   const requestSort = (key) => {
     setSortConfig(prevConfig => {
       if (prevConfig.key === key) {
-        // If clicking same column, toggle direction
         return {
           key,
           direction: prevConfig.direction === 'asc' ? 'desc' : 'asc'
         };
       }
-      // If clicking new column, default to ascending
       return {
         key,
         direction: 'asc'
@@ -33,11 +30,11 @@ export default function AllDeviceTable({
     });
   };
 
-  // Sort devices based on sortConfig and then filter by search
   const sortedAndFilteredDevices = useMemo(() => {
+    if (!deviceData) return [];
+    
     let sorted = [...deviceData];
     
-    // Sort based on current config
     sorted.sort((a, b) => {
       let aValue, bValue;
       
@@ -50,18 +47,30 @@ export default function AllDeviceTable({
           aValue = a.QueryResponses.DeviceName;
           bValue = b.QueryResponses.DeviceName;
           break;
+        case 'Model':
+          aValue = a.ProductName || '';
+          bValue = b.ProductName || '';
+          break;
         case 'OSVersion':
           aValue = a.OSVersion;
           bValue = b.OSVersion;
           break;
         case 'updatedAt':
-          aValue = new Date(a.updatedAt);
-          bValue = new Date(b.updatedAt);
-          break;
+          // Direct integer comparison for Unix timestamps
+          aValue = parseInt(a.updatedAt) || 0;
+          bValue = parseInt(b.updatedAt) || 0;
+          // Return the comparison directly for timestamps
+          return sortConfig.direction === 'asc' 
+            ? aValue - bValue
+            : bValue - aValue;
         default:
           aValue = a.QueryResponses.DeviceName;
           bValue = b.QueryResponses.DeviceName;
       }
+
+      // Handle null/undefined values
+      if (aValue === null || aValue === undefined) aValue = '';
+      if (bValue === null || bValue === undefined) bValue = '';
 
       if (aValue < bValue) {
         return sortConfig.direction === 'asc' ? -1 : 1;
@@ -72,7 +81,6 @@ export default function AllDeviceTable({
       return 0;
     });
 
-    // Filter based on search query
     const lowerQuery = searchQuery.toLowerCase().trim();
     if (lowerQuery) {
       sorted = sorted.filter((device) => {
@@ -86,22 +94,20 @@ export default function AllDeviceTable({
     return sorted;
   }, [deviceData, sortConfig, searchQuery]);
 
-  // Helper function to render sort arrows
+  const deviceCounts = useMemo(() => ({
+    mac: deviceData?.filter(d => d.type === "mac").length || 0,
+    iphone: deviceData?.filter(d => d.type === "iphone").length || 0,
+    ipad: deviceData?.filter(d => d.type === "ipad").length || 0
+  }), [deviceData]);
+
   const renderSortArrow = (columnKey) => {
     if (sortConfig.key !== columnKey) {
-      return <span className="text-gray-300 ml-1">↕</span>;
+      return null;
     }
-    return sortConfig.direction === 'asc' ? 
-      <span className="text-black ml-1">↑</span> : 
-      <span className="text-black ml-1">↓</span>;
+    return (
+      <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+    );
   };
-
-  // Group devices by type for pagination stats
-  const deviceCounts = useMemo(() => ({
-    mac: deviceData.filter(d => d.type === "mac").length,
-    iphone: deviceData.filter(d => d.type === "iphone").length,
-    ipad: deviceData.filter(d => d.type === "ipad").length
-  }), [deviceData]);
 
   return (
     <div className="container">
@@ -121,37 +127,34 @@ export default function AllDeviceTable({
           <table className="table">
             <thead>
               <tr>
-                <th scope="col">OS</th>
+                <th>OS</th>
                 <th 
-                  scope="col" 
                   onClick={() => requestSort('SerialNumber')}
-                  style={{ cursor: 'pointer' }}
-                  className="select-none"
+                  className="cursor-pointer select-none"
                 >
                   Serial Number {renderSortArrow('SerialNumber')}
                 </th>
                 <th 
-                  scope="col"
                   onClick={() => requestSort('DeviceName')}
-                  style={{ cursor: 'pointer' }}
-                  className="select-none"
+                  className="cursor-pointer select-none"
                 >
                   Name {renderSortArrow('DeviceName')}
                 </th>
-                <th scope="col">Model</th>
                 <th 
-                  scope="col"
+                  onClick={() => requestSort('Model')}
+                  className="cursor-pointer select-none"
+                >
+                  Model {renderSortArrow('Model')}
+                </th>
+                <th 
                   onClick={() => requestSort('OSVersion')}
-                  style={{ cursor: 'pointer' }}
-                  className="select-none"
+                  className="cursor-pointer select-none"
                 >
                   OS Version {renderSortArrow('OSVersion')}
                 </th>
                 <th 
-                  scope="col"
                   onClick={() => requestSort('updatedAt')}
-                  style={{ cursor: 'pointer' }}
-                  className="select-none"
+                  className="cursor-pointer select-none"
                 >
                   Checked In {renderSortArrow('updatedAt')}
                 </th>
@@ -199,12 +202,6 @@ export default function AllDeviceTable({
           </div>
         </>
       )}
-
-      <style>{`
-        .select-none {
-          user-select: none;
-        }
-      `}</style>
     </div>
   );
 }

@@ -58,12 +58,12 @@ export default function AllDeviceRow({ device }) {
         }
       }}
     >
-      <td className="py-2 px-4">{deviceType}</td>
-      <td className="py-2 px-4">{device.SerialNumber}</td>
-      <td className="py-2 px-4">{name}</td>
-      <td className="py-2 px-4">{device.ProductName}</td>
-      <td className="py-2 px-4">{osVersion}</td>
-      <td className="py-2 px-4">{lastCheckin}</td>
+      <td className="py-2">{deviceType}</td>
+      <td className="py-2">{device.SerialNumber}</td>
+      <td className="py-2">{name}</td>
+      <td className="py-2">{device.ProductName}</td>
+      <td className="py-2">{osVersion}</td>
+      <td className="py-2">{lastCheckin}</td>
     </tr>
   );
 }
