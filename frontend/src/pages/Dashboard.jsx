@@ -6,6 +6,7 @@ import { FaEdit, FaSync } from 'react-icons/fa';
 import Spinner from '../components/Spinner.jsx';
 import DashboardCard from '../components/DashboardCard';
 import EditCardsModal from '../components/modals/EditCardsModal.jsx';
+import '../dashboard.css';
 import {
     generateBooleanComplianceData,
     generateOSVersionComplianceData,
@@ -66,10 +67,10 @@ const useDashboardData = (consoleUser) => {
         },
         skip: !consoleUser,
         fetchPolicy: 'cache-and-network',
-        notifyOnNetworkStatusChange: true // This ensures we get updates about background refreshes
+        notifyOnNetworkStatusChange: true 
     });
 
-    const isBackgroundRefresh = networkStatus === 6; // Apollo's code for background update
+    const isBackgroundRefresh = networkStatus === 6; 
     const isInitialLoad = loading && !isBackgroundRefresh;
   
     const transformedData = useMemo(() => {
@@ -237,16 +238,6 @@ const Dashboard = () => {
                 
                 <EditCardsModal {...modalProps} />
             </main>
-
-            <style jsx>{`
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                .spin {
-                    animation: spin 1s linear infinite;
-                }
-            `}</style>
         </>
     );
 };

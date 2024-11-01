@@ -16,7 +16,6 @@ axios.defaults.headers.post['content-type'] = 'application/json';
 function updateComplianceCardPrefs(complianceCardPrefs) {
     const API_URL = `${process.env.REACT_APP_BACKEND_SERVER}/complianceCardPrefs`;
     postCommand(API_URL, {consoleUser, complianceCardPrefs}, 'Dashboard cards have been saved.');
-    console.log(complianceCardPrefs);
 }
 
 
